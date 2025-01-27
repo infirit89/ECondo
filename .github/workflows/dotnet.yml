@@ -22,10 +22,10 @@ jobs:
         dotnet-version: 8.0.x
     - name: Restore dependencies
       working-directory: ./backend
-      run: dotnet restore
+      run: dotnet restore ECondo.sln
     - name: Build
       working-directory: ./backend
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore ECondo.sln
     - name: Test
       working-directory: ./backend
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal ECondo.sln
