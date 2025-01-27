@@ -1,0 +1,29 @@
+version: '3.4'
+name: econdo
+
+services:
+  econdo.api:
+    image: ${DOCKER_REGISTRY-}econdoapi
+    container_name: econdo.api
+    build:
+      context: .
+      dockerfile: ECondo.Api/Dockerfile
+    ports:
+        - "8080:8080"
+        - "8081:8081"
+  econdo.mssqldb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: econdo.db
+    ports:
+      - 8002:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=z@malo_Dap0g1nem#
+    volumes:
+      - ./.containers/econdo-db/data:/var/opt/mssql/data
+  econdo.redis:
+    image: redis:latest
+    container_name: econdo.redis
+    restart: always
+    ports:
+      - 6379:6379
