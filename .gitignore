@@ -396,3 +396,10 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Client
+.next/
+node_modules
+
+# Docker
+.containers/
