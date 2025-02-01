@@ -1,9 +1,9 @@
-﻿namespace ECondo.Domain.Users;
+﻿using Microsoft.AspNetCore.Identity;
 
-public class Role
+namespace ECondo.Domain.Users;
+
+public class Role : IdentityRole<Guid>
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
-    public string Name { get; set; } = null!;
-    public string NormalizedName { get; set; } = null!;
-    public Guid ConcurrencyStamp { get; set; } = Guid.NewGuid();
+    public HashSet<UserRole> UserRoles { get; set; } = null!;
+    public HashSet<RoleClaim> RoleClaims { get; set; } = null!;
 }

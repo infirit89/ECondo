@@ -1,21 +1,30 @@
-﻿namespace ECondo.Domain.Users;
-public class User
+﻿using ECondo.Domain.Abstractions;
+using Microsoft.AspNetCore.Identity;
+
+namespace ECondo.Domain.Users;
+public class User : IdentityUser<Guid>, ISoftDeletable
 {
-    public Guid Id { get; set; }
-    public string SecurityStamp { get; set; } = Guid.NewGuid().ToString();
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
-    public string Username { get; set; } = null!;
-    public string NormalizedUsername { get; set; } = null!;
+    // ---- navigational properties ----
+    public HashSet<UserRole> UserRoles { get; set; } = new();
+    public HashSet<UserClaim> UserClaims { get; set; } = new();
+    public HashSet<UserLogin> UserLogins { get; set; } = new();
+    public HashSet<UserToken> UserTokens { get; set; } = new();
+    // ---------------------------------
 
-    public string Email { get; set; } = null!;
-    public string NormalizedEmail { get; set; } = null!;
-    public bool EmailConfirmed { get; set; }
-
-    public string PasswordHash { get; set; } = null!;
-
-    public Guid ConcurrencyStamp { get; set; } = Guid.NewGuid();
-
-    public DateTimeOffset? LockoutEnd { get; set; }
-    public int AccessFailedCount { get; set; } = 0;
-    public bool LockoutEnabled { get; set; }
+    // ---- soft delete stuffs ----    public bool IsDeleted { private set; get; }
+    public bool IsDeleted { private set; get; }
+    public DateTimeOffset? DeletedAt { private set; get; }
+    public void Undo()
+    {
+        IsDeleted = false;
+        DeletedAt = null;
+    }
+    public void Delete()
+    {
+        IsDeleted = true;
+        DeletedAt = DateTimeOffset.UtcNow;
+    }
+    // ----------------------------
 }
