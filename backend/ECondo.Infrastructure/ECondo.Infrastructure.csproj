@@ -27,7 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\ECondo.Application\ECondo.Application.csproj" />
-  </ItemGroup>
+		<ProjectReference Include="..\ECondo.Application\ECondo.Application.csproj" />
+	</ItemGroup>
 
 </Project>
