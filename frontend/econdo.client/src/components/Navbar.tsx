@@ -1,55 +1,75 @@
-import { Anchor, Box, Burger, Button, Divider, Drawer, Group, rem, ScrollArea, Text } from "@mantine/core";
-import styles from '@/components/Navbar.module.css';
+'use client';
+import { Anchor, Box, Burger, Button, Divider, Drawer, Group, ScrollArea, } from "@mantine/core";
+import classes from '@/components/Navbar.module.css';
 import { useDisclosure } from "@mantine/hooks";
+import { MantineLogo } from "@mantinex/mantine-logo";
 
 export function Navbar() {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
 
     return (
-        <>
-            <Box>
-                <Group justify={'space-between'}>
-                    <Text component="a" href="/">ECondo</Text>
-                </Group>
+        <Box>
+            <header className={classes.header}>
+                <Group justify="space-between" h="100%">
+                <Anchor href="/">
+                    <MantineLogo size={30} />
+                </Anchor>
+
+                {/* <Group h="100%" gap={0} visibleFrom="sm">
+                    <a href="#" className={classes.link}>
+                    Начало
+                    </a>
+                    <a href="#" className={classes.link}>
+                    За нас
+                    </a>
+                    <a href="#" className={classes.link}>
+                    Контакти
+                    </a>
+                </Group> */}
+
                 <Group visibleFrom="sm">
-                    <a href='/login' className={styles.link}>Вход</a>
-                    <a href='/register' className={styles.link}>Регистрация</a>
-                    <a href='/about' className={styles.link}>За Errandix</a>
+                    <Button variant="default" component="a" href="/login">Вход</Button>
+                    <Button component="a" href="/register">Регистрирай се</Button>
                 </Group>
-                <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" mb={rem(15)} />
-            </Box>
+
+                <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
+                </Group>
+            </header>
+
             <Drawer
                 opened={drawerOpened}
                 onClose={closeDrawer}
-                size={'100%'}
-                padding={'md'}
+                size="100%"
+                padding="md"
                 title={
-                <Text component="a" href="/">ECondo</Text>
-                // <Anchor href='/'>
-                //     <Image component={NextImage} src={LogoErrandixTransparent} className={classes.logo} alt="errandix" mt={'0'}/>
-                // </Anchor>
+                    <Anchor href="/">
+                        <MantineLogo size={40} />
+                    </Anchor>
                 }
-                className={styles.drawer}
-                hiddenFrom='sm'
+                hiddenFrom="sm"
                 zIndex={1000000}
-                closeButtonProps={{
-                mt: '15px',
-                }}>
-                <ScrollArea h={`calc(100vh -${rem(80)})`} mx={'-md'}>
-                    <Divider my={'sm'}/>
-                    <a href="/" className={styles.drawerlink}>
+            >
+                <ScrollArea h="calc(100vh - 80px" mx="-md">
+                {/* <Divider my="sm" /> */}
+
+                {/* <a href="#" className={classes.link}>
                     Начало
-                    </a>
-                    {/* <a href="/about" className={styles.drawerlink}>
-                    За Errandix
-                    </a> */}
-                    <Divider my={'sm'}/>
-                    <Group justify={'center'} grow pb={'xl'} px={'md'}>
-                    <Button component='a' href='/login' variant={'default'}>Вход</Button>
-                    <Button component='a' href='/register'>Регистрация</Button>
-                    </Group>
+                </a>
+                <a href="#" className={classes.link}>
+                    За нас
+                </a>
+                <a href="#" className={classes.link}>
+                    Контакти
+                </a> */}
+
+                <Divider my="sm" />
+
+                <Group justify="center" grow pb="xl" px="md">
+                    <Button variant="default" component="a" href="/login">Вход</Button>
+                    <Button component="a" href="/register">Регистрирай се</Button>
+                </Group>
                 </ScrollArea>
             </Drawer>
-        </>
+        </Box>
     )
 }
