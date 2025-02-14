@@ -24,8 +24,8 @@ internal class GenerateAccessTokenCommandHandler(
         if (user is null)
             return Result<TokenResult, IdentityError>.Fail(UserErrors.InvalidUser());
 
-        string accessToken = authService.GenerateAccessTokenAsync(user);
+        AccessToken accessToken = authService.GenerateAccessTokenAsync(user);
 
-        return Result<TokenResult, IdentityError>.Ok(new TokenResult(accessToken, ""));
+        return Result<TokenResult, IdentityError>.Ok(new TokenResult(accessToken.Value, accessToken.MinutesExpiry, ""));
     }
 }

@@ -67,8 +67,11 @@ namespace ECondo.Api.Controllers
             };
         }
 
+        [HttpPost(nameof(Refresh))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TokenResult))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
         public async Task<Results<JsonHttpResult<TokenResult>, ValidationProblem>>
-            GenerateAccessToken([FromBody] GenerateAccessTokenRequest accessTokenRequest)
+            Refresh([FromBody] GenerateAccessTokenRequest accessTokenRequest)
         {
             GenerateAccessTokenCommand command = new(accessTokenRequest.RefreshToken);
             var result = await sender.Send(command);

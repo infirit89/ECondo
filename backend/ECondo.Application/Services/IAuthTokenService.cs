@@ -5,7 +5,7 @@ using ECondo.Domain.Users;
 namespace ECondo.Application.Services;
 public interface IAuthTokenService
 {
-    string GenerateAccessTokenAsync(User user);
+    AccessToken GenerateAccessTokenAsync(User user);
     RefreshToken GenerateRefreshTokenAsync(User user);
     Task StoreRefreshTokenAsync(RefreshToken refreshToken);
     Task RemoveRefreshTokenAsync(string tokenValue);

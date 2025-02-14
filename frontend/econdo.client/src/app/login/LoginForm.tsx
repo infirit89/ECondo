@@ -2,27 +2,30 @@
 
 import { TextInput } from "@mantine/core";
 
-import { Box, LoadingOverlay, PasswordInput, Group, Checkbox, Anchor, Button, Text } from "@mantine/core";
+import { Box, LoadingOverlay, PasswordInput, Group, Checkbox, Anchor, Button } from "@mantine/core";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-
-interface ILoginFields {
-    email: string;
-    password: string;
-}
+import { LoginFields } from "@/app/_data/loginData";
+import { login, setAuthCookie } from "../actions";
 
 export default function LoginForm() {
     const [isLoading, setLoading] = useState(false);
     
-    const form = useForm<ILoginFields>({
+    const form = useForm<LoginFields>({
         defaultValues: {
             email: '',
             password: '',
         },
     });
     
-    const onSubmit = async(data: ILoginFields) => {
-        console.log(data);
+    const onSubmit = async(data: LoginFields) => {
+        const loginRes = await login(data);
+        if('errors' in loginRes) {
+            console.error(loginRes.errors);
+            return;
+        }
+
+        await setAuthCookie({ accessToken: loginRes.accessToken, maxAge: loginRes.expiresIn * 60, refreshToken: loginRes.refreshToken });
     }
 
     return (

@@ -1,3 +1,3 @@
 ﻿namespace ECondo.Application.Data;
 
-public sealed record TokenResult(string AccessToken, string RefreshToken);
+public sealed record TokenResult(string AccessToken, int ExpiresIn, string RefreshToken);

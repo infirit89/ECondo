@@ -29,7 +29,7 @@ internal class AuthTokenService : IAuthTokenService
         };
     }
 
-    public string GenerateAccessTokenAsync(User user)
+    public AccessToken GenerateAccessTokenAsync(User user)
     {
         List<Claim> claims =
         [
@@ -51,7 +51,11 @@ internal class AuthTokenService : IAuthTokenService
         var jwtTokenHandler = new JwtSecurityTokenHandler();
         var token = jwtTokenHandler.CreateToken(tokenDescriptor);
 
-        return jwtTokenHandler.WriteToken(token);
+        return new AccessToken
+        {
+            Value = jwtTokenHandler.WriteToken(token),
+            MinutesExpiry = _jwtSettings.MinutesExpiry,
+        };
     }
 
     public RefreshToken GenerateRefreshTokenAsync(User user)

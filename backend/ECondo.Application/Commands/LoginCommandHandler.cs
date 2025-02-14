@@ -22,11 +22,11 @@ internal class LoginCommandHandler(
         if(!await userManager.CheckPasswordAsync(user, request.Password))
             return Result<TokenResult, IdentityError>.Fail(errorDescriber.PasswordMismatch());
 
-        string accessToken = authTokenService.GenerateAccessTokenAsync(user);
+        AccessToken accessToken = authTokenService.GenerateAccessTokenAsync(user);
         RefreshToken refreshToken = authTokenService.GenerateRefreshTokenAsync(user);
 
         await authTokenService.StoreRefreshTokenAsync(refreshToken);
 
-        return Result<TokenResult, IdentityError>.Ok(new TokenResult(accessToken, refreshToken.Value));
+        return Result<TokenResult, IdentityError>.Ok(new TokenResult(accessToken.Value, accessToken.MinutesExpiry, refreshToken.Value));
     }
 }
