@@ -6,7 +6,8 @@ import { Box, LoadingOverlay, PasswordInput, Group, Checkbox, Anchor, Button } f
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { LoginFields } from "@/app/_data/loginData";
-import { login, setAuthCookie } from "../actions";
+import { isApiError } from "../_data/apiResponses";
+import { login } from "@/actions/auth";
 
 export default function LoginForm() {
     const [isLoading, setLoading] = useState(false);
@@ -19,13 +20,9 @@ export default function LoginForm() {
     });
     
     const onSubmit = async(data: LoginFields) => {
-        const loginRes = await login(data);
-        if('errors' in loginRes) {
-            console.error(loginRes.errors);
-            return;
-        }
-
-        await setAuthCookie({ accessToken: loginRes.accessToken, maxAge: loginRes.expiresIn * 60, refreshToken: loginRes.refreshToken });
+        const res = await login(data);
+        if(isApiError(res))
+            console.error(res);
     }
 
     return (

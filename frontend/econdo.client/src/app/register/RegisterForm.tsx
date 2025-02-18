@@ -1,10 +1,9 @@
 'use client';
 
-import { emailSchema, firstNameSchema, lastNameSchema, middleNameSchema, passwordSchema, phoneNumberSchema } from "@/utils/ValidationSchemas";
+import { emailSchema, firstNameSchema, lastNameSchema, middleNameSchema, passwordSchema, phoneNumberSchema } from '@/utils/validationSchemas';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TextInput } from "@mantine/core";
 
-import { Box, LoadingOverlay, PasswordInput, Button } from "@mantine/core";
+import { Box, LoadingOverlay, PasswordInput, Button, TextInput } from "@mantine/core";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z, ZodSchema } from "zod";
