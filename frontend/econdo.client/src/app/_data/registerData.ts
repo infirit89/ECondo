@@ -1,7 +1,8 @@
-export interface IRegisterFields {
+export interface RegisterFields {
     firstName: string;
     middleName: string;
     lastName: string;
+    username: string;
     email: string;
     phone: string;
     password: string;

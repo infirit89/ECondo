@@ -1,5 +1,5 @@
 import { Anchor, Container, Paper, Text, Title } from "@mantine/core";
-import LoginForm from "./LoginForm";
+import LoginForm from "./loginForm";
 
 export default function Login() {
     return (
@@ -15,7 +15,7 @@ export default function Login() {
             </Text>
 
             <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-            <LoginForm/>
+                <LoginForm/>
             </Paper>
         </Container>
     )

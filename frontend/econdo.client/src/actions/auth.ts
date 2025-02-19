@@ -1,11 +1,12 @@
 'use server';
 import axios from 'axios';
-import { ApiError, isApiError, TokenResponse } from '@/app/_data/apiResponses';
+import { ApiError, ApiSucess, isApiError, TokenResponse } from '@/app/_data/apiResponses';
 import { cookies } from 'next/headers';
 import { accessTokenCookieKey, refreshTokenCookieKey } from '@/utils/constants';
 import { axiosToApiErrorConverter } from '@/utils/helper';
 import { LoginFields } from '@/app/_data/loginData';
 import { normalInstance } from '@/lib/axiosInstance';
+import { RegisterFields } from '@/app/_data/registerData';
 
 const backendApiUrl = process.env.NEXT_PRIVATE_BACKEND_URL;
 
@@ -22,6 +23,19 @@ export async function login(loginData: LoginFields): Promise<ApiError | TokenRes
     cookieStore.set(refreshTokenCookieKey, res.data.refreshToken, { httpOnly: true, sameSite: 'strict' });
 
     return res.data;
+}
+
+export async function register(registerData: RegisterFields): Promise<ApiError | ApiSucess> {
+    const res = await normalInstance.post('/api/account/register', registerData)
+    .catch(axiosToApiErrorConverter);
+
+    if(isApiError(res))
+        return res;
+
+    return {
+        status: res.status,
+        statusText: res.statusText,
+    };
 }
 
 export async function generateAccessToken(): Promise<ApiError | TokenResponse> {

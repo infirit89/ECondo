@@ -5,7 +5,7 @@ import { generateAccessToken, setAccessTokenCookie } from "./actions/auth";
 import { isApiError } from "./app/_data/apiResponses";
 
 const protectedRoutes = ['/dashboard'];
-const publicRoutes = ['/login', '/signup', '/'];
+const publicRoutes = ['/login', '/register', '/'];
 
 export default async function middleware(req: NextRequest) {
     const path = req.nextUrl.pathname;

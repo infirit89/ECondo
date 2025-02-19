@@ -17,3 +17,8 @@ export interface ApiError {
 export function isApiError(response : ApiError | any): response is ApiError {
     return 'errors' in response;
 }
+
+export interface ApiSucess {
+    status: number;
+    statusText: string;
+}

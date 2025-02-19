@@ -1,7 +1,7 @@
 import { Container, Title, Text, Anchor, Paper } from "@mantine/core";
-import RegisterForm from "./RegisterForm";
+import RegisterForm from "./registerForm";
 
-export default async function Register() {
+export default function Register() {
 
     return (
         <Container size={420} my={40} mb={100}>

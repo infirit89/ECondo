@@ -7,13 +7,16 @@ import { Box, LoadingOverlay, PasswordInput, Button, TextInput } from "@mantine/
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z, ZodSchema } from "zod";
-import { IRegisterFields } from "./RegisterData";
+import { RegisterFields } from "@/app/_data/registerData";
+import { register } from '@/actions/auth';
+import { isApiError } from '../_data/apiResponses';
 
-const RegisterSchema : ZodSchema<IRegisterFields> = z
+const RegisterSchema : ZodSchema<RegisterFields> = z
     .object({
         firstName: firstNameSchema,
         middleName: middleNameSchema,
         lastName: lastNameSchema,
+        username: z.string(),
         email: emailSchema,
         phone: phoneNumberSchema,
         password: passwordSchema,
@@ -30,7 +33,7 @@ const RegisterSchema : ZodSchema<IRegisterFields> = z
 export default function RegisterForm() {
     const [isLoading, setLoading] = useState(false);
     
-    const form = useForm<IRegisterFields>({
+    const form = useForm<RegisterFields>({
         defaultValues: {
             firstName: '',
             middleName: '',
@@ -39,11 +42,18 @@ export default function RegisterForm() {
             phone: '',
             password: '',
             confirmPassword: '',
+            username: '',
         },
         resolver: zodResolver(RegisterSchema),
     });
     
-    const onSubmit = async(data: IRegisterFields) => {
+    const onSubmit = async(data: RegisterFields) => {
+        data.username = data.email;
+        console.log('aaaaaaaaaaaaaaaaaaaaaaa');
+        const res = await register(data);
+        if(isApiError(res))
+            console.error(res);
+        
         console.log(data);
     }
 
@@ -51,16 +61,21 @@ export default function RegisterForm() {
         <form onSubmit={form.handleSubmit(onSubmit)}>
             <Box pos={'relative'}>
                 <LoadingOverlay visible={isLoading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }}/>
-                <TextInput ta={'start'} label="Първо име" {...form.register('firstName')} withAsterisk
+                <TextInput ta={'start'} label="Първо име" placeholder='Петър' {...form.register('firstName')} withAsterisk
                 error={form.formState.errors.firstName && form.formState.errors.firstName.message}/>
                 
-                <TextInput ta={'start'} label="Презиме" {...form.register('middleName')} withAsterisk
+                <TextInput ta={'start'} label="Презиме" mt={'sm'} placeholder='Петров' {...form.register('middleName')} withAsterisk
                 error={form.formState.errors.middleName && form.formState.errors.middleName.message}/>
                 
-                <TextInput ta={'start'} label="Фамилно име" {...form.register('lastName')} withAsterisk
+                <TextInput ta={'start'} label="Фамилно име" mt={'sm'} placeholder='Попов' {...form.register('lastName')} withAsterisk
                 error={form.formState.errors.lastName && form.formState.errors.lastName.message}/>
                 
-                <TextInput ta={'start'} label="Имейл" {...form.register('email')} withAsterisk
+                <TextInput ta={'start'} label='Телефон' mt={'sm'} placeholder='0881234567' {...form.register('phone')} withAsterisk
+                error={form.formState.errors.phone && form.formState.errors.phone.message} />
+
+                <TextInput ta={'start'} lightHidden darkHidden/>
+                
+                <TextInput ta={'start'} label="Имейл" mt={'sm'} placeholder='peter@gmail.com' {...form.register('email')} withAsterisk
                 error={form.formState.errors.email && form.formState.errors.email.message}/>
                 
                 <PasswordInput ta={'start'} label="Парола" mt="md" {...form.register('password')} withAsterisk
