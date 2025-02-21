@@ -1,10 +1,5 @@
-export interface RegisterFields {
-    firstName: string;
-    middleName: string;
-    lastName: string;
-    username: string;
+export interface RegisterData {
     email: string;
-    phone: string;
+    username: string;
     password: string;
-    confirmPassword: string;
 }

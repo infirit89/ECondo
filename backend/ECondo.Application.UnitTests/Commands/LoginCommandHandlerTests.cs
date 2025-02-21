@@ -1,4 +1,4 @@
-﻿using ECondo.Application.Commands;
+﻿using ECondo.Application.Commands.Identity;
 using ECondo.Application.Data;
 using ECondo.Application.Services;
 using ECondo.Domain.Shared;
@@ -63,7 +63,11 @@ namespace ECondo.Application.UnitTests.Commands
 
             _userManager.FindByEmailAsync(command.Email).Returns(user);
             _userManager.CheckPasswordAsync(user, command.Password).Returns(true);
-            _authTokenService.GenerateAccessTokenAsync(user).Returns("access_token");
+            _authTokenService.GenerateAccessTokenAsync(user).Returns( new AccessToken()
+            {
+                Value = "access_token",
+                MinutesExpiry = 1,
+            });
             _authTokenService.GenerateRefreshTokenAsync(user).Returns(refreshToken);
 
 
@@ -85,7 +89,11 @@ namespace ECondo.Application.UnitTests.Commands
 
             _userManager.FindByEmailAsync(command.Email).Returns(user);
             _userManager.CheckPasswordAsync(user, command.Password).Returns(true);
-            _authTokenService.GenerateAccessTokenAsync(user).Returns("access_token");
+            _authTokenService.GenerateAccessTokenAsync(user).Returns(new AccessToken()
+            {
+                Value = "access_token",
+                MinutesExpiry = 1,
+            });
             _authTokenService.GenerateRefreshTokenAsync(user).Returns(refreshToken);
 
 

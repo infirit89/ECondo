@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 
 import '@mantine/core/styles.css';
 import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from "@mantine/core";
-import App from "@/components/App";
+import App from "@/components/app";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",

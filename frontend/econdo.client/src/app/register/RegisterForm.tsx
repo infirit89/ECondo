@@ -1,24 +1,48 @@
 'use client';
 
-import { emailSchema, firstNameSchema, lastNameSchema, middleNameSchema, passwordSchema, phoneNumberSchema } from '@/utils/validationSchemas';
+import { emailSchema, passwordSchema } from '@/utils/validationSchemas';
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Box, LoadingOverlay, PasswordInput, Button, TextInput } from "@mantine/core";
-import { useState } from "react";
+import { useReducer } from "react";
 import { useForm } from "react-hook-form";
 import { z, ZodSchema } from "zod";
-import { RegisterFields } from "@/app/_data/registerData";
 import { register } from '@/actions/auth';
 import { isApiError } from '../_data/apiResponses';
 
-const RegisterSchema : ZodSchema<RegisterFields> = z
+interface RegisterFormFields {
+    username: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+}
+
+type RegisterState = 'idle' | 'loading' | 'error' | 'success';
+
+type RegisterAction = 
+    | { type: 'START_REGISTER' }
+    | { type: 'REGISTER_SUCCESS' }
+    | { type: 'REGISTER_ERROR' };
+
+const initialRegisterState: RegisterState = 'idle';
+
+function registerReducer(state: RegisterState, action: RegisterAction): RegisterState {
+    switch(action.type) {
+        case 'START_REGISTER':
+            return 'loading';
+        case 'REGISTER_SUCCESS':
+            return 'success';
+        case 'REGISTER_ERROR':
+            return 'error';
+        default:
+            return state;
+    }
+}
+
+const RegisterSchema : ZodSchema<RegisterFormFields> = z
     .object({
-        firstName: firstNameSchema,
-        middleName: middleNameSchema,
-        lastName: lastNameSchema,
         username: z.string(),
         email: emailSchema,
-        phone: phoneNumberSchema,
         password: passwordSchema,
         confirmPassword: z.string(),
     })
@@ -31,15 +55,11 @@ const RegisterSchema : ZodSchema<RegisterFields> = z
     });
 
 export default function RegisterForm() {
-    const [isLoading, setLoading] = useState(false);
+    const [registerState, dispatch] = useReducer(registerReducer, initialRegisterState);
     
-    const form = useForm<RegisterFields>({
+    const form = useForm<RegisterFormFields>({
         defaultValues: {
-            firstName: '',
-            middleName: '',
-            lastName: '',
             email: '',
-            phone: '',
             password: '',
             confirmPassword: '',
             username: '',
@@ -47,21 +67,35 @@ export default function RegisterForm() {
         resolver: zodResolver(RegisterSchema),
     });
     
-    const onSubmit = async(data: RegisterFields) => {
+    const onSubmit = async(data: RegisterFormFields) => {
+        dispatch({ type: 'START_REGISTER' });
         data.username = data.email;
-        console.log('aaaaaaaaaaaaaaaaaaaaaaa');
-        const res = await register(data);
-        if(isApiError(res))
-            console.error(res);
-        
-        console.log(data);
+        const registerResult = await register({
+            email: data.email,
+            username: data.username,
+            password: data.password,
+        });
+        if(isApiError(registerResult)) {
+            form.setError(
+                'email',
+                {
+                    message: `Имейлът ${data.email} вече съществува`,
+                },
+            );
+            dispatch({ type: 'REGISTER_ERROR' });
+            return;
+        }
+
+        dispatch({ type: 'REGISTER_SUCCESS' });
     }
+
+    const isLoading = initialRegisterState === 'loading';
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)}>
             <Box pos={'relative'}>
                 <LoadingOverlay visible={isLoading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }}/>
-                <TextInput ta={'start'} label="Първо име" placeholder='Петър' {...form.register('firstName')} withAsterisk
+                {/* <TextInput ta={'start'} label="Първо име" placeholder='Петър' {...form.register('firstName')} withAsterisk
                 error={form.formState.errors.firstName && form.formState.errors.firstName.message}/>
                 
                 <TextInput ta={'start'} label="Презиме" mt={'sm'} placeholder='Петров' {...form.register('middleName')} withAsterisk
@@ -69,14 +103,14 @@ export default function RegisterForm() {
                 
                 <TextInput ta={'start'} label="Фамилно име" mt={'sm'} placeholder='Попов' {...form.register('lastName')} withAsterisk
                 error={form.formState.errors.lastName && form.formState.errors.lastName.message}/>
-                
-                <TextInput ta={'start'} label='Телефон' mt={'sm'} placeholder='0881234567' {...form.register('phone')} withAsterisk
-                error={form.formState.errors.phone && form.formState.errors.phone.message} />
-
-                <TextInput ta={'start'} lightHidden darkHidden/>
-                
+                 */}
                 <TextInput ta={'start'} label="Имейл" mt={'sm'} placeholder='peter@gmail.com' {...form.register('email')} withAsterisk
                 error={form.formState.errors.email && form.formState.errors.email.message}/>
+
+                {/* <TextInput ta={'start'} label='Телефон' mt={'sm'} placeholder='0881234567' {...form.register('phone')} withAsterisk
+                error={form.formState.errors.phone && form.formState.errors.phone.message} /> */}
+
+                <TextInput ta={'start'} hidden lightHidden darkHidden/>
                 
                 <PasswordInput ta={'start'} label="Парола" mt="md" {...form.register('password')} withAsterisk
                 error={form.formState.errors.password && form.formState.errors.password.message} />

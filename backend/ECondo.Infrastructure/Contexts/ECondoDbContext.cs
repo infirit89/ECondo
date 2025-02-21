@@ -1,4 +1,5 @@
-﻿using ECondo.Domain.Users;
+﻿using ECondo.Domain.Profiles;
+using ECondo.Domain.Users;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +14,8 @@ internal class ECondoDbContext(DbContextOptions<ECondoDbContext> options) : Iden
     public override DbSet<UserLogin> UserLogins { get; set; } = null!;
     public override DbSet<UserToken> UserTokens { get; set; } = null!;
     public override DbSet<RoleClaim> RoleClaims { get; set; } = null!;
+
+    public DbSet<ProfileDetails> UserDetails { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -92,6 +95,15 @@ internal class ECondoDbContext(DbContextOptions<ECondoDbContext> options) : Iden
             builder.HasOne(ut => ut.User).WithMany(u => u.UserTokens).HasForeignKey(ut => ut.UserId).IsRequired();
 
             builder.ToTable("UserTokens");
+        });
+
+        modelBuilder.Entity<ProfileDetails>(builder =>
+        {
+            builder.HasKey(ud => ud.Id);
+            builder.Property(ud => ud.FirstName).HasMaxLength(256);
+            builder.Property(ud => ud.MiddleName).HasMaxLength(256);
+            builder.Property(ud => ud.LastName).HasMaxLength(256);
+            builder.HasOne(ud => ud.User).WithMany(u => u.UserDetails).HasForeignKey(ud => ud.UserId);
         });
     }
 }

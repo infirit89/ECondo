@@ -4,6 +4,7 @@ using ECondo.Infrastructure.Repositories;
 using ECondo.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Resend;
 
 namespace ECondo.Infrastructure.Extensions;
 
@@ -15,9 +16,19 @@ public static class ServiceConfiguration
         services.ConfigureInfrastructureSettings(configuration);
         services.AddIdentityConfiguration(configuration);
 
-        services.AddScoped<IAuthTokenService, AuthTokenService>();
+        services.AddOptions();
+        services.AddHttpClient<ResendClient>();
+        services.Configure<ResendClientOptions>(options =>
+        {
+            options.ApiToken = configuration["ResendSettings:ApiKey"]!;
+        });
+        services.AddTransient<IResend, ResendClient>();
 
         services.AddScoped<ICacheRepository, CacheRepository>();
+
+        services.AddScoped<IAuthTokenService, AuthTokenService>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IEmailService, MailService>();
 
         services.AddSignalR();
 

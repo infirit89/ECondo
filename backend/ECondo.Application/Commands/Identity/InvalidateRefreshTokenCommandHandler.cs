@@ -4,23 +4,23 @@ using ECondo.Domain.Users;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace ECondo.Application.Commands;
+namespace ECondo.Application.Commands.Identity;
 
 internal sealed class InvalidateRefreshTokenCommandHandler(
     UserManager<User> userManager,
     IAuthTokenService authService)
-    : IRequestHandler<InvalidateRefreshTokenCommand, Result<Empty, IdentityError>>
+    : IRequestHandler<InvalidateRefreshTokenCommand, Result<EmptySuccess, Error>>
 {
-    public async Task<Result<Empty, IdentityError>> Handle(InvalidateRefreshTokenCommand request, CancellationToken cancellationToken)
+    public async Task<Result<EmptySuccess, Error>> Handle(InvalidateRefreshTokenCommand request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(request.RefreshToken) || await authService.RefreshTokenExistsAsync(request.RefreshToken))
-            return Result<Empty, IdentityError>.Fail(UserErrors.InvalidRefreshToken());
+            return Result<EmptySuccess, Error>.Fail(UserErrors.InvalidRefreshToken());
 
         User? user = await userManager.FindByNameAsync(request.Username);
-        if(user is null)
-            return Result<Empty, IdentityError>.Fail(UserErrors.InvalidUser(request.Username));
+        if (user is null)
+            return Result<EmptySuccess, Error>.Fail(UserErrors.InvalidUser(request.Username));
 
         await authService.RemoveRefreshTokenAsync(request.RefreshToken);
-        return Result<Empty, IdentityError>.Ok();
+        return Result<EmptySuccess, Error>.Ok();
     }
 }

@@ -1,5 +1,5 @@
 'use client';
-import { Anchor, Box, Burger, Button, Divider, Drawer, Group, ScrollArea, } from "@mantine/core";
+import { Anchor, Avatar, Box, Burger, Button, Divider, Drawer, Group, Menu, MenuDropdown, MenuItem, MenuTarget, ScrollArea, Skeleton, } from "@mantine/core";
 import classes from '@/components/navbar.module.css';
 import { useDisclosure } from "@mantine/hooks";
 import { MantineLogo } from "@mantinex/mantine-logo";
@@ -28,8 +28,18 @@ export function Navbar() {
                 </Group> */}
 
                 <Group visibleFrom="sm">
-                    <Button variant="default" component="a" href="/login">Вход</Button>
-                    <Button component="a" href="/register">Регистрирай се</Button>
+                    {/* <Menu shadow="md" width={200} key={'profile'} withinPortal position="bottom-end" transitionProps={{ transition: 'pop-top-right' }} offset={5}>
+                        <MenuTarget>
+                            { userDetails ?
+                            <Avatar color={'orange'} radius="xl" className={classes.profileLink}>{`${userDetails.firstName.at(0)}${userDetails.lastName.at(0)}`}</Avatar> : 
+                            <Skeleton height={50} circle mb="xl" /> }
+                        </MenuTarget>
+
+                        <MenuDropdown>
+                            <MenuItem component='a' href='/profile'>Профил</MenuItem>
+                            <MenuItem component='a' href='/logout'>Изход</MenuItem>
+                        </MenuDropdown>
+                    </Menu> */}
                 </Group>
 
                 <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />

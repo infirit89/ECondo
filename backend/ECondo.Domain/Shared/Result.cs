@@ -14,7 +14,7 @@ public abstract record Result<TSuccess, TError>
     public static Result<TSuccess, TError> Fail(TError? data = default) => new Error(data);
 }
 
-public class Empty;
+public class EmptySuccess;
 
 public static class ResultHelper
 {

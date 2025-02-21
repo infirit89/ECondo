@@ -1,12 +1,12 @@
-﻿using ECondo.Api.Data;
+﻿using MediatR;
 using ECondo.Api.Extensions;
-using ECondo.Application.Commands;
 using ECondo.Application.Data;
 using ECondo.Domain.Shared;
-using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ECondo.Application.Commands.Identity;
+using ECondo.Api.Data.Identity;
 
 namespace ECondo.Api.Controllers
 {
@@ -25,8 +25,8 @@ namespace ECondo.Api.Controllers
 
             return result switch
             {
-                Result<TokenResult, IdentityError>.Success s => TypedResults.Json(s.Data),
-                Result<TokenResult, IdentityError>.Error e => e.Data.ToValidationProblem(),
+                Result<TokenResult, Error>.Success s => TypedResults.Json(s.Data),
+                Result<TokenResult, Error>.Error e => e.Data.ToValidationProblem(),
                 _ => throw new ArgumentOutOfRangeException(nameof(result))
             };
         }
@@ -38,13 +38,13 @@ namespace ECondo.Api.Controllers
             Register([FromBody] RegisterUserRequest registerUserRequest)
         {
             RegisterCommand command = new(registerUserRequest.Email, registerUserRequest.Username,
-                registerUserRequest.Password);
+                registerUserRequest.Password, registerUserRequest.ReturnUri);
 
             var result = await sender.Send(command);
             return result switch
             {
-                Result<Empty, IdentityError[]>.Success => TypedResults.Ok(),
-                Result<Empty, IdentityError[]>.Error e => e.Data.ToValidationProblem(),
+                Result<EmptySuccess, IdentityError[]>.Success => TypedResults.Ok(),
+                Result<EmptySuccess, IdentityError[]>.Error e => e.Data.ToValidationProblem(),
                 _ => throw new ArgumentOutOfRangeException(nameof(result))
             };
         }
@@ -61,8 +61,8 @@ namespace ECondo.Api.Controllers
 
             return result switch
             {
-                Result<Empty, IdentityError>.Success => TypedResults.Ok(),
-                Result<Empty, IdentityError>.Error e => e.Data.ToValidationProblem(),
+                Result<EmptySuccess, Error>.Success => TypedResults.Ok(),
+                Result<EmptySuccess, Error>.Error e => e.Data.ToValidationProblem(),
                 _ => throw new ArgumentOutOfRangeException(nameof(result))
             };
         }
@@ -78,8 +78,26 @@ namespace ECondo.Api.Controllers
 
             return result switch
             {
-                Result<TokenResult, IdentityError>.Success s => TypedResults.Json(s.Data),
-                Result<TokenResult, IdentityError>.Error e => e.Data.ToValidationProblem(),
+                Result<TokenResult, Error>.Success s => TypedResults.Json(s.Data),
+                Result<TokenResult, Error>.Error e => e.Data.ToValidationProblem(),
+                _ => throw new ArgumentOutOfRangeException(nameof(result))
+            };
+        }
+
+        [HttpPost(nameof(ConfirmEmail))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<Results<Ok, ValidationProblem>>
+            ConfirmEmail([FromBody] ConfirmEmailRequest confirmEmailRequest)
+        {
+            ConfirmEmailCommand confirmEmailCommand = new(confirmEmailRequest.Token, confirmEmailRequest.Email);
+
+            var result = await sender.Send(confirmEmailCommand);
+
+            return result switch
+            {
+                Result<EmptySuccess, IdentityError[]>.Success => TypedResults.Ok(),
+                Result<EmptySuccess, IdentityError[]>.Error e => e.Data.ToValidationProblem(),
                 _ => throw new ArgumentOutOfRangeException(nameof(result))
             };
         }

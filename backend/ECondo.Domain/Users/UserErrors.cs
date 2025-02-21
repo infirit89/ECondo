@@ -1,23 +1,23 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using ECondo.Domain.Shared;
 
 namespace ECondo.Domain.Users;
 public static class UserErrors
 {
-    public static IdentityError InvalidRefreshToken() => new()
+    public static Error InvalidRefreshToken() => new()
     {
         Code = "Users.InvalidRefreshToken",
         Description = "The provided refresh token is not valid",
     };
 
-    public static IdentityError InvalidUser(string username) => new()
+    public static Error InvalidUser(string username) => new()
     {
         Code = "Users.NotFound",
-        Description = $"The user with the Username = '{username}' was not found"
+        Description = $"The user with the Username = '{username}' was not found",
     };
 
-    public static IdentityError InvalidUser() => new()
+    public static Error InvalidUser() => new()
     {
         Code = "Users.NotFound",
-        Description = "The user was not found"
+        Description = "The user was not found",
     };
 }

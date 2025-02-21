@@ -1,6 +1,6 @@
 import { AppShell, AppShellFooter, AppShellHeader, AppShellMain } from "@mantine/core";
 import { ReactNode } from "react";
-import { Navbar } from "./Navbar";
+import { Navbar } from "./navbar";
 
 export default function App({children} : {children: ReactNode}) {
     return (
