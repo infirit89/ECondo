@@ -20,4 +20,10 @@ public static class UserErrors
         Code = "Users.NotFound",
         Description = "The user was not found",
     };
+
+    public static Error EmailNotConfirmed() => new()
+    {
+        Code = "Users.NotConfirmed",
+        Description = "The user's email is not confirmed",
+    };
 }

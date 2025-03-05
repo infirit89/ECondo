@@ -1,6 +1,9 @@
-﻿using ECondo.Api.Data.Profile;
+﻿using System.Security.Claims;
+using ECondo.Api.Data.Profile;
 using ECondo.Api.Extensions;
 using ECondo.Application.Commands.Profile;
+using ECondo.Application.Data;
+using ECondo.Application.Queries.Profile;
 using ECondo.Domain.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -22,8 +25,10 @@ namespace ECondo.Api.Controllers
         public async Task<Results<Ok, ValidationProblem, UnauthorizedHttpResult>>
             Create([FromBody] CreateProfileRequest request)
         {
+            Claim? emailClaim = User.GetEmailClaim();
+
             CreateProfileCommand createProfileCommand =
-                new(request.Username, request.FirstName, request.MiddleName, request.LastName);
+                new(emailClaim is null ? "" : emailClaim.Value, request.FirstName, request.MiddleName, request.LastName, request.Phone);
 
             var result = await sender.Send(createProfileCommand);
 
@@ -31,6 +36,28 @@ namespace ECondo.Api.Controllers
             {
                 Result<EmptySuccess, Error>.Success => TypedResults.Ok(),
                 Result<EmptySuccess, Error>.Error e => e.Data.ToValidationProblem(),
+                _ => throw new ArgumentOutOfRangeException(nameof(result))
+            };
+        }
+
+        [Authorize]
+        [HttpGet(nameof(GetBriefProfile))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BriefProfileResult))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<Results<JsonHttpResult<BriefProfileResult>, ValidationProblem, UnauthorizedHttpResult>>
+            GetBriefProfile()
+        {
+            var emailClaim = User.GetEmailClaim();
+
+            GetBriefProfileQuery getBriefProfileQuery = new(emailClaim is null ? "" : emailClaim.Value);
+
+            var result = await sender.Send(getBriefProfileQuery);
+
+            return result switch
+            {
+                Result<BriefProfileResult, Error>.Success s => TypedResults.Json(s.Data),
+                Result<BriefProfileResult, Error>.Error e => e.Data.ToValidationProblem(),
                 _ => throw new ArgumentOutOfRangeException(nameof(result))
             };
         }

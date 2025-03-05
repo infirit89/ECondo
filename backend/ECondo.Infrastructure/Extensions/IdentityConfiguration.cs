@@ -44,7 +44,7 @@ internal static class IdentityConfiguration
         services.AddIdentityCore<User>(options =>
         {
             options.User.RequireUniqueEmail = true;
-            options.SignIn.RequireConfirmedEmail = false;
+            options.SignIn.RequireConfirmedEmail = true;
             options.Password.RequireNonAlphanumeric = false;
         })
         .AddRoles<Role>()

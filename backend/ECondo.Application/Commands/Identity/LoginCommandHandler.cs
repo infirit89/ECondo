@@ -29,6 +29,9 @@ internal class LoginCommandHandler(
             });
         }
 
+        if(!await userManager.IsEmailConfirmedAsync(user))
+            return Result<TokenResult, Error>.Fail(UserErrors.EmailNotConfirmed());
+
         AccessToken accessToken = authTokenService.GenerateAccessTokenAsync(user);
         RefreshToken refreshToken = authTokenService.GenerateRefreshTokenAsync(user);
 

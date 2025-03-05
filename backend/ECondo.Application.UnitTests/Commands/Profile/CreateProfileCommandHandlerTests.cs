@@ -60,7 +60,7 @@ namespace ECondo.Application.UnitTests.Commands.Profile
             var result = await _handler.Handle(command, CancellationToken.None);
 
             // Assert
-            await _profileDetailsRepository.Received(1).Insert(Arg.Is<ProfileDetails>(pd =>
+            await _profileDetailsRepository.Received(1).InsertAsync(Arg.Is<ProfileDetails>(pd =>
                 pd.FirstName == command.FirstName &&
                 pd.MiddleName == command.MiddleName &&
                 pd.LastName == command.LastName &&

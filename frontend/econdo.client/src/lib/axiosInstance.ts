@@ -18,7 +18,8 @@ authInstance.interceptors.request.use(
             return config;
 
         const cookieStore = await cookies();
-        config.headers.Authorization = `Bearer ${cookieStore.get(accessTokenCookieKey)?.value}`;
+        const accessToken = cookieStore.get(accessTokenCookieKey)?.value;
+        config.headers.Authorization = `Bearer ${accessToken}`;
         return config;
     },
     (error) => Promise.reject(error),

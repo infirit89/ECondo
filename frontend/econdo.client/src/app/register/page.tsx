@@ -2,7 +2,6 @@ import { Container, Title, Text, Anchor, Paper } from "@mantine/core";
 import RegisterForm from "./registerForm";
 
 export default function Register() {
-
     return (
         <Container size={420} my={40} mb={100}>
             <Title ta="center" fw={900} ff={'Greycliff CF, var(--mantine-font-family)'}>

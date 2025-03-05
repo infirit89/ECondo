@@ -4,7 +4,7 @@ import classes from '@/components/navbar.module.css';
 import { useDisclosure } from "@mantine/hooks";
 import { MantineLogo } from "@mantinex/mantine-logo";
 
-export function Navbar() {
+export function UserNavbar({ username, firstName, lastName }: { username: string, firstName: string, lastName: string }) {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
 
     return (
@@ -28,18 +28,17 @@ export function Navbar() {
                 </Group> */}
 
                 <Group visibleFrom="sm">
-                    {/* <Menu shadow="md" width={200} key={'profile'} withinPortal position="bottom-end" transitionProps={{ transition: 'pop-top-right' }} offset={5}>
+                    
+                    <Menu shadow="md" width={200} key={'profile'} withinPortal position="bottom-end" transitionProps={{ transition: 'pop-top-right' }} offset={5}>
                         <MenuTarget>
-                            { userDetails ?
-                            <Avatar color={'orange'} radius="xl" className={classes.profileLink}>{`${userDetails.firstName.at(0)}${userDetails.lastName.at(0)}`}</Avatar> : 
-                            <Skeleton height={50} circle mb="xl" /> }
+                            <Avatar radius="xl" color={'blue'} className={classes.profileLink}>GD</Avatar>
                         </MenuTarget>
-
+                    
                         <MenuDropdown>
                             <MenuItem component='a' href='/profile'>Профил</MenuItem>
                             <MenuItem component='a' href='/logout'>Изход</MenuItem>
                         </MenuDropdown>
-                    </Menu> */}
+                    </Menu>
                 </Group>
 
                 <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />

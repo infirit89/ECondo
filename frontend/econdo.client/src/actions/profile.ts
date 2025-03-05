@@ -1,18 +1,28 @@
 'use server';
 
-import { ApiError, ApiSucess, isApiError } from "@/app/_data/apiResponses";
-import { CreateProfileData } from "@/app/_data/profileData";
-import { normalInstance } from "@/lib/axiosInstance";
-import { axiosToApiErrorConverter } from "@/utils/helper";
-export async function createProfile(data: CreateProfileData): Promise<ApiError | ApiSucess> {
-    const res = await normalInstance.post('/api/profile/create', data)
-    .catch(axiosToApiErrorConverter);
+import { ValidationError } from "@/app/_data/apiResponses";
+import { BriefProfileResponse, CreateProfileData } from "@/app/_data/profileData";
+import authInstance from "@/lib/axiosInstance";
+import { isAxiosError } from "axios";
 
-    if(isApiError(res))
-        return res;
+export async function createProfile(data: CreateProfileData): Promise<ValidationError | null> {
+    try {
+        await authInstance.post('/api/profile/create', data);
+        return null;
+    } catch(error) {
+        console.error(error); 
+        if(isAxiosError<ValidationError, Record<string, unknown>>(error)) {
+            return error.response?.data!;
+        }
 
-    return {
-        status: res.status,
-        statusText: res.statusText,
-    };
+        console.error(error);
+    }
+
+    throw new Error("Unexpected code flow");
+}
+
+export async function getBriefProfile(): Promise<BriefProfileResponse> {
+    const res = await authInstance.get<BriefProfileResponse>(
+        '/api/profile/getBriefProfile');
+    return res.data;
 }

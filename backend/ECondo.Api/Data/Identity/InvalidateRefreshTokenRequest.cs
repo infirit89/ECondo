@@ -1,2 +1,2 @@
 ﻿namespace ECondo.Api.Data.Identity;
-public sealed record InvalidateRefreshTokenRequest(string Username, string RefreshToken);
+public sealed record InvalidateRefreshTokenRequest(string RefreshToken);

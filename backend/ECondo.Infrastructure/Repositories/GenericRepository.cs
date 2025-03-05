@@ -8,7 +8,7 @@ namespace ECondo.Infrastructure.Repositories
     internal class GenericRepository<TEntity>(ECondoDbContext dbContext) : IRepository<TEntity> where TEntity : class
     {
         private readonly DbSet<TEntity> _dbSet = dbContext.Set<TEntity>();
-        public async Task<IEnumerable<TEntity>> Get(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, string includeProperties = "")
+        public async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, string includeProperties = "")
         {
             IQueryable<TEntity> query = _dbSet;
 
@@ -34,17 +34,17 @@ namespace ECondo.Infrastructure.Repositories
 
         }
 
-        public async Task<TEntity?> GetById(object id)
+        public async Task<TEntity?> GetByIdAsync(object id)
         {
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task Insert(TEntity entity)
+        public async Task InsertAsync(TEntity entity)
         {
             await _dbSet.AddAsync(entity);
         }
 
-        public async Task Delete(object id)
+        public async Task DeleteByIdAsync(object id)
         {
             TEntity entity = (await _dbSet.FindAsync(id))!;
             _dbSet.Remove(entity);

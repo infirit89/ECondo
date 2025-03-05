@@ -1,4 +1,5 @@
-﻿using ECondo.Application.Services;
+﻿using ECondo.Application.Extensions;
+using ECondo.Application.Services;
 using ECondo.Domain.Profiles;
 using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
@@ -11,8 +12,7 @@ internal sealed class CreateProfileCommandHandler(UserManager<User> userManager,
 {
     public async Task<Result<EmptySuccess, Error>> Handle(CreateProfileCommand request, CancellationToken cancellationToken)
     {
-        User? user = await userManager.FindByEmailAsync(request.Username)
-                     ?? await userManager.FindByNameAsync(request.Username);
+        var user = await userManager.FindUserByEmailOrNameAsync(request.Username);
 
         if(user is null)
             return Result<EmptySuccess, Error>.Fail(UserErrors.InvalidUser(request.Username));
@@ -25,8 +25,17 @@ internal sealed class CreateProfileCommandHandler(UserManager<User> userManager,
             UserId = user.Id,
             User = user,
         };
-        await unitOfWork.ProfileDetailsRepository.Insert(profileDetails);
+        await unitOfWork.ProfileDetailsRepository.InsertAsync(profileDetails);
         await unitOfWork.SaveChangesAsync();
-        return Result<EmptySuccess, Error>.Ok();
+
+        var phoneResult = await userManager.SetPhoneNumberAsync(user, request.PhoneNumber);
+        if (phoneResult.Succeeded) return Result<EmptySuccess, Error>.Ok();
+        var phoneError = phoneResult.Errors.First();
+        var error = new Error
+        {
+            Code = phoneError.Code,
+            Description = phoneError.Description,
+        };
+        return Result<EmptySuccess, Error>.Fail(error);
     }
 }

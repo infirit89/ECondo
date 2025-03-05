@@ -3,4 +3,4 @@ using MediatR;
 
 namespace ECondo.Application.Commands.Profile;
 
-public sealed record CreateProfileCommand(string Username, string FirstName, string MiddleName, string LastName) : IRequest<Result<EmptySuccess, Error>>;
+public sealed record CreateProfileCommand(string Username, string FirstName, string MiddleName, string LastName, string PhoneNumber) : IRequest<Result<EmptySuccess, Error>>;

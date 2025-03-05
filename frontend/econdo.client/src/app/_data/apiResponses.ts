@@ -1,24 +1,27 @@
+import { AxiosError } from "axios";
+
 export interface TokenResponse {
     accessToken: string;
     expiresIn: number;
     refreshToken: string;
-};
+}
 
 export interface AccessTokenResponse {
     accessToken: string;
 }
 
-export interface ApiError {
-    status: number;
-    title: string;
-    errors: Map<string, string[]>;
+export interface ValidationError extends Error {
+    title: string; 
+    errors: Record<string, string[]>;
 }
 
-export function isApiError(response : ApiError | any): response is ApiError {
+export function isValidationError(response: any): response is ValidationError {
+    if(response === null)
+        return false;
+    
     return 'errors' in response;
 }
 
-export interface ApiSucess {
-    status: number;
-    statusText: string;
+export interface ApiResponse {
+    status?: number;
 }

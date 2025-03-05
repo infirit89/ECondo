@@ -13,7 +13,7 @@ internal sealed class InvalidateRefreshTokenCommandHandler(
 {
     public async Task<Result<EmptySuccess, Error>> Handle(InvalidateRefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(request.RefreshToken) || await authService.RefreshTokenExistsAsync(request.RefreshToken))
+        if (string.IsNullOrEmpty(request.RefreshToken) || !await authService.RefreshTokenExistsAsync(request.RefreshToken))
             return Result<EmptySuccess, Error>.Fail(UserErrors.InvalidRefreshToken());
 
         User? user = await userManager.FindByNameAsync(request.Username);

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ECondo.Application.Commands.Identity;
 using ECondo.Api.Data.Identity;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ECondo.Api.Controllers
 {
@@ -49,13 +51,15 @@ namespace ECondo.Api.Controllers
             };
         }
 
+        [Authorize]
         [HttpPost(nameof(InvalidateRefreshToken))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
         public async Task<Results<Ok, ValidationProblem>>
             InvalidateRefreshToken([FromBody] InvalidateRefreshTokenRequest request)
         {
-            InvalidateRefreshTokenCommand command = new(request.Username, request.RefreshToken);
+            Claim? emailClaim = User.GetEmailClaim();
+            InvalidateRefreshTokenCommand command = new(emailClaim is null ? "" : emailClaim.Value, request.RefreshToken);
 
             var result = await sender.Send(command);
 
