@@ -17,4 +17,17 @@ internal class MailService(IResend resend) : IEmailService
 
         await resend.EmailSendAsync(message);
     }
+
+    public async Task SendPasswordResetMail(string recipientMail, string resetLink)
+    {
+        var message = new EmailMessage
+        {
+            From = "onboarding@resend.dev",
+            Subject = "Reset NewPassword",
+            HtmlBody = $"<a href=\"{resetLink}\">Reset NewPassword</a>"
+        };
+        message.To.Add(recipientMail);
+
+        await resend.EmailSendAsync(message);
+    }
 }

@@ -94,3 +94,25 @@ export async function logout() {
     cookieStore.delete(refreshTokenCookieKey);
     cookieStore.delete(accessTokenCookieKey);
 }
+
+export async function forgotPassword(email: string): Promise<Result<null, ValidationError | Error>> {
+    try {
+        await normalInstance.post('/api/account/forgotPassword', {
+            username: email,
+            returnUri: `${baseUrl}/resetPassword`,
+        });
+
+        return resultOk(null);
+    } catch(error) {
+        if(isAxiosError<ValidationError, Record<string, unknown>>(error))
+            return resultFail<null, ValidationError>(error.response?.data!);
+
+        return resultFail(error as Error);
+    }
+}
+
+// export async function resetPassword(email: string, token: string, password: string): Promise<Result<null, ValidationError | Error>> {
+//     // try {
+//     //     await normalInstance.post('/api/account/resetPassword')
+//     // }
+// }
