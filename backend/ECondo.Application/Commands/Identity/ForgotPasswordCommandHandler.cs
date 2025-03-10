@@ -13,7 +13,7 @@ internal sealed class ForgotPasswordCommandHandler(
 {
     public async Task<Result<EmptySuccess, Error>> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
     {
-        User? user = await userManager.FindUserByEmailOrNameAsync(request.Username);
+        User? user = await userManager.FindByEmailAsync(request.Username);
 
         if(user is null)
             return Result<EmptySuccess, Error>.Fail(UserErrors.InvalidUser(request.Username));

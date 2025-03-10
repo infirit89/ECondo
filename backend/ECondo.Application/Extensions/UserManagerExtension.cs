@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 
 namespace ECondo.Application.Extensions;
-internal static class UserManagerExtension
+public static class UserManagerExtension
 {
     public static async Task<User?> FindUserByEmailOrNameAsync(this UserManager<User> userManager, string name)
     {

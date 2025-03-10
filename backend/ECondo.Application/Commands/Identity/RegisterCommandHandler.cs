@@ -26,8 +26,6 @@ internal sealed class RegisterCommandHandler(
         await userStore.SetUserNameAsync(user, request.Username, cancellationToken);
         await emailStore.SetEmailAsync(user, request.Email, cancellationToken);
 
-        // TODO: email confirmation
-        //await emailStore.SetEmailConfirmedAsync(user, true, cancellationToken);
         var result = await userManager.CreateAsync(user, request.Password);
         if (!result.Succeeded)
             return Result<EmptySuccess, IdentityError[]>.Fail(result.Errors.ToArray());

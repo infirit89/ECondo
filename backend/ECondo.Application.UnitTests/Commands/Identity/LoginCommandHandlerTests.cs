@@ -7,7 +7,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using NSubstitute;
 
-namespace ECondo.Application.UnitTests.Commands
+namespace ECondo.Application.UnitTests.Commands.Identity
 {
     public class LoginCommandHandlerTests
     {
@@ -34,8 +34,8 @@ namespace ECondo.Application.UnitTests.Commands
             var result = await _handler.Handle(command, CancellationToken.None);
 
 
-            result.Should().BeOfType<Result<TokenResult, IdentityError>.Error>();
-            result.ToError().Data?.Code.Should().Be("InvalidUserName");
+            result.Should().BeOfType<Result<TokenResult, Error>.Error>();
+            result.ToError().Data?.Code.Should().Be("Users.NotFound");
         }
 
         [Fact]
@@ -50,59 +50,47 @@ namespace ECondo.Application.UnitTests.Commands
             var result = await _handler.Handle(command, CancellationToken.None);
 
 
-            result.Should().BeOfType<Result<TokenResult, IdentityError>.Error>();
+            result.Should().BeOfType<Result<TokenResult, Error>.Error>();
             result.ToError().Data?.Code.Should().Be("PasswordMismatch");
         }
 
         [Fact]
-        public async Task Handle_ValidCredentials_StoresRefreshToken()
+        public async Task Handle_EmailNotConfirmed_ReturnsEmailNotConfirmedError()
         {
             var user = new User { Email = "test@example.com" };
             var command = new LoginCommand("test@example.com", "password");
-            var refreshToken = new RefreshToken { Value = "refresh_token" };
-
             _userManager.FindByEmailAsync(command.Email).Returns(user);
             _userManager.CheckPasswordAsync(user, command.Password).Returns(true);
-            _authTokenService.GenerateAccessTokenAsync(user).Returns( new AccessToken()
-            {
-                Value = "access_token",
-                MinutesExpiry = 1,
-            });
-            _authTokenService.GenerateRefreshTokenAsync(user).Returns(refreshToken);
-
+            _userManager.IsEmailConfirmedAsync(user).Returns(false);
 
             var result = await _handler.Handle(command, CancellationToken.None);
 
-
-            await _authTokenService.Received(1).StoreRefreshTokenAsync(refreshToken);
-            result.Should().BeOfType<Result<TokenResult, IdentityError>.Success>();
-            result.ToSuccess().Data?.AccessToken.Should().Be("access_token");
-            result.ToSuccess().Data?.RefreshToken.Should().Be("refresh_token");
+            result.Should().BeOfType<Result<TokenResult, Error>.Error>();
+            result.ToError().Data?.Code.Should().Be("Users.NotConfirmed");
         }
 
         [Fact]
-        public async Task Handle_ValidCredentials_ReturnsTokenResultWithRefreshToken()
+        public async Task Handle_ValidCredentials_ReturnsTokenResult()
         {
             var user = new User { Email = "test@example.com" };
             var command = new LoginCommand("test@example.com", "password");
+            var accessToken = new AccessToken { Value = "access_token", MinutesExpiry = 60 };
             var refreshToken = new RefreshToken { Value = "refresh_token" };
 
             _userManager.FindByEmailAsync(command.Email).Returns(user);
             _userManager.CheckPasswordAsync(user, command.Password).Returns(true);
-            _authTokenService.GenerateAccessTokenAsync(user).Returns(new AccessToken()
-            {
-                Value = "access_token",
-                MinutesExpiry = 1,
-            });
+            _userManager.IsEmailConfirmedAsync(user).Returns(true);
+            _authTokenService.GenerateAccessTokenAsync(user).Returns(accessToken);
             _authTokenService.GenerateRefreshTokenAsync(user).Returns(refreshToken);
-
 
             var result = await _handler.Handle(command, CancellationToken.None);
 
-
-            result.Should().BeOfType<Result<TokenResult, IdentityError>.Success>();
+            await _authTokenService.Received(1).StoreRefreshTokenAsync(refreshToken);
+            result.Should().BeOfType<Result<TokenResult, Error>.Success>();
             result.ToSuccess().Data?.AccessToken.Should().Be("access_token");
             result.ToSuccess().Data?.RefreshToken.Should().Be("refresh_token");
+            result.ToSuccess().Data?.ExpiresIn.Should().Be(60);
         }
+
     }
 }
