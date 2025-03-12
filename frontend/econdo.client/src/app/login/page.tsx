@@ -1,19 +1,16 @@
-import { Alert, Anchor, Container, List, ListItem, Paper, Text, Title } from "@mantine/core";
+import { Alert, Anchor, Container, Paper, Text, Title } from "@mantine/core";
 import LoginForm from "./loginForm";
+import AccountConfirmationAlert from "./accountConfirmationAlert";
 
 export default async function Login({ searchParams } : { searchParams : Promise<{ [key: string]: string | string[] | undefined }> }) {
-    const { emailConfirmation = '' } = await searchParams;
+    const { emailConfirmation = '', forgottenPassword = '' } = await searchParams;
 
     return (
         <Container size={420} my={40} mb={100}>
-            <Alert variant="light" mb={'md'} hidden={(emailConfirmation as string) !== 't'}>
-                <Text fz={'sm'}>Акаунтът Ви беше създаден успешно, проверете имейла си за потвърждение.</Text>
-                <Text fz={'sm'} mt={'xs'}>Не го намирате?</Text>
-                <List type={'unordered'}>
-                    <ListItem fz={'sm'}>Проверете папка спам.</ListItem>
-                    <ListItem fz={'sm'}><Anchor href="#" fz={'sm'}>Повторно изпращане</Anchor></ListItem>
-                </List>
-                {/* <Button size={'sm'} mt={'md'}>Повторно изпращане</Button> */}
+            <AccountConfirmationAlert hidden={(emailConfirmation as string) !== 't'}/>
+
+            <Alert variant="light" mb={'md'} hidden={(forgottenPassword as string) !== 't'}>
+                <Text fz={'sm'}>Моля, проверете мейла си. Изпратили сме Ви линк, чрез който можете да промените паролата си. Ако не сте получили писмо проверете дали не е попаднало в папка SPAM.</Text>
             </Alert>
             <Title ta="center" fw={900} ff={'Greycliff CF, var(--mantine-font-family)'}>
             Добре дошъл отново!

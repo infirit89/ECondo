@@ -29,7 +29,10 @@ internal sealed class CreateProfileCommandHandler(UserManager<User> userManager,
         await unitOfWork.SaveChangesAsync();
 
         var phoneResult = await userManager.SetPhoneNumberAsync(user, request.PhoneNumber);
-        if (phoneResult.Succeeded) return Result<EmptySuccess, Error>.Ok();
+
+        if (phoneResult.Succeeded) 
+            return Result<EmptySuccess, Error>.Ok();
+
         var phoneError = phoneResult.Errors.First();
         var error = new Error
         {

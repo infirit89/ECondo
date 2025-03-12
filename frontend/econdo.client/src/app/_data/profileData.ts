@@ -10,3 +10,9 @@ export interface BriefProfileResponse {
     firstName: string;
     lastName: string;
 }
+
+export interface ProfileDetails {
+    firstName: string;
+    middleName: string;
+    lastName: string;
+}

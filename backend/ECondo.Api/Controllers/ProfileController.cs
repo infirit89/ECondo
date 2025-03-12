@@ -61,5 +61,49 @@ namespace ECondo.Api.Controllers
                 _ => throw new ArgumentOutOfRangeException(nameof(result))
             };
         }
+
+        [Authorize]
+        [HttpPut(nameof(UpdateProfile))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<Results<Ok, ValidationProblem, UnauthorizedHttpResult>>
+            UpdateProfile([FromBody] UpdateProfileRequest updateProfileRequest)
+        {
+            var emailClaim = User.GetEmailClaim();
+            UpdateProfileCommand updateProfileCommand = new(
+                emailClaim is null ? "" : emailClaim.Value,
+                updateProfileRequest.FirstName,
+                updateProfileRequest.MiddleName, updateProfileRequest.LastName);
+
+            var result = await sender.Send(updateProfileCommand);
+
+            return result switch
+            {
+                Result<EmptySuccess, Error>.Success => TypedResults.Ok(),
+                Result<EmptySuccess, Error>.Error e => e.Data.ToValidationProblem(),
+                _ => throw new ArgumentOutOfRangeException(nameof(result))
+            };
+        }
+
+        [Authorize]
+        [HttpGet(nameof(GetProfile))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<Results<JsonHttpResult<ProfileResult>, ValidationProblem, UnauthorizedHttpResult>>
+            GetProfile()
+        {
+            var emailClaim = User.GetEmailClaim();
+            GetProfileQuery profileQuery = new(emailClaim is null ? "" : emailClaim.Value);
+
+            var result = await sender.Send(profileQuery);
+            return result switch
+            {
+                Result<ProfileResult, Error>.Success s => TypedResults.Json(s.Data),
+                Result<ProfileResult, Error>.Error e => e.Data.ToValidationProblem(),
+                _ => throw new ArgumentOutOfRangeException(nameof(result))
+            };
+        }
     }
 }

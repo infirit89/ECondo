@@ -33,7 +33,7 @@ export function ForgotPasswordForm() {
 
         const res = await forgotPassword(data.email);
         if(res.ok) {
-            redirect('/login');
+            redirect('/login?forgottenPassword=t');
         }
 
         console.error(res.error);

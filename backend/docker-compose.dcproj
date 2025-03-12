@@ -20,5 +20,7 @@
     <None Include="ECondo.Application.UnitTests\Commands\Identity\GenerateAccessTokenCommandHandlerTests.cs" />
     <None Include="ECondo.Application.UnitTests\Commands\Identity\InvalidateRefreshTokenCommandHandlerTests.cs" />
     <None Include="ECondo.Application.UnitTests\Commands\Profile\CreateProfileCommandHandlerTests.cs" />
+    <None Include="ECondo.Application.UnitTests\Commands\Profile\GetProfileQueryHandlerTests.cs" />
+    <None Include="ECondo.Application.UnitTests\Commands\Profile\UpdateProfileCommandHandlerTests.cs" />
   </ItemGroup>
 </Project>

@@ -1,32 +1,24 @@
-﻿using ECondo.Domain.Shared;
+﻿using ECondo.Application.Extensions;
+using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
 namespace ECondo.Application.Commands.Identity;
 
-internal sealed class ResetPasswordCommandHandler(UserManager<User> userManager) : IRequestHandler<ResetPasswordCommand, Result<EmptySuccess, IdentityError[]>>
+internal sealed class ResetPasswordCommandHandler(UserManager<User> userManager) : IRequestHandler<ResetPasswordCommand, Result<EmptySuccess, Error[]>>
 {
-    public async Task<Result<EmptySuccess, IdentityError[]>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
+    public async Task<Result<EmptySuccess, Error[]>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByEmailAsync(request.Email);
 
         if (user is null)
-        {
-            var invalidError = UserErrors.InvalidUser(request.Email);
-            IdentityError error = new()
-            {
-                Code = invalidError.Code,
-                Description = invalidError.Description,
-            };
-            return Result<EmptySuccess, IdentityError[]>.Fail([error]);
-        }
-
+            return Result<EmptySuccess, Error[]>.Fail([UserErrors.InvalidUser(request.Email)]);
 
         var result = await userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
         if(!result.Succeeded)
-            return Result<EmptySuccess, IdentityError[]>.Fail(result.Errors.ToArray());
+            return Result<EmptySuccess, Error[]>.Fail(result.Errors.ToErrorArray());
 
-        return Result<EmptySuccess, IdentityError[]>.Ok();
+        return Result<EmptySuccess, Error[]>.Ok();
     }
 }

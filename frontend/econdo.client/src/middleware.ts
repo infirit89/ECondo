@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateAccessToken, logout, setAccessTokenCookie } from "./actions/auth";
 import { jwtDecode } from "jwt-decode";
 
-const protectedRoutes = ['/dashboard', '/logout'];
+const protectedRoutes = ['/dashboard', '/logout', '/profile'];
 const publicRoutes = ['/login', '/register', '/'];
 
 export default async function middleware(req: NextRequest) {

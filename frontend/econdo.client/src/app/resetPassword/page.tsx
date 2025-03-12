@@ -4,7 +4,7 @@ import ResetPasswordForm from "./resetPasswordForm";
 export default async function ResetPassword({searchParams} : { searchParams : Promise<{ [key: string]: string | string[] | undefined }> }) {
     const { token = '', email = '' } = await searchParams;
     
-    return(
+    return (
         <Container size={420} my={100} mb={100}>
             <Title ta="center" fw={900}>
                 Промени паролата си

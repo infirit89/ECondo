@@ -1,11 +1,14 @@
 'use client';
 
+import { resetPassword } from "@/actions/auth";
 import { passwordSchema } from "@/utils/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Button, LoadingOverlay, PasswordInput } from "@mantine/core";
+import { Box, Button, LoadingOverlay, PasswordInput, Text } from "@mantine/core";
+import { redirect } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z, ZodSchema } from "zod";
+import { isValidationError } from "../_data/apiResponses";
 
 interface ResetPasswordFields {
     password: string;
@@ -32,6 +35,7 @@ export default function ResetPasswordForm({ email, token }: { email: string, tok
     console.log('token: ', token);
     
     const [isLoading, setLoading] = useState(false);
+    const [isError, setError] = useState(false);
 
 
     const form = useForm<ResetPasswordFields>({
@@ -44,19 +48,18 @@ export default function ResetPasswordForm({ email, token }: { email: string, tok
 
     const onSubmit = async(data: ResetPasswordFields) => {
         setLoading(true);
-        // const res = await axios.post('/api/user/resetPassword', {
-        //     email: email,
-        //     token: userToken,
-        //     password: data.password,
-        // }).catch((ex) => {
-        //     console.error(ex);
-        //     setLoading(false);
-        // });
+        const res = await resetPassword(email, token, data.password);
 
-        // if(res && res.status === 200) {
-        //     console.log(res);
-        //     redirect('/login');
-        // }
+        if(res.ok)
+            redirect('/login');
+
+        if(isValidationError(res.error)) {
+            if(res.error.errors['InvalidToken']) {
+                setError(true);      
+            }
+        }
+
+        setLoading(false);
     }
 
     return (
@@ -71,6 +74,8 @@ export default function ResetPasswordForm({ email, token }: { email: string, tok
                     required: true,
                 })} withAsterisk
                 error={form.formState.errors.confirmPassword && form.formState.errors.confirmPassword.message}/>
+
+                { isError ? <Text c={'red'} pt={10} fw={500} size={'sm'}>Този линк за смяна на парола е невалиден или изтекъл!</Text> : <></> }
             </Box>
             <Button fullWidth mt="xl" type={'submit'} disabled={isLoading}>
                 Промени парола

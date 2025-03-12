@@ -31,7 +31,7 @@ export function UserNavbar({ username, firstName, lastName }: { username: string
                     
                     <Menu shadow="md" width={200} key={'profile'} withinPortal position="bottom-end" transitionProps={{ transition: 'pop-top-right' }} offset={5}>
                         <MenuTarget>
-                            <Avatar radius="xl" color={'blue'} className={classes.profileLink}>GD</Avatar>
+                            <Avatar radius="xl" color={'blue'} className={classes.profileLink}>{firstName.at(0)}{lastName.at(0)}</Avatar>
                         </MenuTarget>
                     
                         <MenuDropdown>

@@ -45,7 +45,7 @@ namespace ECondo.Application.UnitTests.Commands.Identity
             var identityResult = IdentityResult.Failed(identityErrors);
 
             _userManager.FindByEmailAsync(command.Email).Returns(user);
-            _userManager.ChangePasswordAsync(user, command.OldPassword, command.NewPassword).Returns(identityResult);
+            _userManager.ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword).Returns(identityResult);
 
 
             var result = await _handler.Handle(command, CancellationToken.None);
@@ -63,7 +63,7 @@ namespace ECondo.Application.UnitTests.Commands.Identity
             var identityResult = IdentityResult.Success;
 
             _userManager.FindByEmailAsync(command.Email).Returns(user);
-            _userManager.ChangePasswordAsync(user, command.OldPassword, command.NewPassword).Returns(identityResult);
+            _userManager.ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword).Returns(identityResult);
 
 
             var result = await _handler.Handle(command, CancellationToken.None);

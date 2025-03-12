@@ -4,9 +4,6 @@ using ECondo.Domain.Users;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using NSubstitute;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace ECondo.Application.UnitTests.Commands.Identity
 {
@@ -32,8 +29,8 @@ namespace ECondo.Application.UnitTests.Commands.Identity
             var result = await _handler.Handle(command, CancellationToken.None);
 
 
-            result.Should().BeOfType<Result<EmptySuccess, IdentityError[]>.Error>();
-            result.As<Result<EmptySuccess, IdentityError[]>.Error>().Data.Should().ContainSingle(e => e.Code == "Users.NotFound");
+            result.Should().BeOfType<Result<EmptySuccess, Error[]>.Error>();
+            result.As<Result<EmptySuccess, Error[]>.Error>().Data.Should().ContainSingle(e => e.Code == "Users.NotFound");
         }
 
         [Fact]
@@ -41,7 +38,7 @@ namespace ECondo.Application.UnitTests.Commands.Identity
         {
             var user = new User { Email = "test@example.com" };
             var command = new ResetPasswordCommand("test@example.com", "token", "newPassword");
-            var identityErrors = new IdentityError[] { new IdentityError { Code = "InvalidToken", Description = "Invalid token" } };
+            var identityErrors = new IdentityError[] { new() { Code = "InvalidToken", Description = "Invalid token" } };
             var identityResult = IdentityResult.Failed(identityErrors);
 
             _userManager.FindByEmailAsync(command.Email).Returns(user);
@@ -51,8 +48,8 @@ namespace ECondo.Application.UnitTests.Commands.Identity
             var result = await _handler.Handle(command, CancellationToken.None);
 
 
-            result.Should().BeOfType<Result<EmptySuccess, IdentityError[]>.Error>();
-            result.As<Result<EmptySuccess, IdentityError[]>.Error>().Data.Should().ContainSingle(e => e.Code == "InvalidToken");
+            result.Should().BeOfType<Result<EmptySuccess, Error[]>.Error>();
+            result.As<Result<EmptySuccess, Error[]>.Error>().Data.Should().ContainSingle(e => e.Code == "InvalidToken");
         }
 
         [Fact]
@@ -69,7 +66,7 @@ namespace ECondo.Application.UnitTests.Commands.Identity
             var result = await _handler.Handle(command, CancellationToken.None);
 
 
-            result.Should().BeOfType<Result<EmptySuccess, IdentityError[]>.Success>();
+            result.Should().BeOfType<Result<EmptySuccess, Error[]>.Success>();
         }
     }
 }

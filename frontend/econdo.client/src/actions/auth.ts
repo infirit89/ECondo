@@ -111,8 +111,36 @@ export async function forgotPassword(email: string): Promise<Result<null, Valida
     }
 }
 
-// export async function resetPassword(email: string, token: string, password: string): Promise<Result<null, ValidationError | Error>> {
-//     // try {
-//     //     await normalInstance.post('/api/account/resetPassword')
-//     // }
-// }
+export async function resetPassword(email: string, token: string, password: string): Promise<Result<null, ValidationError | Error>> {
+    try {
+        await normalInstance.post('/api/account/resetPassword', {
+            email: email,
+            token: token,
+            newPassword: password,
+        });
+
+        return resultOk(null);
+    }
+    catch(error) {
+        if(isAxiosError<ValidationError, Record<string, unknown>>(error))
+            return resultFail<null, ValidationError>(error.response?.data!);
+
+        return resultFail(error as Error);
+    }
+}
+
+export async function updatePassword(currentPassword: string, newPassword: string): Promise<Result<null, ValidationError | Error>> {
+    try {
+        await authInstance.put('/api/account/updatePassword', {
+            currentPassword: currentPassword,
+            newPassword: newPassword
+        });
+
+        return resultOk(null);
+    } catch(error) {
+        if(isAxiosError<ValidationError, Record<string, unknown>>(error))
+            return resultFail<null, ValidationError>(error.response?.data!);
+
+        return resultFail(error as Error);
+    }
+}

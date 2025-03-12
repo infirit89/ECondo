@@ -20,10 +20,9 @@ public class AccountController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TokenResult))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<Results<JsonHttpResult<TokenResult>, ValidationProblem>>
-        Login([FromBody] LoginUserRequest loginUserRequest)
+        Login([FromBody] LoginCommand loginCommand)
     {
-        LoginCommand command = new(loginUserRequest.Email, loginUserRequest.Password);
-        var result = await sender.Send(command);
+        var result = await sender.Send(loginCommand);
 
         return result switch
         {
@@ -37,12 +36,9 @@ public class AccountController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
     public async Task<Results<Ok, ValidationProblem>>
-        Register([FromBody] RegisterUserRequest registerUserRequest)
+        Register([FromBody] RegisterCommand registerCommand)
     {
-        RegisterCommand command = new(registerUserRequest.Email, registerUserRequest.Username,
-            registerUserRequest.Password, registerUserRequest.ReturnUri);
-
-        var result = await sender.Send(command);
+        var result = await sender.Send(registerCommand);
         return result switch
         {
             Result<EmptySuccess, IdentityError[]>.Success => TypedResults.Ok(),
@@ -75,10 +71,9 @@ public class AccountController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TokenResult))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
     public async Task<Results<JsonHttpResult<TokenResult>, ValidationProblem>>
-        Refresh([FromBody] GenerateAccessTokenRequest accessTokenRequest)
+        Refresh([FromBody] GenerateAccessTokenCommand generateAccessTokenCommand)
     {
-        GenerateAccessTokenCommand command = new(accessTokenRequest.RefreshToken);
-        var result = await sender.Send(command);
+        var result = await sender.Send(generateAccessTokenCommand);
 
         return result switch
         {
@@ -92,16 +87,14 @@ public class AccountController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<Results<Ok, ValidationProblem>>
-        ConfirmEmail([FromBody] ConfirmEmailRequest confirmEmailRequest)
+        ConfirmEmail([FromBody] ConfirmEmailCommand confirmEmailCommand)
     {
-        ConfirmEmailCommand confirmEmailCommand = new(confirmEmailRequest.Token, confirmEmailRequest.Email);
-
         var result = await sender.Send(confirmEmailCommand);
 
         return result switch
         {
-            Result<EmptySuccess, IdentityError[]>.Success => TypedResults.Ok(),
-            Result<EmptySuccess, IdentityError[]>.Error e => e.Data.ToValidationProblem(),
+            Result<EmptySuccess, Error[]>.Success => TypedResults.Ok(),
+            Result<EmptySuccess, Error[]>.Error e => e.Data.ToValidationProblem(),
             _ => throw new ArgumentOutOfRangeException(nameof(result))
         };
     }
@@ -132,8 +125,28 @@ public class AccountController(ISender sender) : ControllerBase
 
         return result switch
         {
-            Result<EmptySuccess, IdentityError[]>.Success => TypedResults.Ok(),
-            Result<EmptySuccess, IdentityError[]>.Error e => e.Data.ToValidationProblem(),
+            Result<EmptySuccess, Error[]>.Success => TypedResults.Ok(),
+            Result<EmptySuccess, Error[]>.Error e => e.Data.ToValidationProblem(),
+            _ => throw new ArgumentOutOfRangeException(nameof(result))
+        };
+    }
+
+    [Authorize]
+    [HttpPut(nameof(UpdatePassword))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<Results<Ok, ValidationProblem>>
+        UpdatePassword([FromBody] UpdatePasswordRequest updatePasswordRequest)
+    {
+        Claim? emailClaim = User.GetEmailClaim();
+        UpdatePasswordCommand updatePasswordCommand = new(emailClaim is null ? "" : emailClaim.Value,
+            updatePasswordRequest.CurrentPassword, updatePasswordRequest.NewPassword);
+        var result = await sender.Send(updatePasswordCommand);
+
+        return result switch
+        {
+            Result<EmptySuccess, Error[]>.Success => TypedResults.Ok(),
+            Result<EmptySuccess, Error[]>.Error e => e.Data.ToValidationProblem(),
             _ => throw new ArgumentOutOfRangeException(nameof(result))
         };
     }

@@ -14,7 +14,8 @@ internal sealed class UpdatePasswordCommandHandler(UserManager<User> userManager
         if(user is null)
             return Result<EmptySuccess, Error[]>.Fail([UserErrors.InvalidUser(request.Email)]);
 
-        var result = await userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+        var result = await userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+
         if(!result.Succeeded)
             return Result<EmptySuccess, Error[]>.Fail(result.Errors.ToErrorArray());
 
