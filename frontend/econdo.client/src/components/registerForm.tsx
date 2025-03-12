@@ -8,7 +8,7 @@ import { useEffect, useReducer } from "react";
 import { useForm } from "react-hook-form";
 import { z, ZodSchema } from "zod";
 import { register } from '@/actions/auth';
-import { isValidationError } from '../_data/apiResponses';
+import { isValidationError } from '@/types/apiResponses';
 import { redirect } from 'next/navigation';
 
 interface RegisterFormFields {
@@ -81,7 +81,7 @@ export default function RegisterForm() {
             username: data.username,
             password: data.password,
         });
-        if (isValidationError(registerResult)) {
+        if(!registerResult.ok && isValidationError(registerResult.error)) {
             form.setError(
                 'email',
                 {

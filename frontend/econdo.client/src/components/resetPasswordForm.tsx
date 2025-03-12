@@ -8,7 +8,8 @@ import { redirect } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z, ZodSchema } from "zod";
-import { isValidationError } from "../_data/apiResponses";
+import { isValidationError } from "@/types/apiResponses";
+import { resetPasswordEvent } from "@/types/auth";
 
 interface ResetPasswordFields {
     password: string;
@@ -51,7 +52,7 @@ export default function ResetPasswordForm({ email, token }: { email: string, tok
         const res = await resetPassword(email, token, data.password);
 
         if(res.ok)
-            redirect('/login');
+            redirect(`/login?event=${resetPasswordEvent}`);
 
         if(isValidationError(res.error)) {
             if(res.error.errors['InvalidToken']) {

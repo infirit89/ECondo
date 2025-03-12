@@ -5,7 +5,7 @@ import { TextInput } from "@mantine/core";
 import { Box, LoadingOverlay, PasswordInput, Group, Checkbox, Anchor, Button, Text } from "@mantine/core";
 import { useEffect, useReducer } from "react";
 import { useForm } from "react-hook-form";
-import { isValidationError } from "../_data/apiResponses";
+import { isValidationError } from "@/types/apiResponses";
 import { login } from "@/actions/auth";
 import { redirect } from "next/navigation";
 
@@ -54,10 +54,13 @@ export default function LoginForm() {
     const onSubmit = async(data: LoginFormFields) => {
         dispatch({ type: 'START_LOGIN' });
         const res = await login(data);
-        if(isValidationError(res)) {
-            form.setValue('password', '');
-            dispatch({type: 'LOGIN_ERROR'});
-            return;
+        console.log('AAAAAAAAAAAAA', res);
+        if(!res.ok) {
+            if(isValidationError(res.error)) {
+                form.setValue('password', '');
+                dispatch({type: 'LOGIN_ERROR'});
+                return;
+            }
         }
 
         dispatch({type: 'LOGIN_SUCESS'});

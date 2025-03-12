@@ -4,7 +4,7 @@ import { Navbar } from "./navbar";
 import { isAuthenticated } from "@/actions/auth";
 import { getBriefProfile } from "@/actions/profile";
 import { ProfileCreationModal } from "./profileCreationModal";
-import { BriefProfileResponse } from "@/app/_data/profileData";
+import { BriefProfileResponse } from "@/types/profileData";
 import { UserNavbar } from "./userNavbar";
 
 export default async function App({children} : {children: ReactNode}) {

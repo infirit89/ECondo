@@ -7,7 +7,7 @@ import { Box, Button, LoadingOverlay, PasswordInput } from "@mantine/core";
 import { useReducer } from "react";
 import { useForm } from "react-hook-form";
 import { z, ZodSchema } from "zod";
-import { isValidationError } from "../_data/apiResponses";
+import { isValidationError } from "@/types/apiResponses";
 
 interface PasswordFormFields {
     currentPassword: string;

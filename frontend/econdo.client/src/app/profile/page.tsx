@@ -1,5 +1,5 @@
 import { Container } from "@mantine/core";
-import ProfileContainer from "./profileContainer";
+import ProfileContainer from "@/components/profileContainer";
 
 export default function Profile() {
 

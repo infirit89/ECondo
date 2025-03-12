@@ -1,4 +1,4 @@
-import { ValidationError } from "@/app/_data/apiResponses";
+import { ValidationError } from "@/types/apiResponses";
 import { AxiosError, isAxiosError } from "axios";
 
 export const axiosToApiErrorConverter = (ex: AxiosError) : ValidationError | AxiosError => {

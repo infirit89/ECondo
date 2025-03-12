@@ -5,7 +5,7 @@ import { Box, Button, LoadingOverlay, TextInput } from "@mantine/core";
 import { useEffect, useReducer, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z, ZodSchema } from "zod";
-import { ProfileDetails } from "../_data/profileData";
+import { ProfileDetails } from "@/types/profileData";
 import { getProfile, updateProfile } from "@/actions/profile";
 
 interface ProfileFormFields {

@@ -1,5 +1,5 @@
 import { Container, Paper, Title } from "@mantine/core";
-import ResetPasswordForm from "./resetPasswordForm";
+import ResetPasswordForm from "@/components/resetPasswordForm";
 
 export default async function ResetPassword({searchParams} : { searchParams : Promise<{ [key: string]: string | string[] | undefined }> }) {
     const { token = '', email = '' } = await searchParams;

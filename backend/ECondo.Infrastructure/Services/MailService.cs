@@ -9,7 +9,7 @@ internal class MailService(IResend resend) : IEmailService
     {
         var message = new EmailMessage
         {
-            From = "onboarding@resend.dev",
+            From = "support@econdo.online",
             Subject = "Account Confirmation",
             HtmlBody = $"<a href=\"{confirmationLink}\">Confirm Account</a>"
         };
@@ -22,7 +22,7 @@ internal class MailService(IResend resend) : IEmailService
     {
         var message = new EmailMessage
         {
-            From = "onboarding@resend.dev",
+            From = "support@econdo.online",
             Subject = "Reset NewPassword",
             HtmlBody = $"<a href=\"{resetLink}\">Reset NewPassword</a>"
         };
