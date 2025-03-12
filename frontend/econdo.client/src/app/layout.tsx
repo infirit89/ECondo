@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import '@mantine/core/styles.css';
 import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from "@mantine/core";
+import App from "@/components/app";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -32,7 +33,9 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider>
-          {children}
+          <App>
+            {children}
+          </App>
         </MantineProvider>
       </body>
     </html>

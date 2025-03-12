@@ -1,4 +1,4 @@
-﻿namespace ECondo.Application
+﻿namespace ECondo.Shared
 {
     public class Class1
     {

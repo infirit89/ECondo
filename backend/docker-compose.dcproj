@@ -15,5 +15,12 @@
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="ECondo.Application.UnitTests\Commands\Identity\ConfirmEmailCommandHandlerTests.cs" />
+    <None Include="ECondo.Application.UnitTests\Commands\Identity\ForgotPasswordCommandHandlerTests.cs" />
+    <None Include="ECondo.Application.UnitTests\Commands\Identity\GenerateAccessTokenCommandHandlerTests.cs" />
+    <None Include="ECondo.Application.UnitTests\Commands\Identity\InvalidateRefreshTokenCommandHandlerTests.cs" />
+    <None Include="ECondo.Application.UnitTests\Commands\Profile\CreateProfileCommandHandlerTests.cs" />
+    <None Include="ECondo.Application.UnitTests\Commands\Profile\GetProfileQueryHandlerTests.cs" />
+    <None Include="ECondo.Application.UnitTests\Commands\Profile\UpdateProfileCommandHandlerTests.cs" />
   </ItemGroup>
 </Project>
