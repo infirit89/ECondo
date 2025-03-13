@@ -12,7 +12,7 @@ export function Navbar() {
             <header className={classes.header}>
                 <Group justify="space-between" h="100%">
                 <Anchor href="/" pt={4} visibleFrom="sm">
-                    <ECondoLogo size={40} />
+                    <ECondoLogo size={30} />
                 </Anchor>
                 <Anchor href="/" pt={3} hiddenFrom="sm">
                     <ECondoLogo type="mark" size={45} />

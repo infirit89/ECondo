@@ -5,6 +5,9 @@ import type { Metadata } from "next";
 import '@mantine/core/styles.css';
 import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from "@mantine/core";
 import App from "@/components/app";
+import { isAuthenticated } from "@/actions/auth";
+import { getBriefProfile } from "@/actions/profile";
+import { BriefProfileResponse } from "@/types/profileData";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -21,11 +24,23 @@ export const metadata: Metadata = {
   description: "A condomium managment app",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let openProfileCreationModal = false;
+  const authenticated = await isAuthenticated();
+  let profileData: BriefProfileResponse | undefined = undefined;
+  if(authenticated) {
+      try {
+          profileData = await getBriefProfile();
+      }
+      catch(error) {
+          openProfileCreationModal = true;
+      }
+  }
+
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
@@ -34,7 +49,7 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider>
-          <App>
+          <App isAuthenticated={authenticated} profileData={profileData}>
             {children}
           </App>
         </MantineProvider>
