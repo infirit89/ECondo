@@ -28,9 +28,9 @@ export default async function middleware(req: NextRequest) {
     if(!accessToken && refreshTokenCookie) {
         const res = await generateAccessToken();
         if(res.ok) {
-            await setAccessTokenCookie(res.value.accessToken, 
-                res.value.expiresIn);
-            accessToken = res.value.accessToken;
+            await setAccessTokenCookie(res.value!.accessToken, 
+                res.value!.expiresIn);
+            accessToken = res.value!.accessToken;
         } else {
             cookieStore.delete(refreshTokenCookieKey);
             cookieStore.delete(accessTokenCookieKey);

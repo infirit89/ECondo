@@ -16,3 +16,4 @@ export interface ProfileDetails {
     middleName: string;
     lastName: string;
 }
+

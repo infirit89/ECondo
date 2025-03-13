@@ -1,8 +1,8 @@
 'use client';
 
 import { createProfile } from "@/actions/profile";
-import { isValidationError } from "@/app/_data/apiResponses";
-import { CreateProfileData } from "@/app/_data/profileData";
+import { isValidationError } from "@/types/apiResponses";
+import { CreateProfileData } from "@/types/profileData";
 import { firstNameSchema, lastNameSchema, middleNameSchema, phoneNumberSchema } from "@/utils/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, LoadingOverlay, Modal, TextInput, Text } from "@mantine/core";

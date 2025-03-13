@@ -1,6 +1,7 @@
 'use client';
 
 import { forgotPassword } from "@/actions/auth";
+import { forgotPasswordEvent } from "@/types/auth";
 import { emailSchema } from "@/utils/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, LoadingOverlay, TextInput } from "@mantine/core";
@@ -33,7 +34,7 @@ export function ForgotPasswordForm() {
 
         const res = await forgotPassword(data.email);
         if(res.ok) {
-            redirect('/login?forgottenPassword=t');
+            redirect(`/login?event=${forgotPasswordEvent}`);
         }
 
         console.error(res.error);

@@ -1,17 +1,23 @@
 import { Alert, Anchor, Container, Paper, Text, Title } from "@mantine/core";
-import LoginForm from "./loginForm";
-import AccountConfirmationAlert from "./accountConfirmationAlert";
+import LoginForm from "@/components/loginForm";
+import AccountConfirmationAlert from "@/components/accountConfirmationAlert";
+import { AuthEvent } from "@/types/auth";
 
 export default async function Login({ searchParams } : { searchParams : Promise<{ [key: string]: string | string[] | undefined }> }) {
-    const { emailConfirmation = '', forgottenPassword = '' } = await searchParams;
+    const { event = '' } = await searchParams;
 
     return (
         <Container size={420} my={40} mb={100}>
-            <AccountConfirmationAlert hidden={(emailConfirmation as string) !== 't'}/>
+            <AccountConfirmationAlert hidden={(event as AuthEvent) !== 'confirmAccount'}/>
 
-            <Alert variant="light" mb={'md'} hidden={(forgottenPassword as string) !== 't'}>
+            <Alert variant="light" mb={'md'} hidden={(event as AuthEvent) !== 'forgotPassword'}>
                 <Text fz={'sm'}>Моля, проверете мейла си. Изпратили сме Ви линк, чрез който можете да промените паролата си. Ако не сте получили писмо проверете дали не е попаднало в папка SPAM.</Text>
             </Alert>
+
+            <Alert variant="light" mb={'md'} hidden={(event as AuthEvent) !== 'resetPassword'} color={'teal'}>
+                <Text fz={'sm'}>Паролата Ви беше нулирана успешно!</Text>
+            </Alert>            
+            
             <Title ta="center" fw={900} ff={'Greycliff CF, var(--mantine-font-family)'}>
             Добре дошъл отново!
             </Title>
