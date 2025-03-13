@@ -63,10 +63,10 @@ export default function UpdateProfileForm({ onSuccess } : { onSuccess?: () => vo
         getProfile()
         .then(x => {
             if(x.ok) {
-                setProfileDetails(x.value);
-                form.setValue('firstName', x.value.firstName);
-                form.setValue('middleName', x.value.middleName);
-                form.setValue('lastName', x.value.lastName);
+                setProfileDetails(x.value!);
+                form.setValue('firstName', x.value!.firstName);
+                form.setValue('middleName', x.value!.middleName);
+                form.setValue('lastName', x.value!.lastName);
 
                 return;
             }

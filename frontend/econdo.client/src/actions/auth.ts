@@ -69,11 +69,20 @@ export async function setAccessTokenCookie(accessToken: string, maxAge: number) 
     cookieStore.set(accessTokenCookieKey, accessToken, { httpOnly: true, sameSite: 'strict', maxAge: maxAge * 60});
 }
 
-export async function confirmEmail(token: string, email: string): Promise<void> {
-    return await normalInstance.post('/api/account/confirmEmail', {
-        token: token,
-        email: email,
-    });
+export async function confirmEmail(token: string, email: string): Promise<Result> {
+    try {
+        await normalInstance.post('/api/account/confirmEmail', {
+            token: token,
+            email: email,
+        });
+
+        return resultOk();
+    } catch(error) {
+        if(isAxiosError<ValidationError, Record<string, unknown>>(error))
+            return resultFail(error.response?.data!);   
+    }
+
+    return resultFail(new Error('Unexpected code flow'));
 }
 
 export async function isAuthenticated(): Promise<boolean> {

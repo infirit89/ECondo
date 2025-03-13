@@ -2,7 +2,7 @@
 import { Anchor, Box, Burger, Button, Divider, Drawer, Group, ScrollArea, } from "@mantine/core";
 import classes from '@/components/navbar.module.css';
 import { useDisclosure } from "@mantine/hooks";
-import { MantineLogo } from "@mantinex/mantine-logo";
+import { ECondoLogo } from "./logo/econdoLogo";
 
 export function Navbar() {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
@@ -11,8 +11,11 @@ export function Navbar() {
         <Box>
             <header className={classes.header}>
                 <Group justify="space-between" h="100%">
-                <Anchor href="/">
-                    <MantineLogo size={30} />
+                <Anchor href="/" pt={4} visibleFrom="sm">
+                    <ECondoLogo size={40} />
+                </Anchor>
+                <Anchor href="/" pt={3} hiddenFrom="sm">
+                    <ECondoLogo type="mark" size={45} />
                 </Anchor>
 
                 {/* <Group h="100%" gap={0} visibleFrom="sm">
@@ -40,10 +43,10 @@ export function Navbar() {
                 opened={drawerOpened}
                 onClose={closeDrawer}
                 size="100%"
-                padding="md"
+                padding={"md"}
                 title={
                     <Anchor href="/">
-                        <MantineLogo size={40} />
+                        <ECondoLogo size={40} />
                     </Anchor>
                 }
                 hiddenFrom="sm"

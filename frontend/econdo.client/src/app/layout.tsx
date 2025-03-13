@@ -30,6 +30,7 @@ export default function RootLayout({
     <html lang="en" {...mantineHtmlProps}>
       <head>
         <ColorSchemeScript />
+        <meta name="apple-mobile-web-app-title" content="ECondo" />
       </head>
       <body>
         <MantineProvider>
