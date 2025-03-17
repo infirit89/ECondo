@@ -9,8 +9,7 @@ export interface CondoCardProps {
 
 export default function CondoCard({ name, image }: CondoCardProps) {
     const {hovered, ref} = useHover();
-    const theme = useMantineTheme();
-
+    
     return (
         <Card ref={ref} shadow={hovered ? 'xl' : 'sm'} padding="lg" radius="md" withBorder>
             <CardSection>
