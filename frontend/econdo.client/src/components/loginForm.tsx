@@ -41,7 +41,7 @@ export default function LoginForm() {
  
     useEffect(() => {
         if(loginState === 'success') 
-            redirect('/dashboard');
+            redirect('/condos');
     }, [loginState]);
 
     const form = useForm<LoginFormFields>({
@@ -54,7 +54,6 @@ export default function LoginForm() {
     const onSubmit = async(data: LoginFormFields) => {
         dispatch({ type: 'START_LOGIN' });
         const res = await login(data);
-        console.log('AAAAAAAAAAAAA', res);
         if(!res.ok) {
             if(isValidationError(res.error)) {
                 form.setValue('password', '');
