@@ -11,4 +11,6 @@ public sealed class Entrance
 
     public Guid ManagerId { get; set; }
     public User Manager { get; set; } = null!;
+
+    public HashSet<Property> Properties { get; set; } = [];
 }

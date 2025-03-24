@@ -1,4 +1,5 @@
 ﻿using ECondo.Domain.Abstractions;
+using ECondo.Domain.Buildings;
 using ECondo.Domain.Profiles;
 using Microsoft.AspNetCore.Identity;
 
@@ -14,6 +15,10 @@ public class User : IdentityUser<Guid>, ISoftDeletable
     public HashSet<UserToken> UserTokens { get; set; } = new();
 
     public HashSet<ProfileDetails> UserDetails { get; set; } = new();
+
+    public HashSet<PropertyUser> PropertyUsers { get; set; } = [];
+
+    public HashSet<Entrance> Entrances { get; set; } = [];
     // ---------------------------------
 
     // ---- soft delete stuffs ----    public bool IsDeleted { private set; get; }

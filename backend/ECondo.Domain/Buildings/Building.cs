@@ -4,7 +4,9 @@ public sealed class Building
 {
     public Guid Id { get; set; } = Guid.NewGuid();
 
-    public string CityId { get; set; } = null!;
+    public string Name { get; set; } = null!;
+
+    public Guid CityId { get; set; }
     public City City { get; set; } = null!;
 
     public string Neighborhood { get; set; } = null!;
