@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECondo.Infrastructure.Migrations
 {
     [DbContext(typeof(ECondoDbContext))]
-    [Migration("20250220104049_ProfileDetails")]
-    partial class ProfileDetails
+    [Migration("20250325200736_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,228 @@ namespace ECondo.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.Building", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BuildingNumber")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Municipality")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Neighborhood")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<Guid>("ProvinceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SettlementPlace")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("StreetNumber")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProvinceId");
+
+                    b.ToTable("Buildings");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.Entrance", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BuildingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ManagerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuildingId");
+
+                    b.HasIndex("ManagerId");
+
+                    b.ToTable("Entrances");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.Occupant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccessCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("MiddleName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<Guid>("OccupantTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OccupantTypeId");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("Occupants");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.OccupantType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OccupantTypes");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.Property", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("BuiltArea")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("EntranceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Floor")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdealParts")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("PropertyTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EntranceId");
+
+                    b.HasIndex("PropertyTypeId");
+
+                    b.ToTable("Properties");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.PropertyType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PropertyTypes");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.PropertyUser", b =>
+                {
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("OccupantTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("PropertyId", "UserId", "OccupantTypeId");
+
+                    b.HasIndex("OccupantTypeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PropertyUsers");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.Province", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Provinces");
+                });
 
             modelBuilder.Entity("ECondo.Domain.Profiles.ProfileDetails", b =>
                 {
@@ -270,6 +492,101 @@ namespace ECondo.Infrastructure.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ECondo.Domain.Buildings.Building", b =>
+                {
+                    b.HasOne("ECondo.Domain.Buildings.Province", "Province")
+                        .WithMany("Buildings")
+                        .HasForeignKey("ProvinceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Province");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.Entrance", b =>
+                {
+                    b.HasOne("ECondo.Domain.Buildings.Building", "Building")
+                        .WithMany("Entrances")
+                        .HasForeignKey("BuildingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECondo.Domain.Users.User", "Manager")
+                        .WithMany("Entrances")
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Building");
+
+                    b.Navigation("Manager");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.Occupant", b =>
+                {
+                    b.HasOne("ECondo.Domain.Buildings.OccupantType", "OccupantType")
+                        .WithMany("Occupants")
+                        .HasForeignKey("OccupantTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECondo.Domain.Buildings.Property", "Property")
+                        .WithMany("Occupants")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OccupantType");
+
+                    b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.Property", b =>
+                {
+                    b.HasOne("ECondo.Domain.Buildings.Entrance", "Entrance")
+                        .WithMany("Properties")
+                        .HasForeignKey("EntranceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECondo.Domain.Buildings.PropertyType", "PropertyType")
+                        .WithMany("Properties")
+                        .HasForeignKey("PropertyTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Entrance");
+
+                    b.Navigation("PropertyType");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.PropertyUser", b =>
+                {
+                    b.HasOne("ECondo.Domain.Buildings.OccupantType", "OccupantType")
+                        .WithMany("PropertyUsers")
+                        .HasForeignKey("OccupantTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ECondo.Domain.Buildings.Property", "Property")
+                        .WithMany("PropertyUsers")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ECondo.Domain.Users.User", "User")
+                        .WithMany("PropertyUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("OccupantType");
+
+                    b.Navigation("Property");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ECondo.Domain.Profiles.ProfileDetails", b =>
                 {
                     b.HasOne("ECondo.Domain.Users.User", "User")
@@ -344,6 +661,40 @@ namespace ECondo.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ECondo.Domain.Buildings.Building", b =>
+                {
+                    b.Navigation("Entrances");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.Entrance", b =>
+                {
+                    b.Navigation("Properties");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.OccupantType", b =>
+                {
+                    b.Navigation("Occupants");
+
+                    b.Navigation("PropertyUsers");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.Property", b =>
+                {
+                    b.Navigation("Occupants");
+
+                    b.Navigation("PropertyUsers");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.PropertyType", b =>
+                {
+                    b.Navigation("Properties");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Buildings.Province", b =>
+                {
+                    b.Navigation("Buildings");
+                });
+
             modelBuilder.Entity("ECondo.Domain.Users.Role", b =>
                 {
                     b.Navigation("RoleClaims");
@@ -353,6 +704,10 @@ namespace ECondo.Infrastructure.Migrations
 
             modelBuilder.Entity("ECondo.Domain.Users.User", b =>
                 {
+                    b.Navigation("Entrances");
+
+                    b.Navigation("PropertyUsers");
+
                     b.Navigation("UserClaims");
 
                     b.Navigation("UserDetails");

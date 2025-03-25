@@ -6,8 +6,11 @@ public sealed class Building
 
     public string Name { get; set; } = null!;
 
-    public Guid CityId { get; set; }
-    public City City { get; set; } = null!;
+    public Guid ProvinceId { get; set; }
+    public Province Province { get; set; } = null!;
+
+    public string Municipality { get; set; } = null!;
+    public string SettlementPlace { get; set; } = null!;
 
     public string Neighborhood { get; set; } = null!;
     public string PostalCode { get; set; } = null!;

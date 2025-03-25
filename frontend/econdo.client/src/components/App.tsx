@@ -23,8 +23,8 @@ export default function App({isAuthenticated, profileData, children} : {isAuthen
                 { isAuthenticated ? 
                 <UserNavbar 
                 username={profileData?.username!} 
-                firstName={profileData?.firstName!} 
-                lastName={profileData?.lastName!}/> 
+                firstName={profileData?.firstName} 
+                lastName={profileData?.lastName}/> 
                 : <Navbar/> } 
             </AppShellHeader>
             {children}

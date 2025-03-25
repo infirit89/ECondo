@@ -14,6 +14,9 @@ public static class MigrationsConfiguration
         var db = scope.ServiceProvider.GetRequiredService<ECondoDbContext>();
         await db.Database.MigrateAsync();
 
+        await applicationBuilder.SeedUsers();
+        await applicationBuilder.SeedProvinces();
+
         return applicationBuilder;
     }
 }

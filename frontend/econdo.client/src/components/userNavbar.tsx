@@ -5,7 +5,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { MantineLogo } from "@mantinex/mantine-logo";
 import { ECondoLogo } from "./logo/econdoLogo";
 
-export function UserNavbar({ username, firstName, lastName }: { username: string, firstName: string, lastName: string }) {
+export function UserNavbar({ username, firstName, lastName }: { username: string, firstName?: string, lastName?: string }) {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
 
     return (
@@ -32,7 +32,12 @@ export function UserNavbar({ username, firstName, lastName }: { username: string
                     
                     <Menu shadow="md" width={200} key={'profile'} withinPortal position="bottom-end" transitionProps={{ transition: 'pop-top-right' }} offset={5}>
                         <MenuTarget>
+                            { firstName && lastName ? 
                             <Avatar radius="xl" color={'blue'} className={classes.profileLink}>{firstName.at(0)}{lastName.at(0)}</Avatar>
+                            : 
+                            // NOTE: maybe query the user email and set the initials from it?
+                            <Avatar radius="xl" color={'blue'} className={classes.profileLink}>UR</Avatar> }
+                            
                         </MenuTarget>
                     
                         <MenuDropdown>

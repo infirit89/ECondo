@@ -14,11 +14,18 @@ internal class BuildingConfiguration : IEntityTypeConfiguration<Building>
             .HasMaxLength(Resources.LongName)
             .IsRequired();
 
-        builder.HasOne(b => b.City)
+        builder.HasOne(b => b.Province)
             .WithMany(c => c.Buildings)
-            .HasForeignKey(b => b.CityId)
+            .HasForeignKey(b => b.ProvinceId)
             .IsRequired();
 
+        builder.Property(b => b.Municipality)
+            .HasMaxLength(Resources.LongName)
+            .IsRequired();
+
+        builder.Property(b => b.SettlementPlace)
+            .HasMaxLength(Resources.LongName)
+            .IsRequired();
 
         builder.Property(b => b.Neighborhood)
             .HasMaxLength(Resources.LongName)

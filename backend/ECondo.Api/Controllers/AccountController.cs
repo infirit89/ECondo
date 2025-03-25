@@ -36,8 +36,14 @@ public class AccountController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
     public async Task<Results<Ok, ValidationProblem>>
-        Register([FromBody] RegisterCommand registerCommand)
+        Register([FromBody] RegisterUserRequest registerRequest)
     {
+        RegisterCommand registerCommand = new(
+            registerRequest.Email,
+            registerRequest.Username,
+            registerRequest.Password,
+            registerRequest.ReturnUri);
+
         var result = await sender.Send(registerCommand);
         return result switch
         {

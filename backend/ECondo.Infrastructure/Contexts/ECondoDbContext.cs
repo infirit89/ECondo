@@ -24,7 +24,7 @@ internal class ECondoDbContext(DbContextOptions<ECondoDbContext> options) : Iden
 
     public virtual DbSet<Building> Buildings { get; set; } = null!;
     public virtual DbSet<Entrance> Entrances { get; set; } = null!;
-    public virtual DbSet<City> Cities { get; set; } = null!;
+    public virtual DbSet<Province> Provinces { get; set; } = null!;
     public virtual DbSet<OccupantType> OccupantTypes { get; set; } = null!;
     public virtual DbSet<Occupant> Occupants { get; set; } = null!;
     public virtual DbSet<Property> Properties { get; set; } = null!;

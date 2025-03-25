@@ -12,14 +12,17 @@ internal sealed class PropertyUserConfiguration : IEntityTypeConfiguration<Prope
 
         builder.HasOne(pu => pu.User)
             .WithMany(u => u.PropertyUsers)
-            .HasForeignKey(pu => pu.UserId);
+            .HasForeignKey(pu => pu.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne(pu => pu.Property)
             .WithMany(p => p.PropertyUsers)
-            .HasForeignKey(pu => pu.PropertyId);
+            .HasForeignKey(pu => pu.PropertyId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne(pu => pu.OccupantType)
             .WithMany(ot => ot.PropertyUsers)
-            .HasForeignKey(pu => pu.OccupantTypeId);
+            .HasForeignKey(pu => pu.OccupantTypeId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

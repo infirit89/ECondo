@@ -10,6 +10,7 @@ import { z, ZodSchema } from "zod";
 import { register } from '@/actions/auth';
 import { isValidationError } from '@/types/apiResponses';
 import { redirect } from 'next/navigation';
+import { confirmAccountEvent } from '@/types/auth';
 
 interface RegisterFormFields {
     username: string;
@@ -69,7 +70,7 @@ export default function RegisterForm() {
 
     useEffect(() => {
         if (registerState === 'success')
-            redirect('/login?emailConfirmation=t');
+            redirect(`/login?event=${confirmAccountEvent}`);
 
     }, [registerState]);
 
