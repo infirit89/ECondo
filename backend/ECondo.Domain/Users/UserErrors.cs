@@ -21,6 +21,12 @@ public static class UserErrors
         Description = "The user was not found",
     };
 
+    public static Error InvalidUser(Guid id) => new()
+    {
+        Code = "Users.NotFound",
+        Description = $"The user with Id = '{id}' was not found",
+    };
+
     public static Error EmailNotConfirmed() => new()
     {
         Code = "Users.NotConfirmed",

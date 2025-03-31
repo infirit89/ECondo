@@ -33,6 +33,7 @@ internal class AuthTokenService : IAuthTokenService
     {
         List<Claim> claims =
         [
+            new (JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email!),
             new(JwtRegisteredClaimNames.GivenName, user.UserName!),
         ];

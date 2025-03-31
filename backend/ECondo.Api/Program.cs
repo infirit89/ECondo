@@ -2,7 +2,6 @@ using ECondo.Application.Extensions;
 using ECondo.Infrastructure.Extensions;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
-using ECondo.Domain.Users;
 
 namespace ECondo.Api
 {
@@ -56,10 +55,8 @@ namespace ECondo.Api
 
             var app = builder.Build();
 
-            app.MapIdentityApi<User>();
-
             // Configure the HTTP request pipeline.
-            await app.ApplyMigrations();
+            await app.ApplyMigrationsAsync();
 
             if (app.Environment.IsDevelopment())
             {
@@ -76,6 +73,7 @@ namespace ECondo.Api
             app.UseAuthorization();
 
             app.MapControllers();
+            app.MapHealthChecks("/healtz");
 
             app.Run();
         }

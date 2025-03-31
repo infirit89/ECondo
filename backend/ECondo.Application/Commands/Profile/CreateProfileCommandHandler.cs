@@ -25,7 +25,7 @@ internal sealed class CreateProfileCommandHandler(UserManager<User> userManager,
             UserId = user.Id,
             User = user,
         };
-        await unitOfWork.ProfileDetailsRepository.InsertAsync(profileDetails);
+        await unitOfWork.ProfileDetails.InsertAsync(profileDetails);
         await unitOfWork.SaveChangesAsync();
 
         var phoneResult = await userManager.SetPhoneNumberAsync(user, request.PhoneNumber);

@@ -59,5 +59,19 @@ namespace ECondo.Infrastructure.Repositories
         {
             _dbSet.Update(entityToUpdate);
         }
+
+        public Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>>? filter = null, string includeProperties = "")
+        {
+            IQueryable<TEntity> query = _dbSet;
+
+            foreach (string includeProperty in includeProperties.Split
+                         (new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+            return filter is null ?
+                query.FirstOrDefaultAsync() :
+                query.FirstOrDefaultAsync(filter);
+        }
     }
 }

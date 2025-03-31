@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using ECondo.Application.Commands.Identity;
 using ECondo.Api.Data.Identity;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 
 namespace ECondo.Api.Controllers;
 
@@ -58,12 +57,9 @@ public class AccountController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
     public async Task<Results<Ok, ValidationProblem>>
-        InvalidateRefreshToken([FromBody] InvalidateRefreshTokenRequest request)
+        InvalidateRefreshToken([FromBody] InvalidateRefreshTokenCommand request)
     {
-        Claim? emailClaim = User.GetEmailClaim();
-        InvalidateRefreshTokenCommand command = new(emailClaim is null ? "" : emailClaim.Value, request.RefreshToken);
-
-        var result = await sender.Send(command);
+        var result = await sender.Send(request);
 
         return result switch
         {
@@ -142,12 +138,9 @@ public class AccountController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<Results<Ok, ValidationProblem>>
-        UpdatePassword([FromBody] UpdatePasswordRequest updatePasswordRequest)
+        UpdatePassword([FromBody] UpdatePasswordCommand request)
     {
-        Claim? emailClaim = User.GetEmailClaim();
-        UpdatePasswordCommand updatePasswordCommand = new(emailClaim is null ? "" : emailClaim.Value,
-            updatePasswordRequest.CurrentPassword, updatePasswordRequest.NewPassword);
-        var result = await sender.Send(updatePasswordCommand);
+        var result = await sender.Send(request);
 
         return result switch
         {

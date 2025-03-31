@@ -15,6 +15,7 @@
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="ECondo.Application.UnitTests\Commands\Building\CreateBuildingCommandHandlerTests.cs" />
     <None Include="ECondo.Application.UnitTests\Commands\Identity\ConfirmEmailCommandHandlerTests.cs" />
     <None Include="ECondo.Application.UnitTests\Commands\Identity\ForgotPasswordCommandHandlerTests.cs" />
     <None Include="ECondo.Application.UnitTests\Commands\Identity\GenerateAccessTokenCommandHandlerTests.cs" />

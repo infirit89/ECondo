@@ -25,4 +25,8 @@
 	<ItemGroup>
 		<ProjectReference Include="..\ECondo.Application\ECondo.Application.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Commands\Building\" />
+	</ItemGroup>
 </Project>

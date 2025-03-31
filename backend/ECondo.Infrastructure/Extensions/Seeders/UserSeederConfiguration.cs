@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ECondo.Infrastructure.Shared;
 
-namespace ECondo.Infrastructure.Extensions;
+namespace ECondo.Infrastructure.Extensions.Seeders;
 
 internal class UserSeeder
 {

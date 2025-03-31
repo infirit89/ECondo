@@ -1,10 +1,10 @@
-﻿using System.Security.Claims;
-using ECondo.Api.Data.Profile;
+﻿using ECondo.Api.Data.Profile;
 using ECondo.Api.Extensions;
 using ECondo.Application.Commands.Profile;
 using ECondo.Application.Data;
 using ECondo.Application.Queries.Profile;
 using ECondo.Domain.Shared;
+using ECondo.Infrastructure.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -16,7 +16,6 @@ namespace ECondo.Api.Controllers
     [Route("api/[controller]")]
     public class ProfileController(ISender sender) : ControllerBase
     {
-
         [Authorize]
         [HttpPost(nameof(Create))]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -25,10 +24,8 @@ namespace ECondo.Api.Controllers
         public async Task<Results<Ok, ValidationProblem, UnauthorizedHttpResult>>
             Create([FromBody] CreateProfileRequest request)
         {
-            Claim? emailClaim = User.GetEmailClaim();
-
             CreateProfileCommand createProfileCommand =
-                new(emailClaim is null ? "" : emailClaim.Value, request.FirstName, request.MiddleName, request.LastName, request.Phone);
+                new(User.GetEmail() ?? "", request.FirstName, request.MiddleName, request.LastName, request.Phone);
 
             var result = await sender.Send(createProfileCommand);
 
@@ -48,11 +45,7 @@ namespace ECondo.Api.Controllers
         public async Task<Results<JsonHttpResult<BriefProfileResult>, ValidationProblem, UnauthorizedHttpResult>>
             GetBriefProfile()
         {
-            var emailClaim = User.GetEmailClaim();
-
-            GetBriefProfileQuery getBriefProfileQuery = new(emailClaim is null ? "" : emailClaim.Value);
-
-            var result = await sender.Send(getBriefProfileQuery);
+            var result = await sender.Send(new GetBriefProfileQuery());
 
             return result switch
             {
@@ -68,15 +61,9 @@ namespace ECondo.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<Results<Ok, ValidationProblem, UnauthorizedHttpResult>>
-            UpdateProfile([FromBody] UpdateProfileRequest updateProfileRequest)
+            UpdateProfile([FromBody] UpdateProfileCommand request)
         {
-            var emailClaim = User.GetEmailClaim();
-            UpdateProfileCommand updateProfileCommand = new(
-                emailClaim is null ? "" : emailClaim.Value,
-                updateProfileRequest.FirstName,
-                updateProfileRequest.MiddleName, updateProfileRequest.LastName);
-
-            var result = await sender.Send(updateProfileCommand);
+            var result = await sender.Send(request);
 
             return result switch
             {
@@ -94,10 +81,7 @@ namespace ECondo.Api.Controllers
         public async Task<Results<JsonHttpResult<ProfileResult>, ValidationProblem, UnauthorizedHttpResult>>
             GetProfile()
         {
-            var emailClaim = User.GetEmailClaim();
-            GetProfileQuery profileQuery = new(emailClaim is null ? "" : emailClaim.Value);
-
-            var result = await sender.Send(profileQuery);
+            var result = await sender.Send(new GetProfileQuery());
             return result switch
             {
                 Result<ProfileResult, Error>.Success s => TypedResults.Json(s.Data),

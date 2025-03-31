@@ -18,5 +18,5 @@ public sealed class Building
     public string StreetNumber { get; set; } = null!;
     public string BuildingNumber { get; set; } = null!;
 
-    public HashSet<Entrance> Entrances { get; set; } = new();
+    public HashSet<Entrance> Entrances { get; set; } = [];
 }

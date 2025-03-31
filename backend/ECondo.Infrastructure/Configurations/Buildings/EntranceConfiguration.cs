@@ -1,4 +1,5 @@
 ﻿using ECondo.Domain.Buildings;
+using ECondo.Infrastructure.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -19,5 +20,8 @@ internal class EntranceConfiguration : IEntityTypeConfiguration<Entrance>
             .WithMany(u => u.Entrances)
             .HasForeignKey(e => e.ManagerId)
             .IsRequired();
+
+        builder.Property(e => e.Number)
+            .HasMaxLength(Resources.ShortName);
     }
 }

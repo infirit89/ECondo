@@ -1,5 +1,4 @@
-﻿
-namespace ECondo.Infrastructure.Shared;
+﻿namespace ECondo.Infrastructure.Shared;
 
 internal static class ProvinceSeedData
 {

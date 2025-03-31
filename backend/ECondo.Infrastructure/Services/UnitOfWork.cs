@@ -8,17 +8,21 @@ using ECondo.Infrastructure.Repositories;
 namespace ECondo.Infrastructure.Services;
 internal class UnitOfWork(ECondoDbContext dbContext) : IUnitOfWork
 {
-    public IRepository<ProfileDetails> ProfileDetailsRepository { get; } =
+    public IRepository<ProfileDetails> ProfileDetails { get; } =
         new GenericRepository<ProfileDetails>(dbContext);
 
-    public IRepository<Building> BuildingRepository { get; } =
+    public IRepository<Building> Buildings { get; } =
         new GenericRepository<Building>(dbContext);
 
-    public IRepository<Province> ProvinceRepository { get; } =
+    public IRepository<Province> Provinces { get; } =
         new GenericRepository<Province>(dbContext);
+
+    public IRepository<Entrance> Entrances { get; } =
+        new GenericRepository<Entrance>(dbContext);
 
     public async Task<bool> SaveChangesAsync()
     {
         return await dbContext.SaveChangesAsync() > 0;
     }
 }
+

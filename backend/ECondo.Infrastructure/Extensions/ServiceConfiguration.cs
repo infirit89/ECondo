@@ -26,9 +26,14 @@ public static class ServiceConfiguration
 
         services.AddScoped<ICacheRepository, CacheRepository>();
 
+        services.AddHttpContextAccessor();
+
         services.AddScoped<IAuthTokenService, AuthTokenService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IEmailService, MailService>();
+        services.AddScoped<IUserContext, UserContext>();
+
+        services.AddHealthChecks();
 
         services.AddSignalR();
 

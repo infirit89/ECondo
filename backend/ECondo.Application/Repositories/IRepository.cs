@@ -11,6 +11,10 @@ public interface IRepository<TEntity> where TEntity : class
 
     Task<TEntity?> GetByIdAsync(object id);
 
+    Task<TEntity?> FirstOrDefaultAsync(
+        Expression<Func<TEntity, bool>>? filter = null,
+        string includeProperties = "");
+
     Task InsertAsync(TEntity entity);
     Task DeleteByIdAsync(object id);
     void Delete(TEntity entityToDelete);

@@ -3,28 +3,31 @@ using ECondo.Domain.Profiles;
 using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace ECondo.Application.Commands.Profile;
 
-internal sealed class UpdateProfileCommandHandler(UserManager<User> userManager, IUnitOfWork unitOfWork) : IRequestHandler<UpdateProfileCommand, Result<EmptySuccess, Error>>
+internal sealed class UpdateProfileCommandHandler(
+    IUnitOfWork unitOfWork,
+    IUserContext userContext) : IRequestHandler<UpdateProfileCommand, Result<EmptySuccess, Error>>
 {
     public async Task<Result<EmptySuccess, Error>> Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
     {
-        User? user = await userManager.FindByEmailAsync(request.Email);
-        if(user is null)
-            return Result<EmptySuccess, Error>.Fail(UserErrors.InvalidUser(request.Email));
+        if(userContext.UserId is null)
+            return Result<EmptySuccess, Error>.Fail(UserErrors.InvalidUser());
 
-        ProfileDetails? profile = (await unitOfWork.ProfileDetailsRepository.GetAsync(x => x.UserId == user.Id))
+        ProfileDetails? profile = (await unitOfWork
+                .ProfileDetails
+                .GetAsync(x => x.UserId == userContext.UserId))
             .FirstOrDefault();
 
         if(profile is null)
-            return Result<EmptySuccess, Error>.Fail(ProfileErrors.InvalidProfile(request.Email));
+            return Result<EmptySuccess, Error>
+                .Fail(ProfileErrors.InvalidProfile((Guid)userContext.UserId));
 
         profile.FirstName = request.FirstName;
         profile.MiddleName = request.MiddleName;
         profile.LastName = request.LastName;
-        unitOfWork.ProfileDetailsRepository.Update(profile);
+        unitOfWork.ProfileDetails.Update(profile);
         await unitOfWork.SaveChangesAsync();
         return Result<EmptySuccess, Error>.Ok();
     }

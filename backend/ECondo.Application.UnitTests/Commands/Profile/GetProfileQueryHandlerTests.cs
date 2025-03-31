@@ -8,10 +8,6 @@ using ECondo.Domain.Users;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using NSubstitute;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace ECondo.Application.UnitTests.Queries.Profile
 {
@@ -28,7 +24,7 @@ namespace ECondo.Application.UnitTests.Queries.Profile
                 Substitute.For<IUserStore<User>>(), null, null, null, null, null, null, null, null);
             _unitOfWork = Substitute.For<IUnitOfWork>();
             _profileDetailsRepository = Substitute.For<IRepository<ProfileDetails>>();
-            _unitOfWork.ProfileDetailsRepository.Returns(_profileDetailsRepository);
+            _unitOfWork.ProfileDetails.Returns(_profileDetailsRepository);
             _handler = new GetProfileQueryHandler(_userManager, _unitOfWork);
         }
 

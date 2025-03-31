@@ -1,0 +1,2 @@
+namespace ECondo.Application.Data;
+

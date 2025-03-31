@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace ECondo.Infrastructure.Extensions;
+namespace ECondo.Infrastructure.Extensions.Seeders;
 
 internal class ProvinceSeeder { }
 internal static class ProvinceSeederConfiguration
@@ -22,10 +22,10 @@ internal static class ProvinceSeederConfiguration
         {
             foreach (var province in ProvinceSeedData.Provinces)
             {
-                var dbProvince = (await unitOfWork.ProvinceRepository.GetAsync(x => x.Name == province)).FirstOrDefault();
+                var dbProvince = (await unitOfWork.Provinces.GetAsync(x => x.Name == province)).FirstOrDefault();
                 if (dbProvince is null)
                 {
-                    await unitOfWork.ProvinceRepository.InsertAsync(new()
+                    await unitOfWork.Provinces.InsertAsync(new()
                     {
                         Name = province,
                     });

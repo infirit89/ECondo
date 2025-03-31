@@ -4,4 +4,4 @@ using MediatR;
 
 namespace ECondo.Application.Queries.Profile;
 
-public sealed record GetProfileQuery(string Email) : IRequest<Result<ProfileResult, Error>>;
+public sealed record GetProfileQuery : IRequest<Result<ProfileResult, Error>>;

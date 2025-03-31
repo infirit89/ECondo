@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECondo.Infrastructure.Migrations
 {
     [DbContext(typeof(ECondoDbContext))]
-    [Migration("20250325200736_Initial")]
+    [Migration("20250330183136_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -92,6 +92,11 @@ namespace ECondo.Infrastructure.Migrations
 
                     b.Property<Guid>("ManagerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasKey("Id");
 

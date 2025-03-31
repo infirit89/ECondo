@@ -4,4 +4,4 @@ using MediatR;
 
 namespace ECondo.Application.Queries.Profile;
 
-public sealed record GetBriefProfileQuery(string Username) : IRequest<Result<BriefProfileResult, Error>>;
+public sealed record GetBriefProfileQuery : IRequest<Result<BriefProfileResult, Error>>;

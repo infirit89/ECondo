@@ -27,7 +27,7 @@ namespace ECondo.Application.UnitTests.Commands.Profile
                 Substitute.For<IUserStore<User>>(), null, null, null, null, null, null, null, null);
             _unitOfWork = Substitute.For<IUnitOfWork>();
             _profileDetailsRepository = Substitute.For<IRepository<ProfileDetails>>();
-            _unitOfWork.ProfileDetailsRepository.Returns(_profileDetailsRepository);
+            _unitOfWork.ProfileDetails.Returns(_profileDetailsRepository);
             _handler = new UpdateProfileCommandHandler(_userManager, _unitOfWork);
         }
 
@@ -73,7 +73,7 @@ namespace ECondo.Application.UnitTests.Commands.Profile
             var command = new UpdateProfileCommand("test@example.com", "FirstName", "MiddleName", "LastName");
 
             _userManager.FindByEmailAsync(command.Email).Returns(user);
-            _unitOfWork.ProfileDetailsRepository.GetAsync(x => x.UserId == user.Id).Returns(new[] { profile });
+            _unitOfWork.ProfileDetails.GetAsync(x => x.UserId == user.Id).Returns(new[] { profile });
 
             // Act
             var result = await _handler.Handle(command, CancellationToken.None);

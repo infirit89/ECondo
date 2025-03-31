@@ -26,7 +26,7 @@ namespace ECondo.Application.UnitTests.Commands.Profile
                 Substitute.For<IUserStore<User>>(), null, null, null, null, null, null, null, null);
             _unitOfWork = Substitute.For<IUnitOfWork>();
             _profileDetailsRepository = Substitute.For<IRepository<ProfileDetails>>();
-            _unitOfWork.ProfileDetailsRepository.Returns(_profileDetailsRepository);
+            _unitOfWork.ProfileDetails.Returns(_profileDetailsRepository);
             _handler = new CreateProfileCommandHandler(_userManager, _unitOfWork);
         }
 

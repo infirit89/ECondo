@@ -8,4 +8,10 @@ public static class ProfileErrors
         Code = "Profile.NotFound",
         Description = $"The profile for user with name = '{username}' was not found",
     };
+
+    public static Error InvalidProfile(Guid id) => new()
+    {
+        Code = "Profile.NotFound",
+        Description = $"The profile for user with Id = '{id}' was not found",
+    };
 }
