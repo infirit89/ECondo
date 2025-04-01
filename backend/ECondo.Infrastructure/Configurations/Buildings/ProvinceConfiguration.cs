@@ -1,4 +1,4 @@
-﻿using ECondo.Domain.Buildings;
+﻿using ECondo.Domain.Provinces;
 using ECondo.Infrastructure.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

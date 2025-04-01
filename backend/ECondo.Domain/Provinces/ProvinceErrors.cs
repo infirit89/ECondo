@@ -1,6 +1,6 @@
 ﻿using ECondo.Domain.Shared;
 
-namespace ECondo.Domain.Buildings;
+namespace ECondo.Domain.Provinces;
 
 public static class ProvinceErrors
 {

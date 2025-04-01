@@ -19,4 +19,5 @@ public interface IRepository<TEntity> where TEntity : class
     Task DeleteByIdAsync(object id);
     void Delete(TEntity entityToDelete);
     void Update(TEntity entityToUpdate);
+    IQueryable<TEntity> GetQueryable();
 }

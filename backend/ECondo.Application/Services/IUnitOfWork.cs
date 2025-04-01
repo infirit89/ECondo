@@ -1,6 +1,7 @@
 ﻿using ECondo.Application.Repositories;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Profiles;
+using ECondo.Domain.Provinces;
 
 namespace ECondo.Application.Services;
 public interface IUnitOfWork

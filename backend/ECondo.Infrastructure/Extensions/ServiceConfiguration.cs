@@ -33,6 +33,8 @@ public static class ServiceConfiguration
         services.AddScoped<IEmailService, MailService>();
         services.AddScoped<IUserContext, UserContext>();
 
+        services.AddScoped<IBuildingService, BuildingService>();
+
         services.AddHealthChecks();
 
         services.AddSignalR();

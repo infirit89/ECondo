@@ -17,6 +17,7 @@ public abstract record Result<TSuccess, TError>
 }
 
 public class EmptySuccess;
+public class EmptyError;
 
 public static class ResultHelper
 {

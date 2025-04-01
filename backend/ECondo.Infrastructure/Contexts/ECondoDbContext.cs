@@ -1,5 +1,6 @@
 ﻿using ECondo.Domain.Buildings;
 using ECondo.Domain.Profiles;
+using ECondo.Domain.Provinces;
 using ECondo.Domain.Users;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

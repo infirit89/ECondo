@@ -1,6 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using ECondo.Domain.Users;
 
 namespace ECondo.Infrastructure.Extensions;
 public static class ClaimsPrincipalExtension

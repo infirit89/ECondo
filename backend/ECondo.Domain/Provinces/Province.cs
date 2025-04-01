@@ -1,4 +1,6 @@
-﻿namespace ECondo.Domain.Buildings;
+﻿using ECondo.Domain.Buildings;
+
+namespace ECondo.Domain.Provinces;
 
 public sealed class Province
 {

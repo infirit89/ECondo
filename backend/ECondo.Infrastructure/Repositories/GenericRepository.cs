@@ -60,6 +60,8 @@ namespace ECondo.Infrastructure.Repositories
             _dbSet.Update(entityToUpdate);
         }
 
+        public IQueryable<TEntity> GetQueryable() => _dbSet.AsQueryable();
+
         public Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>>? filter = null, string includeProperties = "")
         {
             IQueryable<TEntity> query = _dbSet;
