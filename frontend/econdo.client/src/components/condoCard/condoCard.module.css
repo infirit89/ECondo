@@ -1,0 +1,10 @@
+.condoCard {
+    @media (max-width: $mantine-breakpoint-sm) {
+        margin-left: var(--mantine-spacing-md);
+        margin-right: var(--mantine-spacing-md);
+    }
+
+    @mixin hover {
+        cursor: pointer;
+    }
+}

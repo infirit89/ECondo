@@ -1,6 +1,6 @@
 import { Alert, Anchor, Container, Paper, Text, Title } from "@mantine/core";
-import LoginForm from "@/components/loginForm";
-import AccountConfirmationAlert from "@/components/accountConfirmationAlert";
+import LoginForm from "@/components/loginForm/loginForm";
+import AccountConfirmationAlert from "@/components/accountConfirmationAlert/accountConfirmationAlert";
 import { AuthEvent } from "@/types/auth";
 
 export default async function Login({ searchParams } : { searchParams : Promise<{ [key: string]: string | string[] | undefined }> }) {

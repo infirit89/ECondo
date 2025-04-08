@@ -69,5 +69,29 @@ namespace ECondo.Api.Controllers
                 _ => throw new ArgumentOutOfRangeException(nameof(result))
             };
         }
+
+        [Authorize]
+        [HttpGet(nameof(IsInBuilding))]
+        [ProducesResponseType(
+            StatusCodes.Status200OK)]
+        [ProducesResponseType(
+            StatusCodes.Status400BadRequest,
+            Type = typeof(HttpValidationProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<Results<Ok, UnauthorizedHttpResult, ValidationProblem>>
+            IsInBuilding([FromQuery] IsUserInBuildingQuery request)
+        {
+            var result = await sender.Send(request);
+
+            return result switch
+            {
+                Result<EmptySuccess, Error>.Success =>
+                    TypedResults.Ok(),
+
+                Result<EmptySuccess, Error>.Error e =>
+                    e.Data.ToValidationProblem(),
+                _ => throw new ArgumentOutOfRangeException(nameof(result))
+            };
+        }
     }
 }

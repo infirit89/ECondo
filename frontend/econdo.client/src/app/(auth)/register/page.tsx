@@ -1,5 +1,5 @@
 import { Container, Title, Text, Anchor, Paper } from "@mantine/core";
-import RegisterForm from "@/components/registerForm";
+import RegisterForm from "@/components/registerForm/registerForm";
 
 export default function Register() {
     return (

@@ -2,16 +2,19 @@
 
 import { AppShell, AppShellFooter, AppShellHeader, AppShellNavbarConfiguration } from "@mantine/core";
 import { ReactNode } from "react";
-import { Navbar } from "./navbar";
-import { ProfileCreationModal } from "./profileCreationModal";
-import { UserNavbar } from "./userNavbar";;
+import { Navbar } from "../navbar/navbar";
+import { ProfileCreationModal } from "../profile/profileCreationModal";
+import { UserNavbar } from "../navbar/userNavbar";;
 import { BriefProfileResponse } from "@/types/profileData";
 import { usePathname } from "next/navigation";
+
+const dashboardSeperatePaths = [ '/condos', '/profile' ];
 
 export default function App({isAuthenticated, profileData, children} : {isAuthenticated: boolean, profileData?: BriefProfileResponse, children: ReactNode}) {
     const pathname = usePathname();
     const navbarConfig: AppShellNavbarConfiguration | undefined = 
-        isAuthenticated && pathname !== '/condos' ? { width: 300, breakpoint: 'sm', collapsed: { mobile: true } }
+        isAuthenticated && !dashboardSeperatePaths.includes(pathname) 
+        ? { width: 300, breakpoint: 'sm', collapsed: { mobile: true } }
         : undefined;
     
     return (

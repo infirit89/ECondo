@@ -1,7 +1,7 @@
 'use client'; 
 
 import { Alert, Divider, Grid, GridCol, Paper } from "@mantine/core";
-import UpdatePasswordForm from "./updatePasswordForm";
+import UpdatePasswordForm from "../updatePasswordForm/updatePasswordForm";
 import { useReducer } from "react";
 import UpdateProfileForm from "./updateProfileForm";
 

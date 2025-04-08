@@ -1,5 +1,5 @@
 import { Container, Paper, Title } from "@mantine/core";
-import { ForgotPasswordForm } from "@/components/forgotPasswordForm";
+import { ForgotPasswordForm } from "@/components/forgotPasswordForm/forgotPasswordForm";
 
 export default function ForgotPassword() {
 

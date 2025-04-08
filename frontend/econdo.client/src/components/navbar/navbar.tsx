@@ -1,19 +1,21 @@
 'use client';
-import { Anchor, Avatar, Box, Burger, Button, Divider, Drawer, Group, Menu, MenuDropdown, MenuItem, MenuTarget, ScrollArea, Skeleton, } from "@mantine/core";
-import classes from '@/components/navbar.module.css';
+import { Anchor, Box, Burger, Button, Divider, Drawer, Group, ScrollArea, } from "@mantine/core";
+import classes from './navbar.module.css';
 import { useDisclosure } from "@mantine/hooks";
-import { MantineLogo } from "@mantinex/mantine-logo";
-import { ECondoLogo } from "./logo/econdoLogo";
+import { ECondoLogo } from "../logo/econdoLogo";
 
-export function UserNavbar({ username, firstName, lastName }: { username: string, firstName?: string, lastName?: string }) {
+export function Navbar() {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
 
     return (
         <Box>
             <header className={classes.header}>
                 <Group justify="space-between" h="100%">
-                <Anchor href="/" pt={4} visibleFrom='sm'>
-                    <ECondoLogo size={30}/>
+                <Anchor href="/" pt={4} visibleFrom="sm">
+                    <ECondoLogo size={30} />
+                </Anchor>
+                <Anchor href="/" pt={3} hiddenFrom="sm">
+                    <ECondoLogo type="mark" size={45} />
                 </Anchor>
 
                 {/* <Group h="100%" gap={0} visibleFrom="sm">
@@ -29,22 +31,8 @@ export function UserNavbar({ username, firstName, lastName }: { username: string
                 </Group> */}
 
                 <Group visibleFrom="sm">
-                    
-                    <Menu shadow="md" width={200} key={'profile'} withinPortal position="bottom-end" transitionProps={{ transition: 'pop-top-right' }} offset={5}>
-                        <MenuTarget>
-                            { firstName && lastName ? 
-                            <Avatar radius="xl" color={'blue'} className={classes.profileLink}>{firstName.at(0)}{lastName.at(0)}</Avatar>
-                            : 
-                            // NOTE: maybe query the user email and set the initials from it?
-                            <Avatar radius="xl" color={'blue'} className={classes.profileLink}>UR</Avatar> }
-                            
-                        </MenuTarget>
-                    
-                        <MenuDropdown>
-                            <MenuItem component='a' href='/profile'>Профил</MenuItem>
-                            <MenuItem component='a' href='/logout'>Изход</MenuItem>
-                        </MenuDropdown>
-                    </Menu>
+                    <Button variant="default" component="a" href="/login">Вход</Button>
+                    <Button component="a" href="/register">Регистрирай се</Button>
                 </Group>
 
                 <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
@@ -55,10 +43,10 @@ export function UserNavbar({ username, firstName, lastName }: { username: string
                 opened={drawerOpened}
                 onClose={closeDrawer}
                 size="100%"
-                padding="md"
+                padding={"md"}
                 title={
                     <Anchor href="/">
-                        <MantineLogo size={40} />
+                        <ECondoLogo size={40} />
                     </Anchor>
                 }
                 hiddenFrom="sm"

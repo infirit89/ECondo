@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateAccessToken, logout, setAccessTokenCookie } from "./actions/auth";
 import { jwtDecode } from "jwt-decode";
 
-const protectedRoutes = ['/dashboard', '/logout', '/profile'];
+const protectedRoutes = ['/condos', '/logout', '/profile'];
 const publicRoutes = ['/login', '/register', '/'];
 
 export default async function middleware(req: NextRequest) {
@@ -53,8 +53,8 @@ export default async function middleware(req: NextRequest) {
     if(protectedRoutes.includes(path) && !accessToken)
         return NextResponse.redirect(new URL('/login', req.nextUrl));
 
-    if(publicRoutes.includes(path) && accessToken && !path.startsWith('/dashboard')) {
-        return NextResponse.redirect(new URL('/dashboard', req.nextUrl));
+    if(publicRoutes.includes(path) && accessToken && !path.startsWith('/condos')) {
+        return NextResponse.redirect(new URL('/condos', req.nextUrl));
     }
 
     return NextResponse.next();

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
-// import "./globals.css";
+import "./globals.css";
 
 import '@mantine/core/styles.css';
 import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from "@mantine/core";
-import App from "@/components/app";
+import App from "@/components/app/app";
 import { isAuthenticated } from "@/actions/auth";
 import { getBriefProfile } from "@/actions/profile";
 import { BriefProfileResponse } from "@/types/profileData";

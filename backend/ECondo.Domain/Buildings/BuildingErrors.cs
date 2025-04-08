@@ -9,4 +9,10 @@ public static class BuildingErrors
         Code = nameof(InvalidBuilding),
         Description = $"The building with Id = '{id}' was not found",
     };
+
+    public static Error InvalidAccess() => new()
+    {
+        Code = nameof(InvalidAccess),
+        Description = "The user does not have access to the building",
+    };
 }

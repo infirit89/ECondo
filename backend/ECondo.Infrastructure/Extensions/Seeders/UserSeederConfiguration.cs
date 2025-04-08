@@ -29,14 +29,21 @@ internal static class UserSeederConfiguration
         }
 
 
-        var basicUserRes = await sender.Send(UserSeedData.BasicUser);
-        if (!basicUserRes.IsOk())
-            PrintIdentityErrors(basicUserRes.ToError().Data!);
+        foreach (var userData in UserSeedData.Users)
+        {
+            var userRes = await sender.Send(userData);
+            
+            if (!userRes.IsOk())
+                PrintIdentityErrors(userRes.ToError().Data!);
+        }
 
-        var basicUserProfileRes = await sender.Send(UserSeedData.BasicUserProfile);
+        foreach (var profileData in UserSeedData.Profiles)
+        {
+            var userProfileRes = await sender.Send(profileData);
 
-        if (!basicUserProfileRes.IsOk())
-            logger.LogError(basicUserProfileRes.ToError().Data!.Description);
+            if (!userProfileRes.IsOk())
+                logger.LogError(userProfileRes.ToError().Data!.Description);
+        }
 
         return appBuilder;
     }

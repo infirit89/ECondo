@@ -1,9 +1,9 @@
 'use client';
 import { ScrollArea } from "@mantine/core";
-import classes from './dashboardNavbar.module.css';
+import classes from './dashboardSidebar.module.css';
 
 import { IconAdjustments, IconCalendarStats, IconFileAnalytics, IconGauge, IconLock, IconNotes, IconPresentationAnalytics } from '@tabler/icons-react';
-import { LinksGroup } from '@/components/navbarLinksGroup';
+import { LinksGroup } from '@/components/navbar/navbarLinksGroup';
 
 const mockdata = [
     { label: 'Dashboard', icon: IconGauge },
@@ -42,7 +42,7 @@ const mockdata = [
   ];
 
 
-export default function DashboardNavbar() {
+export default function DashboardSidebar() {
     const links = mockdata.map((item) => <LinksGroup {...item} key={item.label} />);
     
     return (
