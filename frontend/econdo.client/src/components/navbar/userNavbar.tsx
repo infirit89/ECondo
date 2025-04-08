@@ -1,5 +1,5 @@
 'use client';
-import { Anchor, Avatar, Box, Burger, Button, Divider, Drawer, Group, Menu, MenuDropdown, MenuItem, MenuTarget, ScrollArea, Skeleton, } from "@mantine/core";
+import { Anchor, Avatar, Box, Burger, Button, Divider, Drawer, Group, Menu, MenuDropdown, MenuItem, MenuTarget, rem, ScrollArea, Skeleton, Stack, } from "@mantine/core";
 import classes from './navbar.module.css';
 import { useDisclosure } from "@mantine/hooks";
 import { MantineLogo } from "@mantinex/mantine-logo";
@@ -58,13 +58,13 @@ export function UserNavbar({ username, firstName, lastName }: { username: string
                 padding="md"
                 title={
                     <Anchor href="/">
-                        <MantineLogo size={40} />
+                        <ECondoLogo size={40} />
                     </Anchor>
                 }
                 hiddenFrom="sm"
                 zIndex={1000000}
             >
-                <ScrollArea h="calc(100vh - 80px" mx="-md">
+                <ScrollArea h={`calc(100vh - ${rem(600)})`} mx="-md">
                 {/* <Divider my="sm" /> */}
 
                 {/* <a href="#" className={classes.link}>
@@ -79,11 +79,18 @@ export function UserNavbar({ username, firstName, lastName }: { username: string
 
                 <Divider my="sm" />
 
-                <Group justify="center" grow pb="xl" px="md">
-                    <Button variant="default" component="a" href="/login">Вход</Button>
-                    <Button component="a" href="/register">Регистрирай се</Button>
-                </Group>
+                <a href="/" className={classes.drawerlink}>
+                Начало
+                </a>
+                <a href="/profile" className={classes.drawerlink}>
+                Профил
+                </a>
                 </ScrollArea>
+                <Stack justify={'flex-end'} h={`calc(100vh - ${rem(300)})`} mx={'-md'}>
+                  <Group justify={'center'} grow pb={'xl'} px={'md'}>
+                    <Button component='a' href='/logout' variant='filled' color={'red'}>Изход</Button>
+                  </Group>
+                </Stack>
             </Drawer>
         </Box>
     )

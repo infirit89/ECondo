@@ -8,7 +8,7 @@ import { UserNavbar } from "../navbar/userNavbar";;
 import { BriefProfileResponse } from "@/types/profileData";
 import { usePathname } from "next/navigation";
 
-const dashboardSeperatePaths = [ '/condos', '/profile' ];
+const dashboardSeperatePaths = [ '/condos', '/profile', '/condos/buildings' ];
 
 export default function App({isAuthenticated, profileData, children} : {isAuthenticated: boolean, profileData?: BriefProfileResponse, children: ReactNode}) {
     const pathname = usePathname();
