@@ -8,36 +8,15 @@ import { useForm } from "react-hook-form";
 import { isValidationError } from "@/types/apiResponses";
 import { login } from "@/actions/auth";
 import { redirect } from "next/navigation";
+import formReducer, { initialFormState } from "@/lib/formState";
 
 interface LoginFormFields {
     email: string;
     password: string;
 }
 
-type LoginState = 'idle' | 'loading' | 'error' | 'success';
-
-type LoginAction = 
-    | { type: 'START_LOGIN' }
-    | { type: 'LOGIN_SUCESS' }
-    | { type: 'LOGIN_ERROR' };
-
-const initialLoginState: LoginState = 'idle';
-
-function loginReducer(state: LoginState, action: LoginAction): LoginState {
-    switch(action.type) {
-        case 'START_LOGIN':
-            return 'loading';
-        case 'LOGIN_SUCESS':
-            return 'success';
-        case 'LOGIN_ERROR':
-            return 'error';
-        default:
-            return state;
-    }
-}
-
 export default function LoginForm() {
-    const [loginState, dispatch] = useReducer(loginReducer, initialLoginState);
+    const [loginState, dispatch] = useReducer(formReducer, initialFormState);
  
     useEffect(() => {
         if(loginState === 'success') 
@@ -52,17 +31,17 @@ export default function LoginForm() {
     });
     
     const onSubmit = async(data: LoginFormFields) => {
-        dispatch({ type: 'START_LOGIN' });
+        dispatch({ type: 'SUBMIT' });
         const res = await login(data);
         if(!res.ok) {
             if(isValidationError(res.error)) {
                 form.setValue('password', '');
-                dispatch({type: 'LOGIN_ERROR'});
+                dispatch({type: 'ERROR'});
                 return;
             }
         }
 
-        dispatch({type: 'LOGIN_SUCESS'});
+        dispatch({type: 'SUCCESS'});
     }
 
     const isLoading = loginState === 'loading';

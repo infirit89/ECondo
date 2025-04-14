@@ -1,0 +1,11 @@
+.buttonContainer {
+    
+    position: absolute;
+    right: 17%;
+}
+
+.cardContainer {
+    @media (max-width: $mantine-breakpoint-sm) {
+        justify-content: center !important;
+    }
+}

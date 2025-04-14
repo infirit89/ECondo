@@ -11,34 +11,13 @@ import { register } from '@/actions/auth';
 import { isValidationError } from '@/types/apiResponses';
 import { redirect } from 'next/navigation';
 import { confirmAccountEvent } from '@/types/auth';
+import formReducer, { initialFormState } from '@/lib/formState';
 
 interface RegisterFormFields {
     username: string;
     email: string;
     password: string;
     confirmPassword: string;
-}
-
-type RegisterState = 'idle' | 'loading' | 'error' | 'success';
-
-type RegisterAction =
-    | { type: 'START_REGISTER' }
-    | { type: 'REGISTER_SUCCESS' }
-    | { type: 'REGISTER_ERROR' };
-
-const initialRegisterState: RegisterState = 'idle';
-
-function registerReducer(state: RegisterState, action: RegisterAction): RegisterState {
-    switch (action.type) {
-        case 'START_REGISTER':
-            return 'loading';
-        case 'REGISTER_SUCCESS':
-            return 'success';
-        case 'REGISTER_ERROR':
-            return 'error';
-        default:
-            return state;
-    }
 }
 
 const RegisterSchema: ZodSchema<RegisterFormFields> = z
@@ -56,7 +35,7 @@ const RegisterSchema: ZodSchema<RegisterFormFields> = z
     });
 
 export default function RegisterForm() {
-    const [registerState, dispatch] = useReducer(registerReducer, initialRegisterState);
+    const [registerState, dispatch] = useReducer(formReducer, initialFormState);
 
     const form = useForm<RegisterFormFields>({
         defaultValues: {
@@ -75,7 +54,7 @@ export default function RegisterForm() {
     }, [registerState]);
 
     const onSubmit = async (data: RegisterFormFields) => {
-        dispatch({ type: 'START_REGISTER' });
+        dispatch({ type: 'SUBMIT' });
         data.username = data.email;
         const registerResult = await register({
             email: data.email,
@@ -89,14 +68,14 @@ export default function RegisterForm() {
                     message: `Имейлът ${data.email} вече съществува`,
                 },
             );
-            dispatch({ type: 'REGISTER_ERROR' });
+            dispatch({ type: 'ERROR' });
             return;
         }
 
-        dispatch({ type: 'REGISTER_SUCCESS' });
+        dispatch({ type: 'SUCCESS' });
     }
 
-    const isLoading = initialRegisterState === 'loading';
+    const isLoading = registerState === 'loading';
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)}>

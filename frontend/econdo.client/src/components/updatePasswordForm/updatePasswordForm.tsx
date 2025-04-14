@@ -8,6 +8,7 @@ import { useReducer } from "react";
 import { useForm } from "react-hook-form";
 import { z, ZodSchema } from "zod";
 import { isValidationError } from "@/types/apiResponses";
+import formReducer, { initialFormState } from "@/lib/formState";
 
 interface PasswordFormFields {
     currentPassword: string;
@@ -29,31 +30,9 @@ const UpdatePasswordSchema : ZodSchema<PasswordFormFields> = z
         path: ["confirmPassword"], // path of error
     });
 
-type UpdatePasswordState = 'idle' | 'loading' | 'error' | 'success';
-
-type UpdatePasswordAction = 
-    | { type: 'START_UPDATE' }
-    | { type: 'UPDATE_SUCESS' }
-    | { type: 'UPDATE_ERROR' };
-
-const initialPasswordFormState: UpdatePasswordState = 'idle';
-
-function passwordUpdateReducer(state: UpdatePasswordState, action: UpdatePasswordAction): UpdatePasswordState {
-    switch(action.type) {
-        case 'START_UPDATE':
-            return 'loading';
-        case 'UPDATE_SUCESS':
-            return 'success';
-        case 'UPDATE_ERROR':
-            return 'error';
-        default:
-            return state;
-    }
-}
-
 export default function UpdatePasswordForm({ onSuccess } : {onSuccess?: () => void}) {
 
-    const [passwordFormState, dispatch] = useReducer(passwordUpdateReducer, initialPasswordFormState);
+    const [passwordFormState, dispatch] = useReducer(formReducer, initialFormState);
      
     const form = useForm<PasswordFormFields>({
         defaultValues: {
@@ -65,7 +44,7 @@ export default function UpdatePasswordForm({ onSuccess } : {onSuccess?: () => vo
     });
 
     const onSubmit = async(data: PasswordFormFields) => {
-        dispatch({ type: 'START_UPDATE' });
+        dispatch({ type: 'SUBMIT' });
 
         const res = await updatePassword(data.currentPassword, data.newPassword);
 
@@ -79,7 +58,7 @@ export default function UpdatePasswordForm({ onSuccess } : {onSuccess?: () => vo
                 });
             }
 
-            dispatch({ type: 'UPDATE_ERROR' });
+            dispatch({ type: 'ERROR' });
             return;
         }
 
@@ -87,7 +66,7 @@ export default function UpdatePasswordForm({ onSuccess } : {onSuccess?: () => vo
             onSuccess();
 
         form.reset();
-        dispatch({ type: 'UPDATE_SUCESS' });
+        dispatch({ type: 'SUCCESS' });
     }
     
     const isLoading = passwordFormState === 'loading';

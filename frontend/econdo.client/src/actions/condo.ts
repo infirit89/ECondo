@@ -43,3 +43,37 @@ export async function isUserInBuilding(buildingId: string): Promise<Result> {
 
     return resultFail(new Error('Unexpected code flow'));
 }
+
+export interface RegisterBuilding {
+    buildingName: string,
+    provinceName: string,
+    municipality: string,
+    settlementPlace: string,
+    neighborhood: string,
+    postalCode: string,
+    street: string,
+    streetNumber: string,
+    buildingNumber: string,
+    entranceNumber: string,
+}
+
+export async function registerBuildingEntrance(building: RegisterBuilding): Promise<Result> {
+    try {
+        await authInstance.post('/api/building/registerBuildingEntrance', building);
+        return resultOk();
+    } catch(error) {
+        if(isAxiosError<ValidationError, Record<string, unknown>>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    return resultFail(new Error('Unexpected code flow'));
+}
+
+export interface ProvinceNameResult {
+    provinces: string[],
+}
+
+export async function getProvinces(): Promise<ProvinceNameResult> {
+    return (await authInstance
+        .get<ProvinceNameResult>('/api/province/getProvinces')).data;
+}

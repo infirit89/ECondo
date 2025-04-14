@@ -10,84 +10,83 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ECondo.Api.Controllers
+namespace ECondo.Api.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class ProfileController(ISender sender) : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ProfileController(ISender sender) : ControllerBase
+    [Authorize]
+    [HttpPost(nameof(Create))]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<Results<Ok, ValidationProblem, UnauthorizedHttpResult>>
+        Create([FromBody] CreateProfileRequest request)
     {
-        [Authorize]
-        [HttpPost(nameof(Create))]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<Results<Ok, ValidationProblem, UnauthorizedHttpResult>>
-            Create([FromBody] CreateProfileRequest request)
+        CreateProfileCommand createProfileCommand =
+            new(User.GetEmail() ?? "", request.FirstName, request.MiddleName, request.LastName, request.Phone);
+
+        var result = await sender.Send(createProfileCommand);
+
+        return result switch
         {
-            CreateProfileCommand createProfileCommand =
-                new(User.GetEmail() ?? "", request.FirstName, request.MiddleName, request.LastName, request.Phone);
+            Result<EmptySuccess, Error>.Success => TypedResults.Ok(),
+            Result<EmptySuccess, Error>.Error e => e.Data.ToValidationProblem(),
+            _ => throw new ArgumentOutOfRangeException(nameof(result))
+        };
+    }
 
-            var result = await sender.Send(createProfileCommand);
+    [Authorize]
+    [HttpGet(nameof(GetBriefProfile))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BriefProfileResult))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<Results<JsonHttpResult<BriefProfileResult>, ValidationProblem, UnauthorizedHttpResult>>
+        GetBriefProfile()
+    {
+        var result = await sender.Send(new GetBriefProfileQuery());
 
-            return result switch
-            {
-                Result<EmptySuccess, Error>.Success => TypedResults.Ok(),
-                Result<EmptySuccess, Error>.Error e => e.Data.ToValidationProblem(),
-                _ => throw new ArgumentOutOfRangeException(nameof(result))
-            };
-        }
-
-        [Authorize]
-        [HttpGet(nameof(GetBriefProfile))]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BriefProfileResult))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<Results<JsonHttpResult<BriefProfileResult>, ValidationProblem, UnauthorizedHttpResult>>
-            GetBriefProfile()
+        return result switch
         {
-            var result = await sender.Send(new GetBriefProfileQuery());
+            Result<BriefProfileResult, Error>.Success s => TypedResults.Json(s.Data),
+            Result<BriefProfileResult, Error>.Error e => e.Data.ToValidationProblem(),
+            _ => throw new ArgumentOutOfRangeException(nameof(result))
+        };
+    }
 
-            return result switch
-            {
-                Result<BriefProfileResult, Error>.Success s => TypedResults.Json(s.Data),
-                Result<BriefProfileResult, Error>.Error e => e.Data.ToValidationProblem(),
-                _ => throw new ArgumentOutOfRangeException(nameof(result))
-            };
-        }
+    [Authorize]
+    [HttpPut(nameof(UpdateProfile))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<Results<Ok, ValidationProblem, UnauthorizedHttpResult>>
+        UpdateProfile([FromBody] UpdateProfileCommand request)
+    {
+        var result = await sender.Send(request);
 
-        [Authorize]
-        [HttpPut(nameof(UpdateProfile))]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<Results<Ok, ValidationProblem, UnauthorizedHttpResult>>
-            UpdateProfile([FromBody] UpdateProfileCommand request)
+        return result switch
         {
-            var result = await sender.Send(request);
+            Result<EmptySuccess, Error>.Success => TypedResults.Ok(),
+            Result<EmptySuccess, Error>.Error e => e.Data.ToValidationProblem(),
+            _ => throw new ArgumentOutOfRangeException(nameof(result))
+        };
+    }
 
-            return result switch
-            {
-                Result<EmptySuccess, Error>.Success => TypedResults.Ok(),
-                Result<EmptySuccess, Error>.Error e => e.Data.ToValidationProblem(),
-                _ => throw new ArgumentOutOfRangeException(nameof(result))
-            };
-        }
-
-        [Authorize]
-        [HttpGet(nameof(GetProfile))]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<Results<JsonHttpResult<ProfileResult>, ValidationProblem, UnauthorizedHttpResult>>
-            GetProfile()
+    [Authorize]
+    [HttpGet(nameof(GetProfile))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<Results<JsonHttpResult<ProfileResult>, ValidationProblem, UnauthorizedHttpResult>>
+        GetProfile()
+    {
+        var result = await sender.Send(new GetProfileQuery());
+        return result switch
         {
-            var result = await sender.Send(new GetProfileQuery());
-            return result switch
-            {
-                Result<ProfileResult, Error>.Success s => TypedResults.Json(s.Data),
-                Result<ProfileResult, Error>.Error e => e.Data.ToValidationProblem(),
-                _ => throw new ArgumentOutOfRangeException(nameof(result))
-            };
-        }
+            Result<ProfileResult, Error>.Success s => TypedResults.Json(s.Data),
+            Result<ProfileResult, Error>.Error e => e.Data.ToValidationProblem(),
+            _ => throw new ArgumentOutOfRangeException(nameof(result))
+        };
     }
 }

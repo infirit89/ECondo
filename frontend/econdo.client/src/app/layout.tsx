@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-// import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import '@mantine/core/styles.css';
@@ -8,16 +7,6 @@ import App from "@/components/app/app";
 import { isAuthenticated } from "@/actions/auth";
 import { getBriefProfile } from "@/actions/profile";
 import { BriefProfileResponse } from "@/types/profileData";
-
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
 
 export const metadata: Metadata = {
   title: "ECondo",
@@ -29,7 +18,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let openProfileCreationModal = false;
   const authenticated = await isAuthenticated();
   let profileData: BriefProfileResponse | undefined = undefined;
   if(authenticated) {
@@ -37,7 +25,7 @@ export default async function RootLayout({
           profileData = await getBriefProfile();
       }
       catch(error) {
-          openProfileCreationModal = true;
+          console.error(error);
       }
   }
 

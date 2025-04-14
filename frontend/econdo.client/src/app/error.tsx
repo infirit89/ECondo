@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { Button, Container, Group, Text, Title } from '@mantine/core';
-import classes from './error.module.css';
+import classes from './globalerror.module.css';
 
 export default function ErrorPage({
     error,
@@ -19,14 +19,15 @@ export default function ErrorPage({
         <div className={classes.root}>
             <Container>
             <div className={classes.label}>500</div>
-            <Title className={classes.title}>Something bad just happened...</Title>
+            <Title className={classes.title}>Опа, случи се грешка...</Title>
             <Text size="lg" ta="center" className={classes.description}>
-                Our servers could not handle your request. Don&apos;t worry, our development team was
-                already notified. Try refreshing the page.
+                Нашите сървъри не можаха да обработят заявката ви.
+                Не се притеснявайте, нашият екип e уведомен.
+                Опитайте да обновите страницата.
             </Text>
             <Group justify="center">
                 <Button variant="white" size="md" onClick={() => reset()}>
-                Refresh the page
+                Обнови страницата
                 </Button>
             </Group>
             </Container>
