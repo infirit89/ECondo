@@ -31,6 +31,8 @@ export default async function RootLayout({
       const profileRes = await getBriefProfile();
       if(profileRes.ok)
         profileData = profileRes.value;
+      else
+        console.error('aaaaaaa', profileRes.error);
   }
 
   return (

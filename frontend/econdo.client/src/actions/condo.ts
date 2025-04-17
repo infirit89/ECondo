@@ -1,9 +1,12 @@
 'use server';
 
-import authInstance from "@/lib/axiosInstance";
-import { ValidationError, ApiError } from "@/types/apiResponses";
+import authInstance, { cacheableAuthInstance, normalInstance, updateCacheableAuthInstanceInterceptor } from "@/lib/axiosInstance";
+import { ApiError } from "@/types/apiResponses";
 import { Result, resultFail, resultOk } from "@/types/result";
 import { isAxiosError } from "axios";
+import { unstable_cache } from "next/cache";
+import { cookies } from "next/headers";
+import { cache } from "react";
 
 export interface BuildingResult {
     id: string,
@@ -19,8 +22,7 @@ export interface BuildingResult {
     entranceNumber: string,
 }
 
-export async function getBuildingsForUser(): Promise<Result<BuildingResult[]>> {
-
+export const getBuildingsForUser = cache(async (): Promise<Result<BuildingResult[]>> => {
     try {
         const buildings = await authInstance.get<BuildingResult[]>('/api/building/getBuildingsForUser');
         return resultOk(buildings.data);
@@ -31,9 +33,9 @@ export async function getBuildingsForUser(): Promise<Result<BuildingResult[]>> {
     }
 
     throw new Error('Unexpected code flow');
-}
+});
 
-export async function isUserInBuilding(buildingId: string): Promise<Result> {
+export const isUserInBuilding = cache(async (buildingId: string): Promise<Result> => {
     try {
         await authInstance.get(`/api/building/isInBuilding?buildingId=${buildingId}`);
         return resultOk();
@@ -44,7 +46,7 @@ export async function isUserInBuilding(buildingId: string): Promise<Result> {
     }
 
     throw new Error('Unexpected code flow');
-}
+});
 
 export interface RegisterBuilding {
     buildingName: string,
@@ -75,7 +77,7 @@ export interface ProvinceNameResult {
     provinces: string[],
 }
 
-export async function getProvinces(): Promise<ProvinceNameResult> {
-    return (await authInstance
+export const getProvinces = unstable_cache(async (): Promise<ProvinceNameResult> => {
+    return  (await normalInstance
         .get<ProvinceNameResult>('/api/province/getProvinces')).data;
-}
+});

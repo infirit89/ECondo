@@ -3,8 +3,15 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { generateAccessToken, logout, setAccessTokenCookie } from "./actions/auth";
 import { jwtDecode } from "jwt-decode";
+import { updateCacheableAuthInstanceInterceptor } from "./lib/axiosInstance";
 
-const protectedRoutes = ['/condos', '/logout', '/profile'];
+const protectedRoutes = [
+    '/condos/buildings', 
+    '/condos/properties', 
+    '/logout', 
+    '/profile'
+];
+
 const publicRoutes = ['/login', '/register', '/'];
 
 export default async function middleware(req: NextRequest) {
@@ -31,6 +38,8 @@ export default async function middleware(req: NextRequest) {
             await setAccessTokenCookie(res.value!.accessToken, 
                 res.value!.expiresIn);
             accessToken = res.value!.accessToken;
+
+            // updateCacheableAuthInstanceInterceptor(await cookies());
         } else {
             cookieStore.delete(refreshTokenCookieKey);
             cookieStore.delete(accessTokenCookieKey);
@@ -54,7 +63,7 @@ export default async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL('/login', req.nextUrl));
 
     if(publicRoutes.includes(path) && accessToken && !path.startsWith('/condos')) {
-        return NextResponse.redirect(new URL('/condos', req.nextUrl));
+        return NextResponse.redirect(new URL('/condos/properties', req.nextUrl));
     }
 
     return NextResponse.next();

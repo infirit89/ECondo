@@ -18,6 +18,7 @@ public static class MigrationsConfiguration
         await applicationBuilder.SeedUsers();
         await applicationBuilder.SeedProvinces();
         await applicationBuilder.SeedBuildings();
+        await applicationBuilder.SeedEntrances();
 
         return applicationBuilder;
     }

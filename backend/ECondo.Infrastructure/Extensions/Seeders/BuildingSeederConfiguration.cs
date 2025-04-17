@@ -9,10 +9,8 @@ using Microsoft.Extensions.Logging;
 
 namespace ECondo.Infrastructure.Extensions.Seeders;
 
-
-internal class BuildingSeeder
-{
-}
+// NOTE: here for in order for ILogger to function properly
+internal class BuildingSeeder;
 
 internal static class BuildingSeederConfiguration
 {

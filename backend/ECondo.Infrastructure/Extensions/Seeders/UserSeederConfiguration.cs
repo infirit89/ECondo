@@ -1,15 +1,15 @@
-﻿using ECondo.Domain.Shared;
-using MediatR;
+﻿using ECondo.Application.Repositories;
+using ECondo.Domain.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ECondo.Infrastructure.Shared;
+using Microsoft.AspNetCore.Identity;
 
 namespace ECondo.Infrastructure.Extensions.Seeders;
 
-internal class UserSeeder
-{
-}
+// NOTE: here for in order for ILogger to function properly
+internal class UserSeeder;
 
 internal static class UserSeederConfiguration
 {
@@ -18,36 +18,53 @@ internal static class UserSeederConfiguration
         await using var scope = appBuilder.ApplicationServices.CreateAsyncScope();
         var services = scope.ServiceProvider;
 
-        var sender = services.GetRequiredService<ISender>();
-        var logger = services.GetRequiredService<ILogger<UserSeeder>>();
+        var userManager = services
+            .GetRequiredService<UserManager<User>>();
+        var logger = services
+            .GetRequiredService<ILogger<UserSeeder>>();
 
-        void PrintIdentityErrors(Error error)
+        var dbContext = services
+            .GetRequiredService<IApplicationDbContext>();
+
+        void PrintIdentityErrors(IEnumerable<IdentityError>  errors)
         {
-            if (error is ValidationError validationError)
+            foreach (var error in errors)
+                logger.LogError($"Code: '{error.Code}'; Description: '{error.Description}'");
+        }
+
+        using (logger.BeginScope("User creation"))
+        {
+            foreach (var userData in UserSeedData.Users)
             {
-                foreach (var err in validationError.Errors)
-                    logger.LogError(err.ToString());
-                return;
+                logger.LogInformation($"Creating User '{userData.User.UserName}'");
+                var userRes = await userManager
+                    .CreateAsync(userData.User, userData.Password);
+
+                if (!userRes.Succeeded)
+                {
+                    PrintIdentityErrors(userRes.Errors);
+                    continue;
+                }
+
+                logger.LogInformation("User successfully created");
             }
 
-            logger.LogError(error.ToString());
+            logger.LogInformation("Users created");
         }
 
 
-        foreach (var userData in UserSeedData.Users)
+        using (logger.BeginScope("Profile creation"))
         {
-            var userRes = await sender.Send(userData);
-            
-            if (!userRes.IsOk())
-                PrintIdentityErrors(userRes.ToError().Data!);
-        }
-
-        foreach (var profileData in UserSeedData.Profiles)
-        {
-            var userProfileRes = await sender.Send(profileData);
-
-            if (!userProfileRes.IsOk())
-                logger.LogError(userProfileRes.ToError().Data!.Description);
+            try
+            {
+                await dbContext.UserDetails.AddRangeAsync(UserSeedData.Profiles);
+                await dbContext.SaveChangesAsync();
+                logger.LogInformation("Profiles created successfully");
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString());
+            }
         }
 
         return appBuilder;

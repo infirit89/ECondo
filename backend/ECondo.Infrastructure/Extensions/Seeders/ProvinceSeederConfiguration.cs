@@ -8,7 +8,8 @@ using Microsoft.Extensions.Logging;
 
 namespace ECondo.Infrastructure.Extensions.Seeders;
 
-internal class ProvinceSeeder { }
+// NOTE: here for in order for ILogger to function properly
+internal class ProvinceSeeder;
 internal static class ProvinceSeederConfiguration
 {
     public static async Task<IApplicationBuilder> SeedProvinces
@@ -20,28 +21,35 @@ internal static class ProvinceSeederConfiguration
         var unitOfWork = services.GetRequiredService<IApplicationDbContext>();
         var logger = services.GetRequiredService<ILogger<ProvinceSeeder>>();
 
-        try
+        using (logger.BeginScope("Province creation"))
         {
-            foreach (var provinceName in ProvinceSeedData.Provinces)
+            try
             {
-                var province = await unitOfWork
-                    .Provinces
-                    .FirstOrDefaultAsync(x => 
-                        x.Name == provinceName);
-                if (province is not null)
-                    continue;
-
-                await unitOfWork.Provinces.AddAsync(new Province
+                foreach (var provinceName in ProvinceSeedData.Provinces)
                 {
-                    Name = provinceName,
-                });
+                    logger.LogInformation($"Creating province {provinceName}");
+                    var province = await unitOfWork
+                        .Provinces
+                        .FirstOrDefaultAsync(x =>
+                            x.Name == provinceName);
+                    if (province is not null)
+                        continue;
+
+                    await unitOfWork.Provinces.AddAsync(new Province
+                    {
+                        Name = provinceName,
+                    });
+                }
+
+                logger.LogInformation("Updating Database");
+                await unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                logger.LogCritical(e.Message);
             }
 
-            await unitOfWork.SaveChangesAsync();
-        }
-        catch (Exception e)
-        {
-            logger.LogCritical(e.Message);
+            logger.LogInformation("Province creation completed");
         }
 
         return appBuilder;
