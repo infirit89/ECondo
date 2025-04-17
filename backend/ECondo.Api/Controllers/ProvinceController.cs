@@ -1,8 +1,6 @@
 ﻿using ECondo.Api.Extensions;
-using ECondo.Application.Queries.Province;
-using ECondo.Domain.Shared;
+using ECondo.Application.Queries.Provinces.GetAll;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECondo.Api.Controllers;
@@ -15,19 +13,10 @@ public class ProvinceController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest,
         Type = typeof(HttpValidationProblemDetails))]
-    public async Task<Results<JsonHttpResult<ProvinceNameResult>, ValidationProblem>>
-        GetProvinces()
+    public async Task<IResult> GetProvinces()
     {
         var result = await sender.Send(new GetProvincesQuery());
-        return result switch
-        {
-            Result<ProvinceNameResult, Error>.Success s =>
-                TypedResults.Json(s.Data),
 
-            Result<ProvinceNameResult, Error>.Error e =>
-                e.Data.ToValidationProblem(),
-
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+        return result.Match(data => TypedResults.Json(data), CustomResults.Problem);
     }
 }

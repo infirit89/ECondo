@@ -5,10 +5,22 @@ using ECondo.Domain.Users;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using ECondo.Application.Repositories;
 
 namespace ECondo.Infrastructure.Contexts;
 
-internal class ECondoDbContext(DbContextOptions<ECondoDbContext> options) : IdentityDbContext<User, Role, Guid, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>(options)
+internal class ECondoDbContext(
+    DbContextOptions<ECondoDbContext> options) 
+    : IdentityDbContext<
+        User,
+        Role,
+        Guid,
+        UserClaim,
+        UserRole,
+        UserLogin,
+        RoleClaim,
+        UserToken>(options),
+    IApplicationDbContext
 {
     // --------------------------- User data ---------------------------
     public override DbSet<User> Users { get; set; } = null!;

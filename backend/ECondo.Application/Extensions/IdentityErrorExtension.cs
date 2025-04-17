@@ -5,12 +5,12 @@ namespace ECondo.Application.Extensions;
 
 internal static class IdentityErrorExtension
 {
-    public static Error[] ToErrorArray(this IEnumerable<IdentityError> errors)
+    public static ValidationError ToValidationError(this IEnumerable<IdentityError> errors)
     {
-        return errors.Select(identityError => new Error
-        {
-            Code = identityError.Code,
-            Description = identityError.Description,
-        }).ToArray();
+        return new ValidationError(
+            errors
+                .Select(identityError => 
+                    Error.Problem(identityError.Code, identityError.Description))
+                .ToArray());
     }
 }

@@ -1,13 +1,13 @@
 ﻿using ECondo.Api.Data.Profile;
 using ECondo.Api.Extensions;
-using ECondo.Application.Commands.Profile;
+using ECondo.Application.Commands.Profiles.Create;
+using ECondo.Application.Commands.Profiles.Update;
 using ECondo.Application.Data;
-using ECondo.Application.Queries.Profile;
-using ECondo.Domain.Shared;
+using ECondo.Application.Queries.Profiles.GetBrief;
+using ECondo.Application.Queries.Profiles.GetForUser;
 using ECondo.Infrastructure.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECondo.Api.Controllers;
@@ -21,7 +21,7 @@ public class ProfileController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<Results<Ok, ValidationProblem, UnauthorizedHttpResult>>
+    public async Task<IResult>
         Create([FromBody] CreateProfileRequest request)
     {
         CreateProfileCommand createProfileCommand =
@@ -29,12 +29,7 @@ public class ProfileController(ISender sender) : ControllerBase
 
         var result = await sender.Send(createProfileCommand);
 
-        return result switch
-        {
-            Result<EmptySuccess, Error>.Success => TypedResults.Ok(),
-            Result<EmptySuccess, Error>.Error e => e.Data.ToValidationProblem(),
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
     }
 
     [Authorize]
@@ -42,17 +37,12 @@ public class ProfileController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BriefProfileResult))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<Results<JsonHttpResult<BriefProfileResult>, ValidationProblem, UnauthorizedHttpResult>>
+    public async Task<IResult>
         GetBriefProfile()
     {
         var result = await sender.Send(new GetBriefProfileQuery());
 
-        return result switch
-        {
-            Result<BriefProfileResult, Error>.Success s => TypedResults.Json(s.Data),
-            Result<BriefProfileResult, Error>.Error e => e.Data.ToValidationProblem(),
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+        return result.Match(data => TypedResults.Json(data), CustomResults.Problem);
     }
 
     [Authorize]
@@ -60,17 +50,12 @@ public class ProfileController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<Results<Ok, ValidationProblem, UnauthorizedHttpResult>>
+    public async Task<IResult>
         UpdateProfile([FromBody] UpdateProfileCommand request)
     {
         var result = await sender.Send(request);
 
-        return result switch
-        {
-            Result<EmptySuccess, Error>.Success => TypedResults.Ok(),
-            Result<EmptySuccess, Error>.Error e => e.Data.ToValidationProblem(),
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
     }
 
     [Authorize]
@@ -78,15 +63,11 @@ public class ProfileController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<Results<JsonHttpResult<ProfileResult>, ValidationProblem, UnauthorizedHttpResult>>
+    public async Task<IResult>
         GetProfile()
     {
         var result = await sender.Send(new GetProfileQuery());
-        return result switch
-        {
-            Result<ProfileResult, Error>.Success s => TypedResults.Json(s.Data),
-            Result<ProfileResult, Error>.Error e => e.Data.ToValidationProblem(),
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+
+        return result.Match(data => TypedResults.Json(data), CustomResults.Problem);
     }
 }

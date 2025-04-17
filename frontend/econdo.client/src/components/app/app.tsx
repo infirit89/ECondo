@@ -30,7 +30,11 @@ export default function App({isAuthenticated, profileData, children} : {isAuthen
                 lastName={profileData?.lastName}/> 
                 : <Navbar/> } 
             </AppShellHeader>
-            {children}
+            { isAuthenticated ? 
+                profileData ?
+                children :
+                <></>
+                : children}
             <AppShellFooter>
                 
             </AppShellFooter>

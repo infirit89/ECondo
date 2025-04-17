@@ -1,5 +1,5 @@
-﻿using ECondo.Application.Commands.Identity;
-using ECondo.Application.Commands.Profile;
+﻿using ECondo.Application.Commands.Identity.Register;
+using ECondo.Application.Commands.Profiles.Create;
 
 namespace ECondo.Infrastructure.Shared;
 

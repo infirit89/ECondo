@@ -1,4 +1,4 @@
-using ECondo.Application.Commands.Identity;
+using ECondo.Application.Commands.Identity.InvalidateRefreshToken;
 using ECondo.Application.Services;
 using ECondo.Domain.Shared;
 using ECondo.Domain.Users;

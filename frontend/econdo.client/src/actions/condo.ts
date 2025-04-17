@@ -1,5 +1,5 @@
 import authInstance from "@/lib/axiosInstance";
-import { ValidationError } from "@/types/apiResponses";
+import { ValidationError, ApiError } from "@/types/apiResponses";
 import { Result, resultFail, resultOk } from "@/types/result";
 import { isAxiosError } from "axios";
 
@@ -24,11 +24,11 @@ export async function getBuildingsForUser(): Promise<Result<BuildingResult[]>> {
         return resultOk(buildings.data);
     }
     catch(error) {
-        if(isAxiosError<ValidationError, Record<string, unknown>>(error))
+        if(isAxiosError<ApiError>(error))
             return resultFail(error.response?.data!);
     }
 
-    return resultFail(new Error('Unexpected code flow'));
+    throw new Error('Unexpected code flow');
 }
 
 export async function isUserInBuilding(buildingId: string): Promise<Result> {
@@ -37,11 +37,11 @@ export async function isUserInBuilding(buildingId: string): Promise<Result> {
         return resultOk();
     }
     catch(error) {
-        if(isAxiosError<ValidationError, Record<string, unknown>>(error))
+        if(isAxiosError<ApiError>(error))
             return resultFail(error.response?.data!);
     }
 
-    return resultFail(new Error('Unexpected code flow'));
+    throw new Error('Unexpected code flow');
 }
 
 export interface RegisterBuilding {
@@ -62,11 +62,11 @@ export async function registerBuildingEntrance(building: RegisterBuilding): Prom
         await authInstance.post('/api/building/registerBuildingEntrance', building);
         return resultOk();
     } catch(error) {
-        if(isAxiosError<ValidationError, Record<string, unknown>>(error))
+        if(isAxiosError<ApiError>(error))
             return resultFail(error.response?.data!);
     }
 
-    return resultFail(new Error('Unexpected code flow'));
+    throw new Error('Unexpected code flow');
 }
 
 export interface ProvinceNameResult {

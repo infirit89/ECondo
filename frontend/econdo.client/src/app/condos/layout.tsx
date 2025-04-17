@@ -11,9 +11,8 @@ export default function CondoLayout({children}: {children: ReactNode}) {
 
     return (
         <AppShellMain>
-            <Center mt={'xl'}>
-                <Tabs>
-                    <TabsList>
+                <Tabs defaultValue={'/condos'} mt={'xl'}>
+                    <TabsList justify={'center'}>
                         {tabs.map((tab) => (
                             <Link href={tab.value} key={tab.value} passHref>
                                 <TabsTab value={tab.value}>{tab.label}</TabsTab>
@@ -21,7 +20,6 @@ export default function CondoLayout({children}: {children: ReactNode}) {
                         ))}
                     </TabsList>
                 </Tabs>
-            </Center>
             <Suspense fallback={<Loading/>}>
                 {children}
             </Suspense>

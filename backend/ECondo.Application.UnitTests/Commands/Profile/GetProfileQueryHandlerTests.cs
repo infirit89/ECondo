@@ -1,4 +1,3 @@
-using ECondo.Application.Queries.Profile;
 using ECondo.Application.Services;
 using ECondo.Application.Repositories;
 using ECondo.Application.Data;
@@ -8,6 +7,7 @@ using ECondo.Domain.Users;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using NSubstitute;
+using ECondo.Application.Queries.Profiles.GetForUser;
 
 namespace ECondo.Application.UnitTests.Queries.Profile
 {

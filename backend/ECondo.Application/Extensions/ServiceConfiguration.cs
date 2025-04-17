@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using ECondo.Application.Behaviours;
+using FluentValidation;
 
 namespace ECondo.Application.Extensions;
 
@@ -9,7 +11,13 @@ public static class ServiceConfiguration
     {
         Assembly currentAssembly = Assembly.GetExecutingAssembly();
         services.AddMediatR(configuration =>
-            configuration.RegisterServicesFromAssembly(currentAssembly));
+        {
+            configuration.RegisterServicesFromAssembly(currentAssembly);
+
+            configuration.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
+        });
+
+        services.AddValidatorsFromAssembly(currentAssembly, includeInternalTypes: true);
 
         return services;
     }

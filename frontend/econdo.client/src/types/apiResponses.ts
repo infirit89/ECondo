@@ -3,6 +3,15 @@ export interface ValidationError extends Error {
     errors: Record<string, string[]>;
 }
 
+export interface ApiError extends Error {
+    type: string;
+    title: string;
+    status: number;
+    detail: string;
+    traceId: string;
+    errors?: Record<string, string[]>;
+}
+
 export function isValidationError(error: any): error is ValidationError {
     if(error === null)
         return false;

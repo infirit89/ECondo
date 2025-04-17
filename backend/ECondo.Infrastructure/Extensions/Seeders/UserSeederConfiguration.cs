@@ -1,7 +1,6 @@
 ﻿using ECondo.Domain.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ECondo.Infrastructure.Shared;
@@ -22,10 +21,16 @@ internal static class UserSeederConfiguration
         var sender = services.GetRequiredService<ISender>();
         var logger = services.GetRequiredService<ILogger<UserSeeder>>();
 
-        void PrintIdentityErrors(IEnumerable<IdentityError> errors)
+        void PrintIdentityErrors(Error error)
         {
-            foreach (var error in errors)
-                logger.LogError(error.Description);
+            if (error is ValidationError validationError)
+            {
+                foreach (var err in validationError.Errors)
+                    logger.LogError(err.ToString());
+                return;
+            }
+
+            logger.LogError(error.ToString());
         }
 
 

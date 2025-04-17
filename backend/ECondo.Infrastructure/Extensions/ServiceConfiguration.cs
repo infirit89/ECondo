@@ -29,7 +29,6 @@ public static class ServiceConfiguration
         services.AddHttpContextAccessor();
 
         services.AddScoped<IAuthTokenService, AuthTokenService>();
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IEmailService, MailService>();
         services.AddScoped<IUserContext, UserContext>();
 

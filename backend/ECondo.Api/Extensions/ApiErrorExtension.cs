@@ -16,11 +16,8 @@ public static class ApiErrorExtension
         return TypedResults.ValidationProblem(errorDictionary);
     }
 
-    public static ValidationProblem ToValidationProblem(this Error[]? errors)
+    public static Dictionary<string, string[]> ToErrorDictionary(this Error[] errors)
     {
-        // We expect a single error code and description in the normal case.
-        // This could be golfed with GroupBy and ToDictionary, but perf! :P
-        Debug.Assert(errors is not null);
         var errorDictionary = new Dictionary<string, string[]>(1);
 
         foreach (var error in errors)
@@ -40,6 +37,16 @@ public static class ApiErrorExtension
 
             errorDictionary[error.Code] = newDescriptions;
         }
+
+        return errorDictionary;
+    }
+
+    public static ValidationProblem ToValidationProblem(this Error[]? errors)
+    {
+        // We expect a single error code and description in the normal case.
+        // This could be golfed with GroupBy and ToDictionary, but perf! :P
+        Debug.Assert(errors is not null);
+        var errorDictionary = errors.ToErrorDictionary();
 
         return TypedResults.ValidationProblem(errorDictionary);
     }

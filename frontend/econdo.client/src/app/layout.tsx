@@ -2,11 +2,17 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import '@mantine/core/styles.css';
-import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from "@mantine/core";
+import { 
+  ColorSchemeScript,
+  mantineHtmlProps, 
+  MantineProvider 
+} from "@mantine/core";
+
 import App from "@/components/app/app";
 import { isAuthenticated } from "@/actions/auth";
 import { getBriefProfile } from "@/actions/profile";
 import { BriefProfileResponse } from "@/types/profileData";
+import { checkHealth } from "@/actions/health";
 
 export const metadata: Metadata = {
   title: "ECondo",
@@ -18,15 +24,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isHealthy = await checkHealth();
   const authenticated = await isAuthenticated();
   let profileData: BriefProfileResponse | undefined = undefined;
   if(authenticated) {
-      try {
-          profileData = await getBriefProfile();
-      }
-      catch(error) {
-          console.error(error);
-      }
+      const profileRes = await getBriefProfile();
+      if(profileRes.ok)
+        profileData = profileRes.value;
   }
 
   return (
@@ -37,7 +41,9 @@ export default async function RootLayout({
       </head>
       <body>
         <MantineProvider>
-          <App isAuthenticated={authenticated} profileData={profileData}>
+          <App 
+          isAuthenticated={authenticated} 
+          profileData={profileData}>
             {children}
           </App>
         </MantineProvider>

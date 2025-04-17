@@ -1,6 +1,8 @@
-using ECondo.Application.Services;
+using ECondo.Application.Repositories;
+using ECondo.Domain.Provinces;
 using ECondo.Infrastructure.Shared;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -15,21 +17,24 @@ internal static class ProvinceSeederConfiguration
         await using var scope = appBuilder.ApplicationServices.CreateAsyncScope();
         var services = scope.ServiceProvider;
 
-        var unitOfWork = services.GetRequiredService<IUnitOfWork>();
+        var unitOfWork = services.GetRequiredService<IApplicationDbContext>();
         var logger = services.GetRequiredService<ILogger<ProvinceSeeder>>();
 
         try
         {
-            foreach (var province in ProvinceSeedData.Provinces)
+            foreach (var provinceName in ProvinceSeedData.Provinces)
             {
-                var dbProvince = (await unitOfWork.Provinces.GetAsync(x => x.Name == province)).FirstOrDefault();
-                if (dbProvince is null)
+                var province = await unitOfWork
+                    .Provinces
+                    .FirstOrDefaultAsync(x => 
+                        x.Name == provinceName);
+                if (province is not null)
+                    continue;
+
+                await unitOfWork.Provinces.AddAsync(new Province
                 {
-                    await unitOfWork.Provinces.InsertAsync(new()
-                    {
-                        Name = province,
-                    });
-                }
+                    Name = provinceName,
+                });
             }
 
             await unitOfWork.SaveChangesAsync();

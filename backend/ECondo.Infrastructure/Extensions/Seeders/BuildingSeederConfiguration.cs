@@ -1,8 +1,9 @@
-using ECondo.Application.Services;
+using ECondo.Application.Repositories;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Provinces;
 using ECondo.Infrastructure.Shared;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -21,19 +22,27 @@ internal static class BuildingSeederConfiguration
         await using var scope = appBuilder.ApplicationServices.CreateAsyncScope();
         var services = scope.ServiceProvider;
 
-        var unitOfWork = services.GetRequiredService<IUnitOfWork>();
+        var unitOfWork = services.GetRequiredService<IApplicationDbContext>();
         var logger = services.GetRequiredService<ILogger<BuildingSeeder>>();
 
         try
         {
-            Building? building = await unitOfWork.Buildings.GetByIdAsync(BuildingSeedData.TestBuildingId);
+            Building? building = await unitOfWork
+                .Buildings
+                .FirstOrDefaultAsync(b => 
+                    b.Id == BuildingSeedData.TestBuildingId);
 
             if (building != null)
                 return appBuilder;
 
-            Province province = (await unitOfWork.Provinces.GetAsync(p => p.Name == BuildingSeedData.TestBuildingProvinceName)).First();
+            Province province = await unitOfWork
+                .Provinces
+                .AsNoTracking()
+                .FirstAsync(p => 
+                    p.Name == 
+                    BuildingSeedData.TestBuildingProvinceName);
 
-            building = new()
+            building = new Building
             {
                 Id = BuildingSeedData.TestBuildingId,
                 Name = BuildingSeedData.TestBuildingName,
@@ -47,7 +56,7 @@ internal static class BuildingSeederConfiguration
                 BuildingNumber = BuildingSeedData.TestBuildingBuildingNumber,
             };
 
-            await unitOfWork.Buildings.InsertAsync(building);
+            await unitOfWork.Buildings.AddAsync(building);
             await unitOfWork.SaveChangesAsync();
         }
         catch (Exception e)

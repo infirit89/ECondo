@@ -5,7 +5,7 @@ import { TextInput } from "@mantine/core";
 import { Box, LoadingOverlay, PasswordInput, Group, Checkbox, Anchor, Button, Text } from "@mantine/core";
 import { useEffect, useReducer } from "react";
 import { useForm } from "react-hook-form";
-import { isValidationError } from "@/types/apiResponses";
+import { UserErrorCode } from "@/types/apiErrors";
 import { login } from "@/actions/auth";
 import { redirect } from "next/navigation";
 import formReducer, { initialFormState } from "@/lib/formState";
@@ -34,7 +34,7 @@ export default function LoginForm() {
         dispatch({ type: 'SUBMIT' });
         const res = await login(data);
         if(!res.ok) {
-            if(isValidationError(res.error)) {
+            if(res.error.title === UserErrorCode.NotFound) {
                 form.setValue('password', '');
                 dispatch({type: 'ERROR'});
                 return;

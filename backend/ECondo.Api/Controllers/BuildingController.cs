@@ -1,11 +1,10 @@
 ﻿using ECondo.Api.Extensions;
-using ECondo.Application.Commands.Building;
+using ECondo.Application.Commands.Buildings.RegisterEntrance;
 using ECondo.Application.Data;
-using ECondo.Application.Queries.Building;
-using ECondo.Domain.Shared;
+using ECondo.Application.Queries.Buildings.GetForUser;
+using ECondo.Application.Queries.Buildings.IsUserIn;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECondo.Api.Controllers;
@@ -20,23 +19,13 @@ public class BuildingController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, 
         Type = typeof(HttpValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<
-            Results<Ok, ValidationProblem, UnauthorizedHttpResult>>
+    public async Task<IResult>
         RegisterBuildingEntrance(
             [FromBody] RegisterBuildingEntranceCommand request)
     {
         var result = await sender.Send(request);
 
-        return result switch
-        {
-            Result<EmptySuccess, Error>.Success =>
-                TypedResults.Ok(),
-
-            Result<EmptySuccess, Error>.Error e =>
-                e.Data.ToValidationProblem(),
-
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
     }
 
     [Authorize]
@@ -48,26 +37,13 @@ public class BuildingController(ISender sender) : ControllerBase
         StatusCodes.Status400BadRequest, 
         Type = typeof(HttpValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<
-            Results<
-                JsonHttpResult<BuildingResult[]>,
-                ValidationProblem,
-                UnauthorizedHttpResult>>
+    public async Task<IResult>
         GetBuildingsForUser()
     {
         var result = await sender
             .Send(new GetBuildingsForUserQuery());
 
-        return result switch
-        {
-            Result<BuildingResult[], Error>.Success s => 
-                TypedResults.Json(s.Data),
-
-            Result<BuildingResult[], Error>.Error e => 
-                e.Data.ToValidationProblem(),
-
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+        return result.Match(data => TypedResults.Json(data), CustomResults.Problem);
     }
 
     [Authorize]
@@ -78,19 +54,11 @@ public class BuildingController(ISender sender) : ControllerBase
         StatusCodes.Status400BadRequest,
         Type = typeof(HttpValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<Results<Ok, UnauthorizedHttpResult, ValidationProblem>>
+    public async Task<IResult>
         IsInBuilding([FromQuery] IsUserInBuildingQuery request)
     {
         var result = await sender.Send(request);
 
-        return result switch
-        {
-            Result<EmptySuccess, Error>.Success =>
-                TypedResults.Ok(),
-
-            Result<EmptySuccess, Error>.Error e =>
-                e.Data.ToValidationProblem(),
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
     }
 }

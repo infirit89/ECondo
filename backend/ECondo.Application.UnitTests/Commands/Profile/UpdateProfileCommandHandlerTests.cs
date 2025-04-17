@@ -1,4 +1,3 @@
-using ECondo.Application.Commands.Profile;
 using ECondo.Application.Repositories;
 using ECondo.Application.Services;
 using ECondo.Domain.Profiles;
@@ -10,6 +9,7 @@ using NSubstitute;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ECondo.Application.Commands.Profiles.Update;
 using Xunit;
 
 namespace ECondo.Application.UnitTests.Commands.Profile
