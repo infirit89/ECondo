@@ -9,18 +9,27 @@ import { UserErrorCode } from "@/types/apiErrors";
 import { login } from "@/actions/auth";
 import { redirect } from "next/navigation";
 import formReducer, { initialFormState } from "@/lib/formState";
+import { z, ZodSchema } from "zod";
+import { emailSchema } from "@/utils/validationSchemas";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface LoginFormFields {
     email: string;
     password: string;
 }
 
+const LoginSchema: ZodSchema<LoginFormFields> = z
+    .object({
+        email: emailSchema,
+        password: z.string().nonempty('Паролата е задължително поле'),
+    });
+
 export default function LoginForm() {
     const [loginState, dispatch] = useReducer(formReducer, initialFormState);
  
     useEffect(() => {
         if(loginState === 'success') 
-            redirect('/condos');
+            redirect('/condos/properties');
     }, [loginState]);
 
     const form = useForm<LoginFormFields>({
@@ -28,6 +37,7 @@ export default function LoginForm() {
             email: '',
             password: '',
         },
+        resolver: zodResolver(LoginSchema),
     });
     
     const onSubmit = async(data: LoginFormFields) => {

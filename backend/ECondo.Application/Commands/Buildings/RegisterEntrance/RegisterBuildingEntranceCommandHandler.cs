@@ -30,7 +30,6 @@ internal sealed class RegisterBuildingEntranceCommandHandler(
                 UserErrors.InvalidUser());
 
         var entrance = await dbContext.Entrances
-            .AsNoTracking()
             .FirstOrDefaultAsync(e =>
                 e.BuildingId == building.Id
                 && e.Number == request.EntranceNumber,
@@ -56,40 +55,33 @@ internal sealed class RegisterBuildingEntranceCommandHandler(
         return Result<EmptySuccess, Error>.Ok();
     }
 
-    private bool IsBuildingEqual(
-        Building building,
-        RegisterBuildingEntranceCommand request)
-        => building.Province.Name.ToLower().Trim() 
-            == request.ProvinceName.ToLower().Trim() &&
-           building.Municipality.ToLower().Trim() 
-            == request.Municipality.ToLower().Trim() &&
-           building.SettlementPlace.ToLower().Trim() 
-            == request.SettlementPlace.ToLower().Trim() &&
-           building.Neighborhood.ToLower().Trim() 
-            == request.Neighborhood.ToLower().Trim() &&
-           building.PostalCode.ToLower().Trim() 
-            == request.PostalCode.ToLower().Trim() &&
-           building.Street.ToLower().Trim() 
-            == request.Street.ToLower().Trim() &&
-           building.StreetNumber.ToLower().Trim() 
-            == request.StreetNumber.ToLower().Trim() &&
-           building.BuildingNumber.ToLower().Trim() 
-            == request.BuildingNumber.ToLower().Trim();
-
     internal async Task<Result<Building, Error>> 
         GetOrCreateBuilding(RegisterBuildingEntranceCommand request)
     {
         var building = await dbContext.Buildings
-            .AsNoTracking()
             .Include(b => b.Province)
-            .FirstOrDefaultAsync(b => 
-                IsBuildingEqual(b, request));
+            .FirstOrDefaultAsync(b =>
+                b.Province.Name.ToLower().Trim()
+                == request.ProvinceName.ToLower().Trim() &&
+                b.Municipality.ToLower().Trim()
+                == request.Municipality.ToLower().Trim() &&
+                b.SettlementPlace.ToLower().Trim()
+                == request.SettlementPlace.ToLower().Trim() &&
+                b.Neighborhood.ToLower().Trim()
+                == request.Neighborhood.ToLower().Trim() &&
+                b.PostalCode.ToLower().Trim()
+                == request.PostalCode.ToLower().Trim() &&
+                b.Street.ToLower().Trim()
+                == request.Street.ToLower().Trim() &&
+                b.StreetNumber.ToLower().Trim()
+                == request.StreetNumber.ToLower().Trim() &&
+                b.BuildingNumber.ToLower().Trim()
+                == request.BuildingNumber.ToLower().Trim());
 
         if (building is not null) 
             return Result<Building, Error>.Ok(building);
 
         var province = await dbContext.Provinces
-            .AsNoTracking()
             .FirstOrDefaultAsync(p => 
                 p.Name == request.ProvinceName);
 
@@ -101,7 +93,7 @@ internal sealed class RegisterBuildingEntranceCommandHandler(
         building = new Building
         {
             Name = request.BuildingName,
-            Province = province,
+            ProvinceId = province.Id,
             Municipality = request.Municipality,
             SettlementPlace = request.SettlementPlace,
             Neighborhood = request.Neighborhood,

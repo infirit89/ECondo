@@ -1,3 +1,5 @@
+'use server';
+
 import authInstance from "@/lib/axiosInstance";
 import { ValidationError, ApiError } from "@/types/apiResponses";
 import { Result, resultFail, resultOk } from "@/types/result";

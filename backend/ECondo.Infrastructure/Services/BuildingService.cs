@@ -11,6 +11,7 @@ internal sealed class BuildingService(
     public Task<BuildingResult[]> GetBuildingsForUser(Guid userId)
     {
         return context.Entrances
+            .AsNoTracking()
             .Include(e => e.Building)
             .ThenInclude(b => b.Province)
             .Where(e => e.ManagerId == userId)

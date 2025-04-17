@@ -2,26 +2,49 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Box, LoadingOverlay, Button, TextInput, Select, Grid, GridCol } from "@mantine/core";
-import { useReducer } from "react";
+import { 
+    Box,
+    LoadingOverlay,
+    Button,
+    TextInput,
+    Select,
+    Grid,
+    GridCol,
+    Text
+} from "@mantine/core";
+import { useEffect, useReducer } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z, ZodSchema } from "zod";
-import { ProvinceNameResult, RegisterBuilding } from '@/actions/condo';
+import { ProvinceNameResult, RegisterBuilding, registerBuildingEntrance } from '@/actions/condo';
 import formReducer, { initialFormState } from "@/lib/formState";
+import { redirect } from "next/navigation";
 
 
-const RegisterSchema: ZodSchema<RegisterBuilding> = z
+const RegisterBuildingSchema: ZodSchema<RegisterBuilding> = z
     .object({
-        buildingName: z.string(),
-        provinceName: z.string(),
-        municipality: z.string(),
-        settlementPlace: z.string(),
-        neighborhood: z.string(),
-        postalCode: z.string(),
-        street: z.string(),
-        streetNumber: z.string(),
-        buildingNumber: z.string(),
-        entranceNumber: z.string(),
+        buildingName: z.string()
+            .nonempty('Името на сградата е задължително поле'),
+        provinceName: z.string()
+            .nonempty('Областта е задължително поле'),
+        municipality: z.string()
+            .nonempty('Общината е задължително поле'),
+        settlementPlace: z.string()
+            .nonempty('Населеното място е задължително поле'),
+        neighborhood: z.string()
+            .nonempty('Кварталът е задължително поле'),
+        postalCode: z.string()
+            .nonempty('Пощенският код е задължително поле')
+            .min(4, 'Пощенският код не е разпознат')
+            .regex(/[\d\d\d\d]/, 'Пощенският код не е разпознат')
+            .max(4, 'Пощенският код не е разпознат'),
+        street: z.string()
+            .nonempty('Улицата е задължително поле'),
+        streetNumber: z.string()
+            .nonempty('Номерът е задължително поле'),
+        buildingNumber: z.string()
+            .nonempty('Блокът е задължително поле'),
+        entranceNumber: z.string()
+            .nonempty('Входът е задължително поле'),
     });
 
 export default function RegisterBuildingEntranceForm(
@@ -43,17 +66,23 @@ export default function RegisterBuildingEntranceForm(
             buildingNumber: '',
             entranceNumber: '',
         },
-        resolver: zodResolver(RegisterSchema),
+        resolver: zodResolver(RegisterBuildingSchema),
     });
 
-    // useEffect(() => {
-    //     if (registerState === 'success')
-    //         redirect(`/login?event=${confirmAccountEvent}`);
+    useEffect(() => {
+        if (registerState === 'success')
+            redirect('/condos/buildings');
 
-    // }, [registerState]);
+    }, [registerState]);
 
     const onSubmit = async (data: RegisterBuilding) => {
         dispatch({ type: 'SUBMIT' });
+
+        const createResult = await registerBuildingEntrance(data);
+        if(!createResult.ok) {
+            dispatch({ type: 'ERROR' });
+            return;
+        }
         // data.username = data.email;
         // const registerResult = await register({
         //     email: data.email,
@@ -75,6 +104,7 @@ export default function RegisterBuildingEntranceForm(
     }
 
     const isLoading = registerState === 'loading';
+    const hasError = registerState === 'error';
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -97,6 +127,7 @@ export default function RegisterBuildingEntranceForm(
                                     data={provinces.provinces}
                                     searchable
                                     withAsterisk
+                                    error={form.formState.errors.provinceName && form.formState.errors.provinceName.message}
                                 />
                             )}
                             control={form.control}
@@ -144,6 +175,7 @@ export default function RegisterBuildingEntranceForm(
                     </GridCol>
                 </Grid>
 
+                { hasError ? <Text c={'red'} pt={10} fw={500} size={'sm'}>Грешка при добавянето на сградата! Моля пробвайте отново!</Text> : <></> }
             </Box>
             <Button fullWidth mt="xl" type={'submit'} disabled={isLoading}>
                 Добави

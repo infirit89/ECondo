@@ -51,7 +51,7 @@ export default function CondoCard({
 
             {/* <Group justify="space-between" mt="md" mb="xs"> */}
             <Center mt={'md'} mb={'xs'}>
-                <Text fw={500}>{name}</Text>
+                <Text fw={500}>{name} (вх. {entranceNumber})</Text>
             </Center>
                 {/* <Badge color="pink">On Sale</Badge> */}
             {/* </Group> */}
