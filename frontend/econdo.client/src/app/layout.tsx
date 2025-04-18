@@ -8,11 +8,8 @@ import {
   MantineProvider 
 } from "@mantine/core";
 
-import App from "@/components/app/app";
-import { isAuthenticated } from "@/actions/auth";
-import { getBriefProfile } from "@/actions/profile";
-import { BriefProfileResponse } from "@/types/profileData";
-import { checkHealth } from "@/actions/health";
+import { Suspense } from "react";
+import HealthProvider from "./healthProvider";
 
 export const metadata: Metadata = {
   title: "ECondo",
@@ -24,17 +21,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const isHealthy = await checkHealth();
-  const authenticated = await isAuthenticated();
-  let profileData: BriefProfileResponse | undefined = undefined;
-  if(authenticated) {
-      const profileRes = await getBriefProfile();
-      if(profileRes.ok)
-        profileData = profileRes.value;
-      else
-        console.error('aaaaaaa', profileRes.error);
-  }
-
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
@@ -43,11 +29,11 @@ export default async function RootLayout({
       </head>
       <body>
         <MantineProvider>
-          <App 
-          isAuthenticated={authenticated} 
-          profileData={profileData}>
-            {children}
-          </App>
+          <Suspense>
+            <HealthProvider>
+                {children}
+            </HealthProvider>
+          </Suspense>
         </MantineProvider>
       </body>
     </html>

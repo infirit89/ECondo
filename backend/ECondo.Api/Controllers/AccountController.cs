@@ -2,7 +2,6 @@
 using ECondo.Api.Extensions;
 using ECondo.Application.Data;
 using Microsoft.AspNetCore.Mvc;
-using ECondo.Api.Data.Identity;
 using Microsoft.AspNetCore.Authorization;
 using ECondo.Application.Commands.Identity.ConfirmEmail;
 using ECondo.Application.Commands.Identity.ForgotPassword;
@@ -34,15 +33,9 @@ public class AccountController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
     public async Task<IResult>
-        Register([FromBody] RegisterUserRequest registerRequest)
+        Register([FromBody] RegisterCommand registerRequest)
     {
-        RegisterCommand registerCommand = new(
-            registerRequest.Email,
-            registerRequest.Username,
-            registerRequest.Password,
-            registerRequest.ReturnUri);
-
-        var result = await sender.Send(registerCommand);
+        var result = await sender.Send(registerRequest);
         return result.Match(TypedResults.Ok, CustomResults.Problem);
     }
 

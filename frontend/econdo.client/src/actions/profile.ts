@@ -19,7 +19,7 @@ export async function createProfile(data: CreateProfileData): Promise<Result> {
     throw new Error('Unexpected code flow');
 }
 
-export async function getBriefProfile(): Promise<Result<BriefProfileResponse>> {
+export const getBriefProfile = async (): Promise<Result<BriefProfileResponse>> => {
     try {
         const res = await authInstance.get<BriefProfileResponse>(
             '/api/profile/getBriefProfile');
@@ -30,7 +30,7 @@ export async function getBriefProfile(): Promise<Result<BriefProfileResponse>> {
     }
 
     throw new Error('Unexpected code flow');
-}
+};
 
 export const getProfile = cache(async (): Promise<Result<ProfileDetails>> => {
     try {

@@ -46,11 +46,6 @@ internal sealed class RegisterCommandHandler(
             request.Email,
             cancellationToken);
 
-        if(request.ConfirmEmail)
-            await emailStore.SetEmailConfirmedAsync(user,
-                confirmed: true,
-                cancellationToken);
-
         var result = await userManager
             .CreateAsync(user, request.Password);
 
@@ -58,12 +53,11 @@ internal sealed class RegisterCommandHandler(
             return Result<EmptySuccess, Error>
                 .Fail(result.Errors.ToValidationError());
 
-        if(!request.ConfirmEmail)
-            await publisher.Publish(notification:
-                new UserRegisteredEvent(
-                    user,
-                    request.ReturnUri),
-                cancellationToken);
+        await publisher.Publish(notification:
+            new UserRegisteredEvent(
+                user,
+                request.ReturnUri),
+            cancellationToken);
 
         return Result<EmptySuccess, Error>.Ok();
     }

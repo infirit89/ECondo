@@ -10,6 +10,7 @@ import {
 import authInstance, { normalInstance } from '@/lib/axiosInstance';
 import { RegisterData, LoginData, TokenResponse } from '@/types/auth';
 import { Result, resultFail, resultOk } from '@/types/result';
+import { setAccessToken as setAxiosAccessToken } from "@/lib/axiosInstance";
 
 const backendApiUrl = process.env.NEXT_PRIVATE_BACKEND_URL;
 
@@ -85,6 +86,12 @@ export async function generateAccessToken(): Promise<Result<TokenResponse>> {
     throw new Error('Unexpected code flow');
 }
 
+export async function updateAccessToken() {
+    const accessToken = (await cookies()).get(accessTokenCookieKey)?.value;
+    setAxiosAccessToken(accessToken ?? '');
+    
+}
+
 export async function setAccessTokenCookie(accessToken: string, maxAge: number) {
     const cookieStore = await cookies();
     cookieStore.set(
@@ -111,11 +118,6 @@ export async function confirmEmail(token: string, email: string): Promise<Result
     }
 
     throw new Error('Unexpected code flow');
-}
-
-export async function isAuthenticated(): Promise<boolean> {
-    const cookieStore = await cookies();
-    return cookieStore.get(accessTokenCookieKey) !== undefined;
 }
 
 export async function logout() {

@@ -4,6 +4,5 @@ public sealed record RegisterCommand(
     string Email,
     string Username,
     string Password,
-    string ReturnUri,
-    bool ConfirmEmail = false) 
+    string ReturnUri) 
     : ICommand;

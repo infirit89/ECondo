@@ -1,97 +1,115 @@
 'use client';
-import { Anchor, Avatar, Box, Burger, Button, Divider, Drawer, Group, Menu, MenuDropdown, MenuItem, MenuTarget, rem, ScrollArea, Skeleton, Stack, } from "@mantine/core";
+import { 
+    Anchor, 
+    AppShellHeader, 
+    Avatar, 
+    Box, 
+    Burger, 
+    Button, 
+    Divider, 
+    Drawer, 
+    Group, 
+    Menu, 
+    MenuDropdown, 
+    MenuItem, 
+    MenuTarget, 
+    rem, 
+    ScrollArea, 
+    Stack
+} from "@mantine/core";
 import classes from './navbar.module.css';
 import { useDisclosure } from "@mantine/hooks";
-import { MantineLogo } from "@mantinex/mantine-logo";
-import { ECondoLogo } from "../logo/econdoLogo";
+import { ECondoLogo } from '@/components/logo/econdoLogo';
 
-export function UserNavbar({ username, firstName, lastName }: { username: string, firstName?: string, lastName?: string }) {
+export function UserNavbar({ firstName, lastName }: { firstName?: string, lastName?: string }) {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
 
     return (
-        <Box>
-            <header className={classes.header}>
-                <Group justify="space-between" h="100%">
-                <Anchor href="/" pt={4} visibleFrom='sm'>
-                    <ECondoLogo size={30}/>
-                </Anchor>
-
-                {/* <Group h="100%" gap={0} visibleFrom="sm">
-                    <a href="#" className={classes.link}>
-                    Начало
-                    </a>
-                    <a href="#" className={classes.link}>
-                    За нас
-                    </a>
-                    <a href="#" className={classes.link}>
-                    Контакти
-                    </a>
-                </Group> */}
-
-                <Group visibleFrom="sm">
-                    
-                    <Menu shadow="md" width={200} key={'profile'} withinPortal position="bottom-end" transitionProps={{ transition: 'pop-top-right' }} offset={5}>
-                        <MenuTarget>
-                            { firstName && lastName ? 
-                            <Avatar radius="xl" color={'blue'} className={classes.profileLink}>{firstName.at(0)}{lastName.at(0)}</Avatar>
-                            : 
-                            // NOTE: maybe query the user email and set the initials from it?
-                            <Avatar radius="xl" color={'blue'} className={classes.profileLink}>UR</Avatar> }
-                            
-                        </MenuTarget>
-                    
-                        <MenuDropdown>
-                            <MenuItem component='a' href='/profile'>Профил</MenuItem>
-                            <MenuItem component='a' href='/logout'>Изход</MenuItem>
-                        </MenuDropdown>
-                    </Menu>
-                </Group>
-
-                <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
-                </Group>
-            </header>
-
-            <Drawer
-                opened={drawerOpened}
-                onClose={closeDrawer}
-                size="100%"
-                padding="md"
-                title={
-                    <Anchor href="/">
-                        <ECondoLogo size={40} />
+        <AppShellHeader>
+            <Box>
+                <header className={classes.header}>
+                    <Group justify="space-between" h="100%">
+                    <Anchor href="/" pt={4} visibleFrom='sm'>
+                        <ECondoLogo size={30}/>
                     </Anchor>
-                }
-                hiddenFrom="sm"
-                zIndex={1000000}
-            >
-                <ScrollArea h={`calc(100vh - ${rem(600)})`} mx="-md">
-                {/* <Divider my="sm" /> */}
 
-                {/* <a href="#" className={classes.link}>
+                    {/* <Group h="100%" gap={0} visibleFrom="sm">
+                        <a href="#" className={classes.link}>
+                        Начало
+                        </a>
+                        <a href="#" className={classes.link}>
+                        За нас
+                        </a>
+                        <a href="#" className={classes.link}>
+                        Контакти
+                        </a>
+                    </Group> */}
+
+                    <Group visibleFrom="sm">
+                        
+                        <Menu shadow="md" width={200} key={'profile'} withinPortal position="bottom-end" transitionProps={{ transition: 'pop-top-right' }} offset={5}>
+                            <MenuTarget>
+                                { firstName && lastName ? 
+                                <Avatar radius="xl" color={'blue'} className={classes.profileLink}>{firstName.at(0)}{lastName.at(0)}</Avatar>
+                                : 
+                                // NOTE: maybe query the user email and set the initials from it?
+                                <Avatar radius="xl" color={'blue'} className={classes.profileLink}>UR</Avatar> }
+                                
+                            </MenuTarget>
+                        
+                            <MenuDropdown>
+                                <MenuItem component='a' href='/profile'>Профил</MenuItem>
+                                <MenuItem component='a' href='/logout'>Изход</MenuItem>
+                            </MenuDropdown>
+                        </Menu>
+                    </Group>
+
+                    <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
+                    </Group>
+                </header>
+
+                <Drawer
+                    opened={drawerOpened}
+                    onClose={closeDrawer}
+                    size="100%"
+                    padding="md"
+                    title={
+                        <Anchor href="/">
+                            <ECondoLogo size={40} />
+                        </Anchor>
+                    }
+                    hiddenFrom="sm"
+                    zIndex={1000000}
+                >
+                    <ScrollArea h={`calc(100vh - ${rem(600)})`} mx="-md">
+                    {/* <Divider my="sm" /> */}
+
+                    {/* <a href="#" className={classes.link}>
+                        Начало
+                    </a>
+                    <a href="#" className={classes.link}>
+                        За нас
+                    </a>
+                    <a href="#" className={classes.link}>
+                        Контакти
+                    </a> */}
+
+                    <Divider my="sm" />
+
+                    <a href="/" className={classes.drawerlink}>
                     Начало
-                </a>
-                <a href="#" className={classes.link}>
-                    За нас
-                </a>
-                <a href="#" className={classes.link}>
-                    Контакти
-                </a> */}
-
-                <Divider my="sm" />
-
-                <a href="/" className={classes.drawerlink}>
-                Начало
-                </a>
-                <a href="/profile" className={classes.drawerlink}>
-                Профил
-                </a>
-                </ScrollArea>
-                <Stack justify={'flex-end'} h={`calc(100vh - ${rem(300)})`} mx={'-md'}>
-                  <Group justify={'center'} grow pb={'xl'} px={'md'}>
-                    <Button component='a' href='/logout' variant='filled' color={'red'}>Изход</Button>
-                  </Group>
-                </Stack>
-            </Drawer>
-        </Box>
+                    </a>
+                    <a href="/profile" className={classes.drawerlink}>
+                    Профил
+                    </a>
+                    </ScrollArea>
+                    <Stack justify={'flex-end'} h={`calc(100vh - ${rem(300)})`} mx={'-md'}>
+                    <Group justify={'center'} grow pb={'xl'} px={'md'}>
+                        <Button component='a' href='/logout' variant='filled' color={'red'}>Изход</Button>
+                    </Group>
+                    </Stack>
+                </Drawer>
+            </Box>
+        </AppShellHeader>
     )
 }

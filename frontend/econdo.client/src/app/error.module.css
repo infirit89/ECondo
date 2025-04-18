@@ -1,7 +1,12 @@
+body {
+    height: 100vh;
+}
+
 .root {
     padding-top: 80px;
     padding-bottom: 120px;
     background-color: var(--mantine-color-blue-filled);
+    height: 100%;
 }
 
 .label {

@@ -3,25 +3,19 @@ import Link from "next/link";
 import { ReactNode, Suspense } from "react";
 import Loading from "./loading";
 
-enum TabNames {
-    'buildings',
-    'properties',
-}
-
 export default async function CondoLayout({ buildings, properties, params }: Readonly<{
     buildings: ReactNode,
     properties: ReactNode,
     params: Promise<{ activeTab: 'buildings' | 'properties' }>
-    }>) {
+}>) {
     const { activeTab } = await params;
-    console.log(activeTab);
     const tabs = [
         { value: '/condos/properties', label: 'Имоти' },
         { value: '/condos/buildings', label: 'Сгради' },
     ];
 
     return (
-        <AppShellMain>
+        <>
             <Tabs defaultValue={`/condos/${activeTab}`} mt={'xl'}>
                 <TabsList justify={'center'}>
                     {tabs.map((tab) => (
@@ -38,6 +32,6 @@ export default async function CondoLayout({ buildings, properties, params }: Rea
                     properties :
                     <></> }
             </Suspense>
-        </AppShellMain>
+        </>
     )
 }

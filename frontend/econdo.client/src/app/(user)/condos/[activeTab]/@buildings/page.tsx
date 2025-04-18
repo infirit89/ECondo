@@ -14,7 +14,6 @@ import { IconMoodPuzzled } from "@tabler/icons-react";
 import classes from './buildingsPage.module.css';
 
 export default async function BuildingsPage() {
-
     const buildingsResult = await getBuildingsForUser();
 
     return (

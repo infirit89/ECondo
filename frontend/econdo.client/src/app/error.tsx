@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { Button, Container, Group, Text, Title } from '@mantine/core';
 import classes from './error.module.css';
-import Router from "next/router";
 
 export default function ErrorPage({
     error,

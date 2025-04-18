@@ -1,11 +1,9 @@
-﻿using ECondo.Api.Data.Profile;
-using ECondo.Api.Extensions;
+﻿using ECondo.Api.Extensions;
 using ECondo.Application.Commands.Profiles.Create;
 using ECondo.Application.Commands.Profiles.Update;
 using ECondo.Application.Data;
 using ECondo.Application.Queries.Profiles.GetBrief;
 using ECondo.Application.Queries.Profiles.GetForUser;
-using ECondo.Infrastructure.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,12 +20,9 @@ public class ProfileController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IResult>
-        Create([FromBody] CreateProfileRequest request)
+        Create([FromBody] CreateProfileCommand request)
     {
-        CreateProfileCommand createProfileCommand =
-            new(User.GetEmail() ?? "", request.FirstName, request.MiddleName, request.LastName, request.Phone);
-
-        var result = await sender.Send(createProfileCommand);
+        var result = await sender.Send(request);
 
         return result.Match(TypedResults.Ok, CustomResults.Problem);
     }
