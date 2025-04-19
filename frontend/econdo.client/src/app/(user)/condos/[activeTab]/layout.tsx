@@ -1,4 +1,4 @@
-import { AppShellMain, Center, Tabs, TabsList, TabsTab } from "@mantine/core";
+import { Tabs, TabsList, TabsTab } from "@mantine/core";
 import Link from "next/link";
 import { ReactNode, Suspense } from "react";
 import Loading from "./loading";
