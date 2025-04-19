@@ -36,17 +36,24 @@ internal static class UserSeederConfiguration
         {
             foreach (var userData in UserSeedData.Users)
             {
-                logger.LogInformation($"Creating User '{userData.User.UserName}'");
-                var userRes = await userManager
-                    .CreateAsync(userData.User, userData.Password);
-
-                if (!userRes.Succeeded)
+                try
                 {
-                    PrintIdentityErrors(userRes.Errors);
-                    continue;
-                }
+                    logger.LogInformation($"Creating User '{userData.User.UserName}'");
+                    var userRes = await userManager
+                        .CreateAsync(userData.User, userData.Password);
 
-                logger.LogInformation("User successfully created");
+                    if (!userRes.Succeeded)
+                    {
+                        PrintIdentityErrors(userRes.Errors);
+                        continue;
+                    }
+
+                    logger.LogInformation("User successfully created");
+                }
+                catch (Exception e)
+                {
+                    logger.LogError(e.Message);
+                }
             }
 
             logger.LogInformation("Users created");

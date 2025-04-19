@@ -7,10 +7,9 @@ import {
     accessTokenCookieKey,
     refreshTokenCookieKey 
 } from '@/utils/constants';
-import authInstance, { normalInstance } from '@/lib/axiosInstance';
+import normalInstance, { authInstance } from '@/lib/axiosInstance';
 import { RegisterData, LoginData, TokenResponse } from '@/types/auth';
 import { Result, resultFail, resultOk } from '@/types/result';
-import { setAccessToken as setAxiosAccessToken } from "@/lib/axiosInstance";
 
 const backendApiUrl = process.env.NEXT_PRIVATE_BACKEND_URL;
 
@@ -84,12 +83,6 @@ export async function generateAccessToken(): Promise<Result<TokenResponse>> {
     }
 
     throw new Error('Unexpected code flow');
-}
-
-export async function updateAccessToken() {
-    const accessToken = (await cookies()).get(accessTokenCookieKey)?.value;
-    setAxiosAccessToken(accessToken ?? '');
-    
 }
 
 export async function setAccessTokenCookie(accessToken: string, maxAge: number) {

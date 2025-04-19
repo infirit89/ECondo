@@ -7,14 +7,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Queries.Buildings.IsUserIn;
 
-internal sealed class IsUserInBuildingQueryHandler(
+internal sealed class IsUserEntranceManagerQueryHandler(
     IUserContext userContext,
     IApplicationDbContext dbContext)
-    : IQueryHandler<IsUserInBuildingQuery>
+    : IQueryHandler<IsUserEntranceManagerQuery>
 {
     public async Task<Result<EmptySuccess, Error>> 
         Handle(
-            IsUserInBuildingQuery request,
+            IsUserEntranceManagerQuery request,
             CancellationToken cancellationToken)
     {
         if(userContext.UserId is null)
@@ -24,12 +24,13 @@ internal sealed class IsUserInBuildingQueryHandler(
         var entrance = await dbContext
             .Entrances
             .AsNoTracking()
-            .FirstOrDefaultAsync(e =>
+            .AnyAsync(e =>
             e.ManagerId == userContext.UserId &&
-            e.BuildingId == request.BuildingId,
+            e.BuildingId == request.BuildingId &&
+            e.Number == request.EntranceNumber,
             cancellationToken: cancellationToken);
 
-        if(entrance is null)
+        if(!entrance)
             return Result<EmptySuccess, Error>
                 .Fail(BuildingErrors.InvalidAccess());
 

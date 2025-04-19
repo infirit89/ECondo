@@ -8,7 +8,6 @@ import {
   MantineProvider 
 } from "@mantine/core";
 
-import { Suspense } from "react";
 import HealthProvider from "./healthProvider";
 
 export const metadata: Metadata = {
@@ -29,11 +28,9 @@ export default async function RootLayout({
       </head>
       <body>
         <MantineProvider>
-          <Suspense>
-            <HealthProvider>
-                {children}
-            </HealthProvider>
-          </Suspense>
+          <HealthProvider>
+              {children}
+          </HealthProvider>
         </MantineProvider>
       </body>
     </html>

@@ -1,6 +1,6 @@
 'use server';
 
-import authInstance, { normalInstance } from "@/lib/axiosInstance";
+import normalInstance, { authInstance } from "@/lib/axiosInstance";
 import { ApiError } from "@/types/apiResponses";
 import { Result, resultFail, resultOk } from "@/types/result";
 import { isAxiosError } from "axios";
@@ -34,9 +34,10 @@ export const getBuildingsForUser = cache(async (): Promise<Result<BuildingResult
     throw new Error('Unexpected code flow');
 });
 
-export const isUserInBuilding = cache(async (buildingId: string): Promise<Result> => {
+export const isUserInBuilding = cache(async (buildingId: string, entranceNumber: string): Promise<Result> => {
     try {
-        await authInstance.get(`/api/building/isInBuilding?buildingId=${buildingId}`);
+        await authInstance
+            .get(`/api/building/isEntranceManager?buildingId=${buildingId}&entranceNumber=${entranceNumber}`);
         return resultOk();
     }
     catch(error) {

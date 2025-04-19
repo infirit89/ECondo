@@ -36,7 +36,7 @@ export default function CondoCard({
     const {hovered, ref} = useHover();
     
     const selectBuilding = () => {
-        redirect(`/buildings/${id}`);
+        redirect(`/buildings/${id}/${entranceNumber}/properties`);
     }
 
     return (

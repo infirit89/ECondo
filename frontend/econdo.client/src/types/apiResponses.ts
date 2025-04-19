@@ -3,6 +3,16 @@ export interface ValidationError extends Error {
     errors: Record<string, string[]>;
 }
 
+export interface PagedList<T> {
+    items: T[],
+    currentPage: number,
+    totalPages: number,
+    pageSize: number,
+    totalCount: number,
+    hasPrevious: boolean,
+    hasNext: boolean,
+}
+
 export interface ApiError extends Error {
     type: string;
     title: string;

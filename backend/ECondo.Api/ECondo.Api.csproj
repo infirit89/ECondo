@@ -27,8 +27,4 @@
 		<ProjectReference Include="..\ECondo.Infrastructure\ECondo.Infrastructure.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Data\" />
-	</ItemGroup>
-
 </Project>

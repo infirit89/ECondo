@@ -47,7 +47,7 @@ public class BuildingController(ISender sender) : ControllerBase
     }
 
     [Authorize]
-    [HttpGet(nameof(IsInBuilding))]
+    [HttpGet(nameof(IsEntranceManager))]
     [ProducesResponseType(
         StatusCodes.Status200OK)]
     [ProducesResponseType(
@@ -55,7 +55,7 @@ public class BuildingController(ISender sender) : ControllerBase
         Type = typeof(HttpValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IResult>
-        IsInBuilding([FromQuery] IsUserInBuildingQuery request)
+        IsEntranceManager([FromQuery] IsUserEntranceManagerQuery request)
     {
         var result = await sender.Send(request);
 

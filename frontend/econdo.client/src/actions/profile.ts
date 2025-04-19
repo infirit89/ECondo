@@ -1,7 +1,7 @@
 'use server';
 
 import { BriefProfileResponse, CreateProfileData, ProfileDetails } from "@/types/profileData";
-import authInstance from "@/lib/axiosInstance";
+import { authInstance } from "@/lib/axiosInstance";
 import { resultFail, resultOk, Result } from "@/types/result";
 import { isAxiosError } from "axios";
 import { ApiError } from "@/types/apiResponses";
@@ -19,18 +19,19 @@ export async function createProfile(data: CreateProfileData): Promise<Result> {
     throw new Error('Unexpected code flow');
 }
 
-export const getBriefProfile = async (): Promise<Result<BriefProfileResponse>> => {
+export const getBriefProfile = cache(async (): Promise<Result<BriefProfileResponse>> => {
     try {
         const res = await authInstance.get<BriefProfileResponse>(
             '/api/profile/getBriefProfile');
         return resultOk(res.data);
     } catch(error) {
+        console.error(error);
         if(isAxiosError<ApiError>(error))
             return resultFail(error.response?.data!);
     }
 
     throw new Error('Unexpected code flow');
-};
+});
 
 export const getProfile = cache(async (): Promise<Result<ProfileDetails>> => {
     try {
