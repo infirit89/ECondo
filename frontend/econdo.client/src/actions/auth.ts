@@ -115,8 +115,10 @@ export async function confirmEmail(token: string, email: string): Promise<Result
 
 export async function logout() {
     const cookieStore = await cookies();
+    const refreshToken = cookieStore.get(refreshTokenCookieKey)?.value;
+    
     await authInstance.post('/api/account/invalidateRefreshToken', {
-        refreshToken: cookieStore.get(refreshTokenCookieKey)?.value,
+        refreshToken: refreshToken,
     });
 
     cookieStore.delete(refreshTokenCookieKey);

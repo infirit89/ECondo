@@ -105,7 +105,7 @@ export default function RegisterForm() {
                     error={form.formState.errors.confirmPassword && form.formState.errors.confirmPassword.message} />
             </Box>
             <Button fullWidth mt="xl" type={'submit'} disabled={isLoading}>
-                Влез
+                Регистрирай се
             </Button>
         </form>
     )

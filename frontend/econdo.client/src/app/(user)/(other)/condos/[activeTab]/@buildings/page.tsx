@@ -12,6 +12,7 @@ import {
 import { IconMoodPuzzled } from "@tabler/icons-react";
 
 import classes from './buildingsPage.module.css';
+import Link from "next/link";
 
 export default async function BuildingsPage() {
     const buildingsResult = await getBuildingsForUser();
@@ -19,7 +20,7 @@ export default async function BuildingsPage() {
     return (
         <Container size="lg" py="xl">
             <Flex justify={'flex-end'} align="center" mb="lg">
-                <Button size="md" component="a" href="/createBuilding">Добави сграда</Button>
+                <Button size="md" component={Link} href="/createBuilding">Добави сграда</Button>
             </Flex>
             {
                 buildingsResult.ok && buildingsResult.value?.length! > 0 ?

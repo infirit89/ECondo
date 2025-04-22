@@ -2,7 +2,7 @@
 import { Card, CardSection, Text, Image, Center } from "@mantine/core";
 import classes from './condoCard.module.css';
 import { useHover } from "@mantine/hooks";
-import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export interface CondoCardProps {
     id: string;
@@ -34,13 +34,17 @@ export default function CondoCard({
     entranceNumber,
 }: CondoCardProps) {
     const {hovered, ref} = useHover();
-    
-    const selectBuilding = () => {
-        redirect(`/buildings/${id}/${entranceNumber}/properties`);
-    }
 
     return (
-        <Card onClick={selectBuilding} className={`max-w-xs ${classes.condoCard}`} ref={ref} shadow={hovered ? 'xl' : 'sm'} padding="lg" radius="md" withBorder>
+        <Card 
+        component={Link} 
+        href={`/buildings/${id}/${entranceNumber}/properties`} 
+        className={`max-w-xs ${classes.condoCard}`} 
+        ref={ref} 
+        shadow={hovered ? 'xl' : 'sm'} 
+        padding="lg" 
+        radius="md" 
+        withBorder>
             <CardSection>
                 <Image
                 className={`h-[180]`}

@@ -1,35 +1,36 @@
 'use client';
 import { 
-    Anchor, 
-    AppShellHeader, 
-    Avatar, 
-    Box, 
-    Burger, 
-    Button, 
-    Divider, 
-    Drawer, 
-    Group, 
-    Menu, 
-    MenuDropdown, 
-    MenuItem, 
-    MenuTarget, 
-    rem, 
-    ScrollArea, 
+    Anchor,
+    AppShellHeader,
+    Box,
+    Burger,
+    Button,
+    Divider,
+    Drawer,
+    Group,
+    Menu,
+    MenuDropdown,
+    MenuItem,
+    MenuTarget,
+    rem,
+    ScrollArea,
     Stack
 } from "@mantine/core";
 import classes from './navbar.module.css';
 import { useDisclosure } from "@mantine/hooks";
 import { ECondoLogo } from '@/components/logo/econdoLogo';
+import UserAvatar from "./userAvatar";
+import Link from "next/link";
 
-export function UserNavbar({ firstName, lastName }: { firstName?: string, lastName?: string }) {
+export function UserNavbar() {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
-
+    
     return (
         <AppShellHeader>
             <Box>
                 <header className={classes.header}>
                     <Group justify="space-between" h="100%">
-                    <Anchor href="/" pt={4} visibleFrom='sm'>
+                    <Anchor component={Link} href="/" pt={4} visibleFrom='sm'>
                         <ECondoLogo size={30}/>
                     </Anchor>
 
@@ -47,19 +48,21 @@ export function UserNavbar({ firstName, lastName }: { firstName?: string, lastNa
 
                     <Group visibleFrom="sm">
                         
-                        <Menu shadow="md" width={200} key={'profile'} withinPortal position="bottom-end" transitionProps={{ transition: 'pop-top-right' }} offset={5}>
+                        <Menu
+                        shadow="md"
+                        width={200}
+                        key={'profile'}
+                        withinPortal
+                        position="bottom-end"
+                        transitionProps={{ transition: 'pop-top-right' }}
+                        offset={5}>
                             <MenuTarget>
-                                { firstName && lastName ? 
-                                <Avatar radius="xl" color={'blue'} className={classes.profileLink}>{firstName.at(0)}{lastName.at(0)}</Avatar>
-                                : 
-                                // NOTE: maybe query the user email and set the initials from it?
-                                <Avatar radius="xl" color={'blue'} className={classes.profileLink}>UR</Avatar> }
-                                
+                                <UserAvatar/>
                             </MenuTarget>
                         
                             <MenuDropdown>
-                                <MenuItem component='a' href='/profile'>Профил</MenuItem>
-                                <MenuItem component='a' href='/logout'>Изход</MenuItem>
+                                <MenuItem component={Link} href='/profile'>Профил</MenuItem>
+                                <MenuItem component={Link} href='/logout'>Изход</MenuItem>
                             </MenuDropdown>
                         </Menu>
                     </Group>
@@ -96,16 +99,16 @@ export function UserNavbar({ firstName, lastName }: { firstName?: string, lastNa
 
                     <Divider my="sm" />
 
-                    <a href="/" className={classes.drawerlink}>
+                    <Link href="/" className={classes.drawerlink}>
                     Начало
-                    </a>
-                    <a href="/profile" className={classes.drawerlink}>
+                    </Link>
+                    <Link href="/profile" className={classes.drawerlink}>
                     Профил
-                    </a>
+                    </Link>
                     </ScrollArea>
                     <Stack justify={'flex-end'} h={`calc(100vh - ${rem(300)})`} mx={'-md'}>
                     <Group justify={'center'} grow pb={'xl'} px={'md'}>
-                        <Button component='a' href='/logout' variant='filled' color={'red'}>Изход</Button>
+                        <Button component={Link} href='/logout' variant='filled' color={'red'}>Изход</Button>
                     </Group>
                     </Stack>
                 </Drawer>

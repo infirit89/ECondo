@@ -1,7 +1,7 @@
 import { accessTokenCookieKey, refreshTokenCookieKey } from "@/utils/constants";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { generateAccessToken, logout, setAccessTokenCookie } from "./actions/auth";
+import { generateAccessToken, setAccessTokenCookie } from "./actions/auth";
 import { jwtDecode } from "jwt-decode";
 
 const protectedRoutes = [
@@ -46,16 +46,6 @@ export default async function middleware(req: NextRequest) {
         return NextResponse.redirect(req.nextUrl);
     }
     
-    if(path.startsWith('/logout')) {
-        try {
-            await logout();
-            return NextResponse.redirect(new URL('/', req.nextUrl));
-        }
-        catch(error) {
-            console.error(error);
-        }
-    }
-
     if(protectedRoutes.includes(path) && !accessToken)
         return NextResponse.redirect(new URL('/login', req.nextUrl));
 
@@ -64,4 +54,17 @@ export default async function middleware(req: NextRequest) {
     }
 
     return NextResponse.next();
+}
+
+export const config = {
+    matcher: [
+        /*
+        * Match all request paths except for the ones starting with:
+        * - api (API routes)
+        * - _next/static (static files)
+        * - _next/image (image optimization files)
+        * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+        */
+        '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|icon.svg).*)',
+    ],
 }

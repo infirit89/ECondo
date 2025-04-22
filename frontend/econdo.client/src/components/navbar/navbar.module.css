@@ -44,14 +44,6 @@
     border-top: 1px solid light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
 }
 
-.profileLink {
-    /* margin-top: -25px; */
-    @mixin hover {
-      background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
-      color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
-    }
-}
-
 .drawerlink {
     display: flex;
     align-items: center;

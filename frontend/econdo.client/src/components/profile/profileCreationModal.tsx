@@ -16,7 +16,7 @@ const ProfileSchema: ZodSchema<CreateProfileData> = z
         firstName: firstNameSchema,
         middleName: middleNameSchema,
         lastName: lastNameSchema,
-        phone: phoneNumberSchema,
+        phoneNumber: phoneNumberSchema,
     });
 
 type ProfileCreationState = 'idle' | 'loading' | 'error' | 'success';
@@ -41,7 +41,8 @@ function profileCreationReducer(state: ProfileCreationState, action: ProfileCrea
     }
 }
 
-export function ProfileCreationModal({ opened }: { opened: boolean }) {
+export function ProfileCreationModal(
+    { opened }: { opened: boolean }) {
     const [profileCreationState, dispatch] = useReducer(profileCreationReducer, initialProfileCreationState);
     const router = useRouter();
 
@@ -50,7 +51,7 @@ export function ProfileCreationModal({ opened }: { opened: boolean }) {
             firstName: '',
             middleName: '',
             lastName: '',
-            phone: '',
+            phoneNumber: '',
         },
         resolver: zodResolver(ProfileSchema),
     });
@@ -89,8 +90,8 @@ export function ProfileCreationModal({ opened }: { opened: boolean }) {
                     <TextInput ta={'start'} label="Фамилно име" mt={'sm'} placeholder='Попов' {...form.register('lastName')} withAsterisk
                         error={form.formState.errors.lastName && form.formState.errors.lastName.message} />
 
-                    <TextInput ta={'start'} label='Телефон' mt={'sm'} placeholder='0881234567' {...form.register('phone')} withAsterisk
-                        error={form.formState.errors.phone && form.formState.errors.phone.message} />
+                    <TextInput ta={'start'} label='Телефон' mt={'sm'} placeholder='0881234567' {...form.register('phoneNumber')} withAsterisk
+                        error={form.formState.errors.phoneNumber && form.formState.errors.phoneNumber.message} />
                 </Box>
                 <Button fullWidth mt="xl" type={'submit'} disabled={false}>
                     Запази

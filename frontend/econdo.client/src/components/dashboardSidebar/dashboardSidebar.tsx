@@ -3,10 +3,9 @@ import { Anchor, AppShellNavbar, AppShellSection, Box, Center, ScrollArea } from
 import classes from './dashboardSidebar.module.css';
 
 import { IconArrowLeft, IconBuildingEstate, IconReceipt, IconUsersGroup, } from '@tabler/icons-react';
+import Link from "next/link";
 
 export type ActiveTab = 'properties' | 'ownership' | 'bills';
-
-export const experimental_ppr = true;
 
 export default function DashboardSidebar(
     { buildingId, entranceNumber, activeTab } : 
@@ -20,7 +19,7 @@ export default function DashboardSidebar(
     
 
     const links = data.map((item) => (
-        <a
+        <Link
           className={classes.link}
           data-active={item.id === activeTab || undefined}
           href={item.link}
@@ -28,14 +27,14 @@ export default function DashboardSidebar(
         >
           <item.icon className={classes.linkIcon} stroke={1.5} />
           <span>{item.label}</span>
-        </a>
+        </Link>
       ));
     return (
         <AppShellNavbar>
             <nav className={classes.navbar}>
                 <div className={classes.navbarMain}>
                     <AppShellSection className={classes.header}>
-                        <Anchor size="sm" href="/condos/buildings">
+                        <Anchor component={Link} size="sm" href="/condos/buildings">
                             <Center inline>
                                 <IconArrowLeft size={12}/>
                                 <Box ml={5}>Към начало</Box>

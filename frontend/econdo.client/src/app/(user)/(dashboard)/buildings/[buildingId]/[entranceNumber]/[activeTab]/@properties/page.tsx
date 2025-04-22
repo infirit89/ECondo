@@ -1,21 +1,19 @@
-import { getPropertiesInEntrance } from "@/actions/property";
+'use client';
 
-export default async function PropertiesPage({ params } : 
-    Readonly<{ 
-        params: Promise<{
-            buildingId: string,
-            entranceNumber: string
-        }> 
-    }>) {
-    const {buildingId, entranceNumber} = await params;
+import { Container, Title, Flex, Button } from "@mantine/core";;
+import PropertiesList from "./propertiesList";
 
-    const propertiesRes = await getPropertiesInEntrance(buildingId, entranceNumber, 0, 5);
-    console.log(propertiesRes);
-    
-    
+export default function PropertiesPage() {
+
     return (
-        <>
-            Properties
-        </>
+        <Container size="lg" py="xl">
+            <Flex justify={'space-between'} mb={'md'}>
+                <Title>Имоти</Title>
+                <Button>Нов имот</Button>
+            </Flex>
+            
+            <PropertiesList/>
+            
+        </Container>
     );
 }

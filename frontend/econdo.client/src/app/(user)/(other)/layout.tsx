@@ -1,31 +1,20 @@
-'use server';
-
-import { getBriefProfile } from "@/actions/profile";
 import { UserNavbar } from "@/components/navbar/userNavbar";
 import { AppShell, AppShellFooter, AppShellMain } from "@mantine/core";
-import { ReactNode, Suspense } from "react";
+import { ReactNode } from "react";
 
-export default async function CommonUserLayout( { children }: 
-    Readonly<{ children: ReactNode }> ) {
-
-    const profileRes = await getBriefProfile();
-
-    if(!profileRes.ok)
-        throw new Error();
+export default function CommonUserLayout(
+    { children }: Readonly<{ children: ReactNode }> ) {
 
     return (
         <AppShell 
         header={{ height: 60 }}>
-            <UserNavbar 
-            {...profileRes.value} />
+            <UserNavbar />
             <AppShellMain>
-                <Suspense>
-                    {children}
-                </Suspense>
+                {children}
             </AppShellMain>
-            <AppShellFooter>
+            {/* <AppShellFooter> */}
                 
-            </AppShellFooter>
+            {/* </AppShellFooter> */}
         </AppShell>
     );
 }

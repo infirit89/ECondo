@@ -1,7 +1,6 @@
 import { Tabs, TabsList, TabsTab } from "@mantine/core";
 import Link from "next/link";
-import { ReactNode, Suspense } from "react";
-import Loading from "./loading";
+import { ReactNode } from "react";
 
 export default async function CondoLayout({ buildings, properties, params }: Readonly<{
     buildings: ReactNode,
@@ -16,22 +15,20 @@ export default async function CondoLayout({ buildings, properties, params }: Rea
 
     return (
         <>
-            <Tabs defaultValue={`/condos/${activeTab}`} mt={'xl'}>
+            <Tabs defaultValue={`/condos/${activeTab}`} mt={'xl'} variant='outline'>
                 <TabsList justify={'center'}>
                     {tabs.map((tab) => (
-                        <Link href={tab.value} key={tab.value} passHref>
+                        <Link href={tab.value} key={tab.value}>
                             <TabsTab value={tab.value}>{tab.label}</TabsTab>
                         </Link>
                     ))}
                 </TabsList>
             </Tabs>
-            <Suspense fallback={<Loading/>}>
-                { activeTab === 'buildings' ?
-                    buildings :
-                    activeTab === 'properties' ?
-                    properties :
-                    <></> }
-            </Suspense>
+            { activeTab === 'buildings' ?
+                buildings :
+                activeTab === 'properties' ?
+                properties :
+                <></> }
         </>
     )
 }

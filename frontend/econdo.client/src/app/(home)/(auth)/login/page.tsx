@@ -2,6 +2,7 @@ import { Alert, Anchor, Container, Paper, Text, Title } from "@mantine/core";
 import LoginForm from "@/components/loginForm/loginForm";
 import AccountConfirmationAlert from "@/components/accountConfirmationAlert/accountConfirmationAlert";
 import { AuthEvent } from "@/types/auth";
+import Link from "next/link";
 
 export default async function Login({ searchParams } : { searchParams : Promise<{ [key: string]: string | string[] | undefined }> }) {
     const { event = '' } = await searchParams;
@@ -9,6 +10,10 @@ export default async function Login({ searchParams } : { searchParams : Promise<
     return (
         <Container size={420} my={40} mb={100}>
             <AccountConfirmationAlert hidden={(event as AuthEvent) !== 'confirmAccount'}/>
+
+            <Alert variant="light" mb={'md'} hidden={(event as AuthEvent) !== 'accountVerified'}>
+                <Text fz={'sm'}>Акаунтът Ви беше потвърден успешно!</Text>
+            </Alert>
 
             <Alert variant="light" mb={'md'} hidden={(event as AuthEvent) !== 'forgotPassword'}>
                 <Text fz={'sm'}>Моля, проверете мейла си. Изпратили сме Ви линк, чрез който можете да промените паролата си. Ако не сте получили писмо проверете дали не е попаднало в папка SPAM.</Text>
@@ -23,7 +28,7 @@ export default async function Login({ searchParams } : { searchParams : Promise<
             </Title>
             <Text c="dimmed" size="sm" ta="center" mt={5}>
             Нямаш профил?{' '}
-            <Anchor size="sm" href="/register">
+            <Anchor component={Link} size="sm" href="/register">
                 Създай профил
             </Anchor>
             </Text>

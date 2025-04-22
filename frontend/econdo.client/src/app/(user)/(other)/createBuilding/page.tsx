@@ -2,11 +2,11 @@ import { getProvinces } from "@/actions/condo";
 import RegisterBuildingEntranceForm from "@/components/registerBuildingEntranceForm/registerBuildingEntranceForm";
 import { Container, Anchor, Paper, Center, Box, AppShellMain, Title } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
+import Link from "next/link";
 
 export default async function CreateBuildingPage() {
 
     const provinces = await getProvinces();
-    console.log(provinces);
 
     return (
         <AppShellMain>
@@ -15,7 +15,7 @@ export default async function CreateBuildingPage() {
                     Регистрирай сграда
                 </Title>
                 
-                <Anchor size="sm" href="/condos/buildings">
+                <Anchor component={Link} size="sm" href="/condos/buildings">
                     <Center inline>
                         <IconArrowLeft size={12}/>
                         <Box ml={5}>Назад</Box>

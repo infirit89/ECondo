@@ -1,22 +1,14 @@
-import { getBriefProfile } from "@/actions/profile";
-import AppProvider from "@/components/appProvider/appProvider";
-import { ReactNode, Suspense } from "react";
+'use client';
 
-export const experimental_ppr = true;
+import { ReactNode } from "react";
+import ProfileProvider from "../profileProvider";
 
-export default async function UserLayout({ children } : Readonly<{children: ReactNode}>) {
-
-    const profileRes = await getBriefProfile();
-
-    if(!profileRes.ok)
-        throw new Error();
-
-
+export default function UserLayout(
+    {children} : {children: ReactNode}) {
+    
     return (
-        <AppProvider profileData={profileRes.value}>
-            <Suspense fallback={<>Loading</>}>
-                {children}
-            </Suspense>
-        </AppProvider>
-    )
+        <ProfileProvider>
+            {children}
+        </ProfileProvider>
+    );
 }

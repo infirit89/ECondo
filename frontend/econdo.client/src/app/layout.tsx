@@ -9,6 +9,8 @@ import {
 } from "@mantine/core";
 
 import HealthProvider from "./healthProvider";
+import { Suspense } from "react";
+import Loading from "@/components/loading";
 
 export const metadata: Metadata = {
   title: "ECondo",
@@ -29,7 +31,9 @@ export default async function RootLayout({
       <body>
         <MantineProvider>
           <HealthProvider>
-              {children}
+              <Suspense fallback={<Loading/>}>
+                {children}
+              </Suspense>
           </HealthProvider>
         </MantineProvider>
       </body>

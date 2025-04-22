@@ -6,12 +6,18 @@ import { resultFail, resultOk, Result } from "@/types/result";
 import { isAxiosError } from "axios";
 import { ApiError } from "@/types/apiResponses";
 import { cache } from "react";
+import { userProfileCookieKey } from "@/utils/constants";
+import { cookies } from "next/headers";
 
 export async function createProfile(data: CreateProfileData): Promise<Result> {
     try {
+        console.log('aaaaaaaa');
         await authInstance.post('/api/profile/create', data);
         return resultOk();
     } catch(error) {
+        // console.log();
+        if(isAxiosError(error))
+            console.log(error.response?.data);
         if(isAxiosError<ApiError>(error))
             return resultFail(error.response?.data!);
     }
@@ -21,17 +27,31 @@ export async function createProfile(data: CreateProfileData): Promise<Result> {
 
 export const getBriefProfile = cache(async (): Promise<Result<BriefProfileResponse>> => {
     try {
-        const res = await authInstance.get<BriefProfileResponse>(
+        const res = 
+        await authInstance.get<BriefProfileResponse>(
             '/api/profile/getBriefProfile');
         return resultOk(res.data);
     } catch(error) {
-        console.error(error);
         if(isAxiosError<ApiError>(error))
             return resultFail(error.response?.data!);
     }
 
     throw new Error('Unexpected code flow');
 });
+
+export async function setProfileCookie(profile: BriefProfileResponse | undefined) {
+    const cookieStore = await cookies();
+    
+    cookieStore.set(userProfileCookieKey, 
+        JSON.stringify(profile));
+}
+
+export async function getProfileFromCookie(): Promise<BriefProfileResponse | undefined> {
+    const cookieStore = await cookies();
+    const profile = cookieStore.get(userProfileCookieKey);
+
+    return profile?.value ? JSON.parse(profile.value) : undefined;
+}
 
 export const getProfile = cache(async (): Promise<Result<ProfileDetails>> => {
     try {

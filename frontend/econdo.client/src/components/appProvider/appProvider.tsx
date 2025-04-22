@@ -1,20 +1,19 @@
-'use server';
+'use client';
 
+import { AppShell } from "@mantine/core";
+import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
-import { ProfileCreationModal } from "../profile/profileCreationModal";
-import { BriefProfileResponse } from "@/types/profileData";
 
-export default async function AppProvider(
-    { profileData, children } : 
-    { profileData: BriefProfileResponse | undefined, 
-        children: ReactNode }) {
+export default function AppProvider(
+    { children } : 
+    { children: ReactNode }) {
+
+    const pathname = usePathname();
+    pathname.startsWith('/buildings');
 
     return (
-        <>
-            <ProfileCreationModal opened={ !profileData }/>
-            { profileData ?
-                children :
-                <></>}
-        </>
+        <AppShell>
+
+        </AppShell>
     );
 }
