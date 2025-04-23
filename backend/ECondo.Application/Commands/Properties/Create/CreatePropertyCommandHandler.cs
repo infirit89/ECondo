@@ -47,7 +47,8 @@ internal sealed class CreatePropertyCommandHandler
 
         if(property is not null)
             return Result<EmptySuccess, Error>.Fail(
-                PropertyErrors.AlreadyExists(request.Number, entrance.Id));
+                PropertyErrors.AlreadyExists(
+                    request.Number, entrance.Id));
 
         property = new Property()
         {

@@ -1,17 +1,14 @@
-'use client';
-
-import { Container, Title, Flex, Button } from "@mantine/core";;
-import PropertiesList from "./propertiesList";
+import { getAllPropertyTypes } from "@/actions/property";
+import PropertyPageContent from "./propertyPageContent";
+import { Suspense } from "react";
+import Loading from "@/components/loading";
 
 export default function PropertiesPage() {
+    const propertyTypes = getAllPropertyTypes();
 
     return (
-        <Container size="lg" py="xl">
-            <Flex justify={'space-between'} mb={'md'}>
-                <Title>Имоти</Title>
-                <Button>Нов имот</Button>
-            </Flex>
-            <PropertiesList/>
-        </Container>
+        <Suspense fallback={<Loading/>}>
+            <PropertyPageContent propertyTypes={propertyTypes}/>
+        </Suspense>
     );
 }

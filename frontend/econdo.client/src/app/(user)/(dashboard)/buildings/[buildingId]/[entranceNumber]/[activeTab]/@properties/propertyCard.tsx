@@ -1,4 +1,4 @@
-import { BriefPropertyResult } from "@/actions/property";
+import { BriefPropertyResult, deleteProperty } from "@/actions/property";
 import { 
     Card, 
     CardSection, 
@@ -10,6 +10,9 @@ import {
     useMantineTheme,
 } from "@mantine/core";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
+import { useParams } from "next/navigation";
+import { useState } from "react";
+import { string } from "zod";
 
 const propertyImages = new Map([
     ['офис', {
@@ -47,13 +50,18 @@ const propertyImages = new Map([
 ])
 
 export default function PropertyCard(
-    {property} : { property: BriefPropertyResult }
+    {property, handleDelete } : 
+    { 
+        property: BriefPropertyResult,
+        handleDelete?: (id: string) => {}
+    }
 ) {
     const theme = useMantineTheme();
     let propertyImage = 
         propertyImages.get(
             property.propertyType.toLowerCase());
 
+    const [isDeleting, setIsDeleting] = useState(false);
     propertyImage = propertyImage !== undefined ? 
     propertyImage :
     {
@@ -87,10 +95,20 @@ export default function PropertyCard(
 
             <CardSection mt={'md'} pr={'lg'} pb={'xs'} pt={'xs'}>
                 <Group justify='end' gap={8} mr={0}>
-                    <ActionIcon variant="subtle" color="gray">
+                    <ActionIcon disabled={isDeleting} variant="subtle" color="gray">
                         <IconPencil size={20} stroke={1.5} />
                     </ActionIcon>
-                    <ActionIcon variant="subtle" color="red">
+                    <ActionIcon
+                    disabled={isDeleting}
+                    variant="subtle" 
+                    color="red" 
+                    onClick={
+                        !handleDelete ? 
+                        () => {} : 
+                        () => {
+                            setIsDeleting(true);
+                            handleDelete(property.id);
+                        }}>
                         <IconTrash size={20} color={theme.colors.red[6]} stroke={1.5} />
                     </ActionIcon>
                 </Group>

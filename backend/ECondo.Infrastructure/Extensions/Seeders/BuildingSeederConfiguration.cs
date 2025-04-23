@@ -35,7 +35,6 @@ internal static class BuildingSeederConfiguration
 
             Province province = await unitOfWork
                 .Provinces
-                .AsNoTracking()
                 .FirstAsync(p => 
                     p.Name == 
                     BuildingSeedData.TestBuildingProvinceName);

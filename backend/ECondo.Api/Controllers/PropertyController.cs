@@ -71,7 +71,7 @@ public class PropertyController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> Delete(
-        [FromBody] DeletePropertyCommand request)
+        [FromQuery] DeletePropertyCommand request)
     {
         var result = await sender.Send(request);
         return result.Match(TypedResults.Ok, CustomResults.Problem);

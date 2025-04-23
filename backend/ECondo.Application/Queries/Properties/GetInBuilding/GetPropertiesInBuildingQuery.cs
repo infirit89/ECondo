@@ -4,8 +4,8 @@ namespace ECondo.Application.Queries.Properties.GetInBuilding;
 
 public sealed record BriefPropertyResult(
     Guid Id,
-    int Floor,
-    int Number,
+    string Floor,
+    string Number,
     string PropertyType);
 
 public sealed record GetPropertiesInBuildingQuery(

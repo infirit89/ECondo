@@ -7,8 +7,8 @@ public sealed class Property
     public Guid EntranceId { get; set; }
     public Entrance Entrance { get; set; } = null!;
 
-    public int Floor { get; set; }
-    public int Number { get; set; }
+    public string Floor { get; set; } = null!;
+    public string Number { get; set; } = null!;
 
     public Guid PropertyTypeId { get; set; }
     public PropertyType PropertyType { get; set; } = null!;

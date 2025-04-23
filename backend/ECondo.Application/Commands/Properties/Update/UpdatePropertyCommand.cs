@@ -6,8 +6,8 @@ public sealed record UpdatePropertyCommand(
     Guid BuildingId,
     string EntranceNumber,
     Guid PropertyId,
-    int Floor,
-    int Number,
+    string Floor,
+    string Number,
     string PropertyType,
     int BuiltArea,
     int IdealParts) : ICommand, IRequireEntranceManager;

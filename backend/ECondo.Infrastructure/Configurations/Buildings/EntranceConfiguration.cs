@@ -23,5 +23,7 @@ internal class EntranceConfiguration : IEntityTypeConfiguration<Entrance>
 
         builder.Property(e => e.Number)
             .HasMaxLength(Resources.ShortName);
+
+        builder.HasIndex(e => e.Number);
     }
 }

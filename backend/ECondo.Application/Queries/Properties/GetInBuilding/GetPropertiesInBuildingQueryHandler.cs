@@ -22,7 +22,11 @@ internal sealed class GetPropertiesInBuildingQueryHandler
             .SelectMany(e =>
                 e.Properties
                     .Select(p =>
-                        new BriefPropertyResult(p.Id, p.Floor, p.Number, p.PropertyType.Name)));
+                        new BriefPropertyResult(
+                            p.Id,
+                            p.Floor,
+                            p.Number,
+                            p.PropertyType.Name)));
 
         var propertyCount = await propertyQuery.CountAsync(cancellationToken: cancellationToken);
 

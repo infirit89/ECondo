@@ -93,7 +93,7 @@ export function ProfileCreationModal(
                     <TextInput ta={'start'} label='Телефон' mt={'sm'} placeholder='0881234567' {...form.register('phoneNumber')} withAsterisk
                         error={form.formState.errors.phoneNumber && form.formState.errors.phoneNumber.message} />
                 </Box>
-                <Button fullWidth mt="xl" type={'submit'} disabled={false}>
+                <Button fullWidth mt="xl" type={'submit'} disabled={isLoading}>
                     Запази
                 </Button>
             </form>

@@ -4,7 +4,7 @@ namespace ECondo.Domain.Buildings;
 
 public static class PropertyErrors
 {
-    public static Error AlreadyExists(int number, Guid entranceId) =>
+    public static Error AlreadyExists(string number, Guid entranceId) =>
         Error.Conflict(
             "Properties.AlreadyExists",
             $"The property with number = {number} already exists in entrance '{entranceId}'");

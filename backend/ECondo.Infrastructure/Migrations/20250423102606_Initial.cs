@@ -16,7 +16,7 @@ namespace ECondo.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -40,7 +40,7 @@ namespace ECondo.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -52,8 +52,8 @@ namespace ECondo.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    NormalizedName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -69,15 +69,15 @@ namespace ECondo.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -94,13 +94,13 @@ namespace ECondo.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     ProvinceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Municipality = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    SettlementPlace = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Neighborhood = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Municipality = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    SettlementPlace = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Neighborhood = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     PostalCode = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Street = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Street = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     StreetNumber = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     BuildingNumber = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false)
                 },
@@ -162,9 +162,9 @@ namespace ECondo.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    MiddleName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    MiddleName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -274,8 +274,8 @@ namespace ECondo.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EntranceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Floor = table.Column<int>(type: "int", nullable: false),
-                    Number = table.Column<int>(type: "int", nullable: false),
+                    Floor = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Number = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     PropertyTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BuiltArea = table.Column<int>(type: "int", nullable: false),
                     IdealParts = table.Column<int>(type: "int", nullable: false)
@@ -304,10 +304,10 @@ namespace ECondo.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OccupantTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    MiddleName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    MiddleName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     AccessCode = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -371,6 +371,11 @@ namespace ECondo.Infrastructure.Migrations
                 column: "ManagerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Entrances_Number",
+                table: "Entrances",
+                column: "Number");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Occupants_OccupantTypeId",
                 table: "Occupants",
                 column: "OccupantTypeId");
@@ -384,6 +389,11 @@ namespace ECondo.Infrastructure.Migrations
                 name: "IX_Properties_EntranceId",
                 table: "Properties",
                 column: "EntranceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Properties_Number",
+                table: "Properties",
+                column: "Number");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Properties_PropertyTypeId",
