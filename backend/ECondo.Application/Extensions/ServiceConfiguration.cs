@@ -15,6 +15,7 @@ public static class ServiceConfiguration
             configuration.RegisterServicesFromAssembly(currentAssembly);
 
             configuration.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
+            configuration.AddOpenBehavior(typeof(EntranceManagerAuthorizationPipelineBehaviour<,>));
         });
 
         services.AddValidatorsFromAssembly(currentAssembly, includeInternalTypes: true);

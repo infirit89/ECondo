@@ -19,10 +19,6 @@ internal sealed class GetBriefProfileQueryHandler(
             GetBriefProfileQuery request,
             CancellationToken cancellationToken)
     {
-        if(userContext.UserId is null)
-            return Result<BriefProfileResult, Error>
-                .Fail(UserErrors.InvalidUser());
-
         var user = await dbContext
             .Users
             .AsNoTracking()

@@ -15,12 +15,8 @@ internal sealed class UpdatePasswordCommandHandler(
         UpdatePasswordCommand request,
         CancellationToken cancellationToken)
     {
-        if(userContext.UserId is null)
-            return Result<EmptySuccess, Error>
-                .Fail(UserErrors.InvalidUser());
-
         User? user = await userManager
-            .FindByIdAsync(userContext.UserId.ToString()!);
+            .FindByIdAsync(userContext.UserId.ToString());
 
         if(user is null)
             return Result<EmptySuccess, Error>

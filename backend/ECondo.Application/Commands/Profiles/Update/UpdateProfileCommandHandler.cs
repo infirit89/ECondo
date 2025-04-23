@@ -2,7 +2,6 @@
 using ECondo.Application.Services;
 using ECondo.Domain.Profiles;
 using ECondo.Domain.Shared;
-using ECondo.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Commands.Profiles.Update;
@@ -17,10 +16,6 @@ internal sealed class UpdateProfileCommandHandler(
             UpdateProfileCommand request,
             CancellationToken cancellationToken)
     {
-        if(userContext.UserId is null)
-            return Result<EmptySuccess, Error>
-                .Fail(UserErrors.InvalidUser());
-
         ProfileDetails? profile = await applicationDbContext
             .UserDetails
             .FirstOrDefaultAsync(x => 
@@ -30,7 +25,7 @@ internal sealed class UpdateProfileCommandHandler(
         if(profile is null)
             return Result<EmptySuccess, Error>
                 .Fail(ProfileErrors
-                    .InvalidProfile((Guid)userContext.UserId));
+                    .InvalidProfile(userContext.UserId));
 
         profile.FirstName = request.FirstName;
         profile.MiddleName = request.MiddleName;

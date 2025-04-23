@@ -16,7 +16,7 @@ public sealed class Property
     public int BuiltArea { get; set; }
     public int IdealParts { get; set; }
 
-    // People that occupy the property but aren't users
+    // People that occupy the property but may not be users
     public HashSet<Occupant> Occupants { get; set; } = [];
 
     public HashSet<PropertyUser> PropertyUsers { get; set; } = [];

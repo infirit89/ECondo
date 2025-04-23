@@ -3,7 +3,6 @@ using ECondo.Application.Services;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Provinces;
 using ECondo.Domain.Shared;
-using ECondo.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Commands.Buildings.RegisterEntrance;
@@ -25,10 +24,6 @@ internal sealed class RegisterBuildingEntranceCommandHandler(
 
         var building = buildingResult.ToSuccess().Data!;
 
-        if(userContext.UserId is null)
-            return Result<EmptySuccess, Error>.Fail(
-                UserErrors.InvalidUser());
-
         var entrance = await dbContext.Entrances
             .FirstOrDefaultAsync(e =>
                 e.BuildingId == building.Id
@@ -44,7 +39,7 @@ internal sealed class RegisterBuildingEntranceCommandHandler(
         {
             Building = building,
             Number = request.EntranceNumber,
-            ManagerId = (Guid)userContext.UserId,
+            ManagerId = userContext.UserId,
         };
 
         await dbContext

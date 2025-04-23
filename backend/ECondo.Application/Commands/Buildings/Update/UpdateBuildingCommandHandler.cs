@@ -1,15 +1,12 @@
 ﻿using ECondo.Application.Repositories;
-using ECondo.Application.Services;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Provinces;
 using ECondo.Domain.Shared;
-using ECondo.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Commands.Buildings.Update;
 
 internal sealed class UpdateBuildingCommandHandler(
-    IUserContext userContext,
     IApplicationDbContext dbContext)
     : ICommandHandler<UpdateBuildingCommand>
 {
@@ -17,10 +14,6 @@ internal sealed class UpdateBuildingCommandHandler(
             UpdateBuildingCommand request,
             CancellationToken cancellationToken)
     {
-        if(userContext.UserId is null)
-            return Result<EmptySuccess, Error>
-                .Fail(UserErrors.InvalidUser());
-
         Building? building = await dbContext
             .Buildings
             .FirstOrDefaultAsync(b => 

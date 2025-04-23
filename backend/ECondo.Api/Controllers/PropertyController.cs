@@ -1,4 +1,7 @@
 ﻿using ECondo.Api.Extensions;
+using ECondo.Application.Commands.Properties.Create;
+using ECondo.Application.Commands.Properties.Delete;
+using ECondo.Application.Commands.Properties.Update;
 using ECondo.Application.Queries.Properties.GetInBuilding;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -26,5 +29,51 @@ public class PropertyController(ISender sender) : ControllerBase
         return result.Match(
             data => TypedResults.Json(data.ToPagedListResponse()),
             CustomResults.Problem);
+    }
+
+    [Authorize]
+    [HttpPost(nameof(Create))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest,
+        Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IResult> Create(
+        [FromBody] CreatePropertyCommand request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
+    }
+
+    [Authorize]
+    [HttpPut(nameof(Update))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest,
+        Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IResult> Update(
+        [FromBody] UpdatePropertyCommand request)
+    {
+        var result = await sender.Send(request);
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
+    }
+
+    [Authorize]
+    [HttpDelete(nameof(Delete))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest,
+        Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> Delete(
+        [FromBody] DeletePropertyCommand request)
+    {
+        var result = await sender.Send(request);
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
     }
 }

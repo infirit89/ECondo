@@ -3,7 +3,6 @@ using ECondo.Application.Repositories;
 using ECondo.Application.Services;
 using ECondo.Domain.Profiles;
 using ECondo.Domain.Shared;
-using ECondo.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Queries.Profiles.GetForUser;
@@ -18,10 +17,6 @@ internal sealed class GetProfileQueryHandler(
             GetProfileQuery request,
             CancellationToken cancellationToken)
     {
-        if(userContext.UserId is null)
-            return Result<ProfileResult, Error>
-                .Fail(UserErrors.InvalidUser());
-
         var profileDetails =
             await dbContext
                 .UserDetails
@@ -33,7 +28,7 @@ internal sealed class GetProfileQueryHandler(
         if(profileDetails is null)
             return Result<ProfileResult, Error>
                 .Fail(ProfileErrors
-                    .InvalidProfile((Guid)userContext.UserId));
+                    .InvalidProfile(userContext.UserId));
 
         return Result<ProfileResult, Error>.Ok(
             new ProfileResult(

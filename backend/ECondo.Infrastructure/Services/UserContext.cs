@@ -6,9 +6,10 @@ namespace ECondo.Infrastructure.Services;
 
 internal class UserContext(IHttpContextAccessor httpContextAccessor) : IUserContext
 {
-    public Guid? UserId { get; } =
+    public Guid UserId { get; } =
         httpContextAccessor
             .HttpContext?
             .User
-            .GetId();
+            .GetId() ??
+        throw new ApplicationException("User context is unavailable");
 }

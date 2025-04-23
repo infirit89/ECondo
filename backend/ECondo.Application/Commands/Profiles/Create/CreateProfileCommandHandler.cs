@@ -15,20 +15,16 @@ internal sealed class CreateProfileCommandHandler(
             CreateProfileCommand request,
             CancellationToken cancellationToken)
     {
-        if (userContext.UserId is null)
-            return Result<EmptySuccess, Error>
-                .Fail(UserErrors.InvalidUser());
-
         var user = await dbContext
             .Users
             .FirstOrDefaultAsync(u => 
-                u.Id == (Guid)userContext.UserId,
+                u.Id == userContext.UserId,
                 cancellationToken: cancellationToken);
 
         if(user is null)
             return Result<EmptySuccess, Error>
                 .Fail(UserErrors
-                    .InvalidUser((Guid)userContext.UserId));
+                    .InvalidUser(userContext.UserId));
 
         ProfileDetails profileDetails = new()
         {

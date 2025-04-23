@@ -1,7 +1,6 @@
 ﻿using ECondo.Application.Repositories;
 using ECondo.Application.Services;
 using ECondo.Domain.Shared;
-using ECondo.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Queries.Properties.GetInBuilding;
@@ -12,9 +11,6 @@ internal sealed class GetPropertiesInBuildingQueryHandler
 {
     public async Task<Result<PagedList<BriefPropertyResult>, Error>> Handle(GetPropertiesInBuildingQuery request, CancellationToken cancellationToken)
     {
-        if (userContext.UserId is null)
-            return Result<PagedList<BriefPropertyResult>, Error>.Fail(UserErrors.InvalidUser());
-
         var propertyQuery = dbContext.Entrances
             .Include(e => e.Properties)
             .ThenInclude(p => p.PropertyType)
@@ -22,7 +18,7 @@ internal sealed class GetPropertiesInBuildingQueryHandler
             .Where(e =>
                 e.BuildingId == request.BuildingId &&
                 e.Number == request.EntranceNumber &&
-                e.ManagerId == (Guid)userContext.UserId)
+                e.ManagerId == userContext.UserId)
             .SelectMany(e =>
                 e.Properties
                     .Select(p =>

@@ -11,9 +11,7 @@ export default function PropertiesPage() {
                 <Title>Имоти</Title>
                 <Button>Нов имот</Button>
             </Flex>
-            
             <PropertiesList/>
-            
         </Container>
     );
 }

@@ -5,8 +5,7 @@ using ECondo.Domain.Users;
 namespace ECondo.Application.Commands.Identity.InvalidateRefreshToken;
 
 internal sealed class InvalidateRefreshTokenCommandHandler(
-    IAuthTokenService authService,
-    IUserContext userContext)
+    IAuthTokenService authService)
     : ICommandHandler<InvalidateRefreshTokenCommand>
 {
     public async Task<Result<EmptySuccess, Error>> Handle(
@@ -18,10 +17,6 @@ internal sealed class InvalidateRefreshTokenCommandHandler(
                 .RefreshTokenExistsAsync(request.RefreshToken))
             return Result<EmptySuccess, Error>
                 .Fail(UserErrors.InvalidRefreshToken());
-
-        if (userContext.UserId is null)
-            return Result<EmptySuccess, Error>
-                .Fail(UserErrors.InvalidUser());
 
         await authService
             .RemoveRefreshTokenAsync(request.RefreshToken);
