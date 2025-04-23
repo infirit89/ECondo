@@ -1,3 +1,3 @@
-import { NumberInput } from './NumberInput';
+import { NumberInput } from './numberInput';
 
 export default NumberInput;

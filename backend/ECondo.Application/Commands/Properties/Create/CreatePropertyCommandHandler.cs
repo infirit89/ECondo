@@ -30,7 +30,7 @@ internal sealed class CreatePropertyCommandHandler
         var propertyType = await dbContext
             .PropertyTypes
             .FirstOrDefaultAsync(pt => 
-                pt.Name == request.PropertyType,
+                pt.Name.ToLower() == request.PropertyType.ToLower(),
                 cancellationToken: cancellationToken);
 
         if(propertyType is null)

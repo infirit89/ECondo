@@ -39,10 +39,9 @@ internal class ECondoDbContext(
     public virtual DbSet<Entrance> Entrances { get; set; } = null!;
     public virtual DbSet<Province> Provinces { get; set; } = null!;
     public virtual DbSet<OccupantType> OccupantTypes { get; set; } = null!;
-    public virtual DbSet<Occupant> Occupants { get; set; } = null!;
     public virtual DbSet<Property> Properties { get; set; } = null!;
     public virtual DbSet<PropertyType> PropertyTypes { get; set; } = null!;
-    public virtual DbSet<PropertyUser> PropertyUsers { get; set; } = null!;
+    public virtual DbSet<PropertyOccupant> PropertyOccupants { get; set; } = null!;
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

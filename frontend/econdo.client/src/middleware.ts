@@ -8,7 +8,9 @@ const protectedRoutes = [
     '/condos/buildings', 
     '/condos/properties', 
     '/logout', 
-    '/profile'
+    '/profile',
+    '/acceptedInvitation',
+    '/buildings',
 ];
 
 const publicRoutes = ['/login', '/register', '/'];

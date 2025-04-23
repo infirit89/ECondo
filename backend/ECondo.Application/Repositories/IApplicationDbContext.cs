@@ -31,10 +31,9 @@ public interface IApplicationDbContext
     DbSet<Entrance> Entrances { get; }
     DbSet<Province> Provinces { get; }
     DbSet<OccupantType> OccupantTypes { get; }
-    DbSet<Occupant> Occupants { get; }
     DbSet<Property> Properties { get; }
     DbSet<PropertyType> PropertyTypes { get; }
-    DbSet<PropertyUser> PropertyUsers { get; }
+    DbSet<PropertyOccupant> PropertyOccupants { get; }
     #endregion
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

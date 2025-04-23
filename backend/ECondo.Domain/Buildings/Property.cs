@@ -17,7 +17,5 @@ public sealed class Property
     public int IdealParts { get; set; }
 
     // People that occupy the property but may not be users
-    public HashSet<Occupant> Occupants { get; set; } = [];
-
-    public HashSet<PropertyUser> PropertyUsers { get; set; } = [];
+    public HashSet<PropertyOccupant> PropertyOccupants { get; set; } = [];
 }

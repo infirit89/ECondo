@@ -21,6 +21,7 @@ public static class MigrationsConfiguration
         await applicationBuilder.SeedEntrances();
         await applicationBuilder.SeedPropertyTypes();
         await applicationBuilder.SeedProperties();
+        await applicationBuilder.SeedOccupantTypes();
 
         return applicationBuilder;
     }

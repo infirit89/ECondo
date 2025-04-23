@@ -298,58 +298,36 @@ namespace ECondo.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Occupants",
+                name: "PropertyOccupants",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OccupantTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    MiddleName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    AccessCode = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MiddleName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InvitationToken = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    InvitationSentAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    InvitationExpiresAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Occupants", x => x.Id);
+                    table.PrimaryKey("PK_PropertyOccupants", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Occupants_OccupantTypes_OccupantTypeId",
-                        column: x => x.OccupantTypeId,
-                        principalTable: "OccupantTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Occupants_Properties_PropertyId",
-                        column: x => x.PropertyId,
-                        principalTable: "Properties",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PropertyUsers",
-                columns: table => new
-                {
-                    PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OccupantTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PropertyUsers", x => new { x.PropertyId, x.UserId, x.OccupantTypeId });
-                    table.ForeignKey(
-                        name: "FK_PropertyUsers_OccupantTypes_OccupantTypeId",
+                        name: "FK_PropertyOccupants_OccupantTypes_OccupantTypeId",
                         column: x => x.OccupantTypeId,
                         principalTable: "OccupantTypes",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_PropertyUsers_Properties_PropertyId",
+                        name: "FK_PropertyOccupants_Properties_PropertyId",
                         column: x => x.PropertyId,
                         principalTable: "Properties",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_PropertyUsers_Users_UserId",
+                        name: "FK_PropertyOccupants_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id");
@@ -376,16 +354,6 @@ namespace ECondo.Infrastructure.Migrations
                 column: "Number");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Occupants_OccupantTypeId",
-                table: "Occupants",
-                column: "OccupantTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Occupants_PropertyId",
-                table: "Occupants",
-                column: "PropertyId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Properties_EntranceId",
                 table: "Properties",
                 column: "EntranceId");
@@ -401,13 +369,23 @@ namespace ECondo.Infrastructure.Migrations
                 column: "PropertyTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PropertyUsers_OccupantTypeId",
-                table: "PropertyUsers",
+                name: "IX_PropertyOccupants_InvitationToken",
+                table: "PropertyOccupants",
+                column: "InvitationToken");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PropertyOccupants_OccupantTypeId",
+                table: "PropertyOccupants",
                 column: "OccupantTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PropertyUsers_UserId",
-                table: "PropertyUsers",
+                name: "IX_PropertyOccupants_PropertyId",
+                table: "PropertyOccupants",
+                column: "PropertyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PropertyOccupants_UserId",
+                table: "PropertyOccupants",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -465,10 +443,7 @@ namespace ECondo.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Occupants");
-
-            migrationBuilder.DropTable(
-                name: "PropertyUsers");
+                name: "PropertyOccupants");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");

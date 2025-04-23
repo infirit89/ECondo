@@ -106,50 +106,6 @@ namespace ECondo.Infrastructure.Migrations
                     b.ToTable("Entrances");
                 });
 
-            modelBuilder.Entity("ECondo.Domain.Buildings.Occupant", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AccessCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("MiddleName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<Guid>("OccupantTypeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("PropertyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OccupantTypeId");
-
-                    b.HasIndex("PropertyId");
-
-                    b.ToTable("Occupants");
-                });
-
             modelBuilder.Entity("ECondo.Domain.Buildings.OccupantType", b =>
                 {
                     b.Property<Guid>("Id")
@@ -205,6 +161,58 @@ namespace ECondo.Infrastructure.Migrations
                     b.ToTable("Properties");
                 });
 
+            modelBuilder.Entity("ECondo.Domain.Buildings.PropertyOccupant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("InvitationExpiresAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("InvitationSentAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("InvitationToken")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MiddleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("OccupantTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvitationToken");
+
+                    b.HasIndex("OccupantTypeId");
+
+                    b.HasIndex("PropertyId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PropertyOccupants");
+                });
+
             modelBuilder.Entity("ECondo.Domain.Buildings.PropertyType", b =>
                 {
                     b.Property<Guid>("Id")
@@ -219,26 +227,6 @@ namespace ECondo.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PropertyTypes");
-                });
-
-            modelBuilder.Entity("ECondo.Domain.Buildings.PropertyUser", b =>
-                {
-                    b.Property<Guid>("PropertyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("OccupantTypeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("PropertyId", "UserId", "OccupantTypeId");
-
-                    b.HasIndex("OccupantTypeId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PropertyUsers");
                 });
 
             modelBuilder.Entity("ECondo.Domain.Profiles.ProfileDetails", b =>
@@ -532,25 +520,6 @@ namespace ECondo.Infrastructure.Migrations
                     b.Navigation("Manager");
                 });
 
-            modelBuilder.Entity("ECondo.Domain.Buildings.Occupant", b =>
-                {
-                    b.HasOne("ECondo.Domain.Buildings.OccupantType", "OccupantType")
-                        .WithMany("Occupants")
-                        .HasForeignKey("OccupantTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ECondo.Domain.Buildings.Property", "Property")
-                        .WithMany("Occupants")
-                        .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OccupantType");
-
-                    b.Navigation("Property");
-                });
-
             modelBuilder.Entity("ECondo.Domain.Buildings.Property", b =>
                 {
                     b.HasOne("ECondo.Domain.Buildings.Entrance", "Entrance")
@@ -570,25 +539,24 @@ namespace ECondo.Infrastructure.Migrations
                     b.Navigation("PropertyType");
                 });
 
-            modelBuilder.Entity("ECondo.Domain.Buildings.PropertyUser", b =>
+            modelBuilder.Entity("ECondo.Domain.Buildings.PropertyOccupant", b =>
                 {
                     b.HasOne("ECondo.Domain.Buildings.OccupantType", "OccupantType")
-                        .WithMany("PropertyUsers")
+                        .WithMany("PropertyOccupants")
                         .HasForeignKey("OccupantTypeId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("ECondo.Domain.Buildings.Property", "Property")
-                        .WithMany("PropertyUsers")
+                        .WithMany("PropertyOccupants")
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("ECondo.Domain.Users.User", "User")
-                        .WithMany("PropertyUsers")
+                        .WithMany("PropertyOccupants")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("OccupantType");
 
@@ -683,16 +651,12 @@ namespace ECondo.Infrastructure.Migrations
 
             modelBuilder.Entity("ECondo.Domain.Buildings.OccupantType", b =>
                 {
-                    b.Navigation("Occupants");
-
-                    b.Navigation("PropertyUsers");
+                    b.Navigation("PropertyOccupants");
                 });
 
             modelBuilder.Entity("ECondo.Domain.Buildings.Property", b =>
                 {
-                    b.Navigation("Occupants");
-
-                    b.Navigation("PropertyUsers");
+                    b.Navigation("PropertyOccupants");
                 });
 
             modelBuilder.Entity("ECondo.Domain.Buildings.PropertyType", b =>
@@ -716,7 +680,7 @@ namespace ECondo.Infrastructure.Migrations
                 {
                     b.Navigation("Entrances");
 
-                    b.Navigation("PropertyUsers");
+                    b.Navigation("PropertyOccupants");
 
                     b.Navigation("UserClaims");
 

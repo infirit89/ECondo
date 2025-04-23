@@ -43,6 +43,7 @@ export default function LoginForm() {
     const onSubmit = async(data: LoginFormFields) => {
         dispatch({ type: 'SUBMIT' });
         const res = await login(data);
+        console.log(res);
         if(!res.ok) {
             if(res.error.title === UserErrorCode.NotFound) {
                 form.setValue('password', '');

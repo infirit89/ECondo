@@ -5,6 +5,7 @@ using ECondo.Domain.Users;
 using Microsoft.AspNetCore.Identity;
 
 namespace ECondo.Application.Commands.Identity.GenerateAccessToken;
+
 internal class GenerateAccessTokenCommandHandler(
     UserManager<User> userManager,
     IAuthTokenService authService) :
