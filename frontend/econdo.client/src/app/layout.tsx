@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import '@mantine/core/styles.css';
+import { ModalsProvider } from '@mantine/modals';
 import { 
   ColorSchemeScript,
   mantineHtmlProps, 
@@ -30,11 +31,13 @@ export default async function RootLayout({
       </head>
       <body>
         <MantineProvider>
-          <HealthProvider>
+          <ModalsProvider>
+            <HealthProvider>
               <Suspense fallback={<Loading/>}>
                 {children}
               </Suspense>
-          </HealthProvider>
+            </HealthProvider>
+          </ModalsProvider>
         </MantineProvider>
       </body>
     </html>

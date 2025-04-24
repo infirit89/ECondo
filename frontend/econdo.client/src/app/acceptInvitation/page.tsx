@@ -20,24 +20,12 @@ export default async function AcceptInvitationLandingPage(
             </Text>
 
             <Center mt="md">
-                <Button component={Link} href={`/acceptedInvitation?token=${token}&email=${email}`} size="lg">
+                <Button
+                component={Link}
+                href={`/acceptedInvitation?token=${token}&email=${email}`} size="lg">
                     Приемам поканата
                 </Button>
             </Center>
-          
-            {/* <>
-              <Title order={1} align="center" color="green">
-                <Center>
-                  <Check size={32} />
-                </Center>
-                Поканата е приета!
-              </Title>
-
-              <Text size="lg" align="center">
-                Успешно се присъединихте към имота. Вече имате достъп до информацията и функциите за управление.
-              </Text>
-            </> */}
-
           </Stack>
         </Paper>
       </Container>

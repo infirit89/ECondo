@@ -108,3 +108,52 @@ export const deleteProperty =
 
         throw new Error('Unexpected code flow');
     });
+
+export interface Property {
+    id: string,
+    floor: string,
+    number: string,
+    propertyType: string,
+    builtArea: number,
+    idealParts: number,
+}
+
+export const getPropertyById =
+cache(async (propertyId: string):
+Promise<Result<Property>> => {
+    try {
+        const res = await authInstance.get<Property>('/api/property/getById', {
+            params: {
+                propertyId,
+            }
+        });
+
+        return resultOk(res.data);
+    } catch(error) {
+        if(isAxiosError<ApiError, Record<string, string[]>>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+});
+
+export const updateProperty =
+cache(async (data: Property):
+Promise<Result> => {
+    try {
+        await authInstance.put('/api/property/update', {
+            propertyId: data.id,
+            floor: data.floor,
+            number: data.number,
+            propertyType: data.propertyType,
+            builtArea: data.builtArea,
+            idealParts: data.idealParts,
+        });
+        return resultOk();
+    } catch(error) {
+        if(isAxiosError<ApiError, Record<string, string[]>>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+});

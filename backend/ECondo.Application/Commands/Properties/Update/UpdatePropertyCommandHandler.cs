@@ -25,23 +25,31 @@ internal sealed class UpdatePropertyCommandHandler
                 PropertyTypeErrors
                     .InvalidPropertyType(request.PropertyType));
 
-        var property = await dbContext
+        var propertyToUpdate = await dbContext
             .Properties
-            .FirstOrDefaultAsync(p => 
+            .FirstAsync(p => 
                 p.Id == request.PropertyId,
                 cancellationToken: cancellationToken);
-
-        if(property is null)
+        
+        var property = await dbContext
+            .Properties
+            .FirstOrDefaultAsync(p =>
+                p.Number == request.Number &&
+                p.EntranceId == propertyToUpdate.EntranceId, 
+                cancellationToken: cancellationToken);
+        
+        if(property is not null)
             return Result<EmptySuccess, Error>.Fail(
-                PropertyErrors.InvalidProperty(request.PropertyId));
+                PropertyErrors.AlreadyExists(
+                    property.Number, property.EntranceId));
+        
+        propertyToUpdate.Floor = request.Floor;
+        propertyToUpdate.Number = request.Number;
+        propertyToUpdate.PropertyTypeId = propertyType.Id;
+        propertyToUpdate.BuiltArea = request.BuiltArea;
+        propertyToUpdate.IdealParts = request.IdealParts;
 
-        property.Floor = request.Floor;
-        property.Number = request.Number;
-        property.PropertyTypeId = propertyType.Id;
-        property.BuiltArea = request.BuiltArea;
-        property.IdealParts = request.IdealParts;
-
-        dbContext.Properties.Update(property);
+        dbContext.Properties.Update(propertyToUpdate);
         await dbContext.SaveChangesAsync(cancellationToken);
         return Result<EmptySuccess, Error>.Ok();
     }

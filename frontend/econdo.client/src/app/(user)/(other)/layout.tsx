@@ -1,6 +1,7 @@
+import Loading from "@/components/loading";
 import { UserNavbar } from "@/components/navbar/userNavbar";
-import { AppShell, AppShellFooter, AppShellMain } from "@mantine/core";
-import { ReactNode } from "react";
+import { AppShell, AppShellMain } from "@mantine/core";
+import { ReactNode, Suspense } from "react";
 
 export default function CommonUserLayout(
     { children }: Readonly<{ children: ReactNode }> ) {
@@ -10,7 +11,9 @@ export default function CommonUserLayout(
         header={{ height: 60 }}>
             <UserNavbar />
             <AppShellMain>
-                {children}
+                <Suspense fallback={<Loading/>}>
+                    {children}
+                </Suspense>
             </AppShellMain>
             {/* <AppShellFooter> */}
                 

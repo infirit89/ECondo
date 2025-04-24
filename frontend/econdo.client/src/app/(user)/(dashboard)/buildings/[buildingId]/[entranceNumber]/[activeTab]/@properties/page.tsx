@@ -2,13 +2,21 @@ import { getAllPropertyTypes } from "@/actions/property";
 import PropertyPageContent from "./propertyPageContent";
 import { Suspense } from "react";
 import Loading from "@/components/loading";
+import { getAllOccupantTypes } from "@/actions/propertyOccupant";
+import PropertyTypeProvider from "./propertyTypeProvider";
+import OccupantTypeProvider from "./occupantTypeProvider";
 
 export default function PropertiesPage() {
     const propertyTypes = getAllPropertyTypes();
+    const occupantTypes = getAllOccupantTypes();
 
     return (
         <Suspense fallback={<Loading/>}>
-            <PropertyPageContent propertyTypes={propertyTypes}/>
+            <PropertyTypeProvider propertyTypes={propertyTypes}>
+                <OccupantTypeProvider occupantTypes={occupantTypes}>
+                    <PropertyPageContent/>
+                </OccupantTypeProvider>
+            </PropertyTypeProvider>
         </Suspense>
     );
 }

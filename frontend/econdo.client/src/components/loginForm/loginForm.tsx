@@ -45,7 +45,8 @@ export default function LoginForm() {
         const res = await login(data);
         console.log(res);
         if(!res.ok) {
-            if(res.error.title === UserErrorCode.NotFound) {
+            if(res.error.title === UserErrorCode.NotFound || 
+                res.error.title === 'Validation.General') {
                 form.setValue('password', '');
                 dispatch({type: 'ERROR'});
                 return;

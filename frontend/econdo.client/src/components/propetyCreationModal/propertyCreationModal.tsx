@@ -1,49 +1,46 @@
 'use client';
 
-import { createProperty, PropertyTypeNameResult } from "@/actions/property";
+import { createProperty } from "@/actions/property";
+import { usePropertyTypes } from "@/app/(user)/(dashboard)/buildings/[buildingId]/[entranceNumber]/[activeTab]/@properties/propertyTypeProvider";
 import formReducer, { initialFormState } from "@/lib/formState";
+import { queryKeys } from "@/types/queryKeys";
+import { propertySchema } from "@/utils/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Group, LoadingOverlay, Modal, NumberInput, Stack, TextInput, Title, Text, Select } from "@mantine/core";
-import { useParams, useRouter } from "next/navigation";
+import { 
+    Button,
+    Group,
+    LoadingOverlay,
+    Modal,
+    NumberInput,
+    Stack,
+    TextInput,
+    Text,
+    Select
+} from "@mantine/core";
+import { useQueryClient } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 import { useEffect, useReducer } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-const propertySchema = z.object({
-    floor: z.string().min(1, "Етаж е задължително поле"),
-    number: z.string().min(1, "Номер е задължително поле"),
-    propertyType: z.string()
-        .nonempty('Видът на имота е задължително поле'),
-    builtArea: z
-      .number({
-        required_error: "Застроената площ е задължително поле",
-        invalid_type_error: "Застроената площ трябва да бъде число",
-      })
-      .positive("Застроената площ трябва да бъде положително число"),
-    idealParts: z
-      .number({
-        required_error: "Идеалните части е задължително поле",
-        invalid_type_error: "Идеалните части трябва да бъдат число",
-      })
-      .int("Идеалните части трябва да бъдат цяло число")
-      .positive("Идеалните части трябва да бъдат положително число"),
-  })
-  
 type PropertyFormValues = z.infer<typeof propertySchema>
   
 interface PropertyModalProps {
     isOpen: boolean,
     onClose: () => void,
-    propertyTypes: PropertyTypeNameResult,
 }
 
-export function PropertyCreationModal(
-    { isOpen, onClose, propertyTypes }: 
-    PropertyModalProps) {
+export function PropertyCreationModal({ 
+    isOpen, 
+    onClose, }: PropertyModalProps) {
     const { buildingId, entranceNumber } = 
         useParams<{ buildingId: string, entranceNumber: string }>();
 
-    const [formState, dispatch] = useReducer(formReducer, initialFormState);
+    const { propertyTypes } = usePropertyTypes();
+    const [formState, dispatch] = 
+        useReducer(formReducer, initialFormState);
+
+    const queryClient = useQueryClient();
 
     const {
         control,
@@ -65,7 +62,6 @@ export function PropertyCreationModal(
         if(formState === 'success') {
             reset();
             onClose();
-            window.location.reload();
         }
     }, [formState]);
 
@@ -92,13 +88,16 @@ export function PropertyCreationModal(
         }
         
         dispatch({type: 'SUCCESS'});
+        queryClient.invalidateQueries({
+            queryKey: queryKeys.properties.all,
+        });
     }
     const isLoading = formState === 'loading';
     const hasError = formState === 'error';
     return (
         <Modal 
         opened={isOpen} 
-        onClose={onClose} 
+        onClose={!isLoading ? onClose : () => {}} 
         title={<Text>Нов имот</Text>} size="md" centered>
         <form onSubmit={handleSubmit(handleFormSubmit)}>
             <Stack gap="md">
@@ -185,8 +184,8 @@ export function PropertyCreationModal(
                 </Text> :
                 <></> }
                 <Group justify='end' mt="md">
-                    <Button variant="outline" onClick={onClose}>
-                    Cancel
+                    <Button variant="outline" disabled={isLoading} onClick={onClose}>
+                    Отмени
                     </Button>
                     <Button type="submit" disabled={isLoading}>
                         Добави имот

@@ -1,4 +1,4 @@
-import { BriefPropertyResult, deleteProperty } from "@/actions/property";
+import { BriefPropertyResult } from "@/actions/property";
 import { 
     Card, 
     CardSection, 
@@ -10,9 +10,9 @@ import {
     useMantineTheme,
 } from "@mantine/core";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
-import { useParams } from "next/navigation";
 import { useState } from "react";
-import { string } from "zod";
+import PropertyEditModal from "./propertyEditModal";
+import { boolean } from "zod";
 
 const propertyImages = new Map([
     ['офис', {
@@ -49,19 +49,27 @@ const propertyImages = new Map([
     }],
 ])
 
-export default function PropertyCard(
-    {property, handleDelete } : 
-    { 
-        property: BriefPropertyResult,
-        handleDelete?: (id: string) => {}
-    }
-) {
+interface ProperyCardProps {
+    property: BriefPropertyResult,
+    handleDelete?: (id: string) => void,
+    buildingId: string,
+    entranceNumber: string,
+    isDeleting: boolean,
+}
+
+export default function PropertyCard({ 
+    property, 
+    handleDelete,
+    buildingId, 
+    entranceNumber,
+    isDeleting, } : ProperyCardProps) {
+
     const theme = useMantineTheme();
     let propertyImage = 
         propertyImages.get(
             property.propertyType.toLowerCase());
 
-    const [isDeleting, setIsDeleting] = useState(false);
+    const [ editModalOpened, setEditModalOpen ] = useState(false);
     propertyImage = propertyImage !== undefined ? 
     propertyImage :
     {
@@ -70,49 +78,66 @@ export default function PropertyCard(
     };
 
     return (
-        <Card 
-        padding="lg"
-        radius="md"
-        withBorder>
-            <CardSection>
-                <Image
-                className={`h-[180]`}
-                src={propertyImage.src}
-                alt={propertyImage.alt}
-                />
-            </CardSection>
+        <>
+            <PropertyEditModal
+            opened={editModalOpened}
+            onClose={() => setEditModalOpen(false)}
+            buildingId={buildingId}
+            entranceNumber={entranceNumber}
+            propertyId={property.id}
+            />
+            {/* <AddOccupantModal
+            addOccupantModal={stack.register('add-occupant-modal')}
+            buildingId={buildingId}
+            entranceNumber={entranceNumber}
+            propertyId={property.id}/> */}
+            <Card 
+            padding="lg"
+            radius="md"
+            withBorder>
+                <CardSection>
+                    <Image
+                    className={`h-[180]`}
+                    src={propertyImage.src}
+                    alt={propertyImage.alt}
+                    />
+                </CardSection>
 
-            <Center mb={'xs'} mt={'xs'}>
-                <Text fw={500}>№ {property.number}</Text>
-            </Center>
+                <Center mb={'xs'} mt={'xs'}>
+                    <Text fw={500}>№ {property.number}</Text>
+                </Center>
 
-            <Text size="sm" c="dimmed" ta={'center'}>
-                Етаж: {property.floor}
-            </Text>
-            <Text size="sm" c="dimmed" ta={'center'}>
-                Тип: {property.propertyType}
-            </Text>
+                <Text size="sm" c="dimmed" ta={'center'}>
+                    Етаж: {property.floor}
+                </Text>
+                <Text size="sm" c="dimmed" ta={'center'}>
+                    Тип: {property.propertyType}
+                </Text>
 
-            <CardSection mt={'md'} pr={'lg'} pb={'xs'} pt={'xs'}>
-                <Group justify='end' gap={8} mr={0}>
-                    <ActionIcon disabled={isDeleting} variant="subtle" color="gray">
-                        <IconPencil size={20} stroke={1.5} />
-                    </ActionIcon>
-                    <ActionIcon
-                    disabled={isDeleting}
-                    variant="subtle" 
-                    color="red" 
-                    onClick={
-                        !handleDelete ? 
-                        () => {} : 
-                        () => {
-                            setIsDeleting(true);
-                            handleDelete(property.id);
-                        }}>
-                        <IconTrash size={20} color={theme.colors.red[6]} stroke={1.5} />
-                    </ActionIcon>
-                </Group>
-            </CardSection>
-        </Card>
+                <CardSection mt={'md'} pr={'lg'} pb={'xs'} pt={'xs'}>
+                    <Group justify='end' gap={8} mr={0}>
+                        <ActionIcon 
+                        disabled={isDeleting} 
+                        variant="subtle" 
+                        color="gray"
+                        onClick={() => setEditModalOpen(true)}>
+                            <IconPencil size={20} stroke={1.5} />
+                        </ActionIcon>
+                        <ActionIcon
+                        disabled={isDeleting}
+                        variant="subtle" 
+                        color="red" 
+                        onClick={
+                            !handleDelete ? 
+                            () => {} : 
+                            () => {
+                                handleDelete(property.id);
+                            }}>
+                            <IconTrash size={20} color={theme.colors.red[6]} stroke={1.5} />
+                        </ActionIcon>
+                    </Group>
+                </CardSection>
+            </Card>
+        </>
     );
 }

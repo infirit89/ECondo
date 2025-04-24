@@ -13,4 +13,9 @@ public static class PropertyErrors
         Error.NotFound(
             "Properties.NotFound",
             $"The property with Id = '{propertyId}' does not exists");
+
+    public static Error Forbidden(Guid propertyId) =>
+        Error.Forbidden(
+            "Properties.Forbidden",
+            $"The user can not access the property with id '{propertyId}'");
 }

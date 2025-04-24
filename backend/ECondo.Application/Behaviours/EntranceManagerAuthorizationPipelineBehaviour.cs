@@ -1,6 +1,7 @@
 ﻿using ECondo.Application.Policies;
 using ECondo.Application.Repositories;
 using ECondo.Application.Services;
+using ECondo.Application.Shared;
 using ECondo.Domain.Exceptions;
 using ECondo.Domain.Shared;
 using MediatR;
@@ -29,24 +30,16 @@ internal sealed class EntranceManagerAuthorizationPipelineBehaviour
         if (isManager)
             return await next();
 
-        if (typeof(TResponse).IsGenericType &&
-            typeof(TResponse).GetGenericTypeDefinition() == typeof(Result<,>))
+        if (Utils.IsTypeResultType<TResponse>())
         {
-            Type resultType = typeof(TResponse).GetGenericArguments()[0];
-            var failMethodInfo = typeof(Result<,>)
-                .MakeGenericType(resultType, typeof(Error))
-                .GetMethod(nameof(Result<object, Error>.Fail));
-
-            object? res = failMethodInfo?.Invoke(
-                null,
+            var res = Utils.InvokeResultFail<TResponse>(
                 [CreateForbiddenError()]);
 
             if (res is not null)
-                return (TResponse)res;
-
+                return res;
         }
 
-        throw new UnauthorizedException();
+        throw new ForbiddenException();
     }
 
     private static Error CreateForbiddenError() =>

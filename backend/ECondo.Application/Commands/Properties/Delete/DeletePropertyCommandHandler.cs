@@ -22,6 +22,7 @@ internal sealed class DeletePropertyCommandHandler
 
         var property = await dbContext
             .Properties
+            .Include(p => p.PropertyOccupants)
             .FirstOrDefaultAsync(p => 
                 p.Id == request.PropertyId &&
                 p.EntranceId == entrance.Id,
@@ -31,6 +32,7 @@ internal sealed class DeletePropertyCommandHandler
             return Result<EmptySuccess, Error>.Fail(
                 PropertyErrors.InvalidProperty(request.PropertyId));
 
+        dbContext.PropertyOccupants.RemoveRange(property.PropertyOccupants);
         dbContext.Properties.Remove(property);
         await dbContext.SaveChangesAsync(cancellationToken);
         return Result<EmptySuccess, Error>.Ok();

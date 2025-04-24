@@ -1,5 +1,7 @@
 ﻿using ECondo.Api.Extensions;
+using ECondo.Application.Commands.PropertyOccupants.AcceptInvitation;
 using ECondo.Application.Commands.PropertyOccupants.AddToProperty;
+using ECondo.Application.Queries.PropertyOccupants.GetInProperty;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,5 +27,38 @@ public class PropertyOccupantController(ISender sender)
         var result = await sender.Send(request);
 
         return result.Match(TypedResults.Ok, CustomResults.Problem);
+    }
+
+    [Authorize]
+    [HttpPost(nameof(AcceptInvitation))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest,
+        Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IResult> AcceptInvitation(
+        [FromBody] AcceptPropertyInvitationCommand request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
+    }
+    
+    [Authorize]
+    [HttpGet(nameof(GetInProperty))]
+    [ProducesResponseType(StatusCodes.Status200OK,
+        Type = typeof(IEnumerable<OccupantResult>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest,
+        Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IResult> GetInProperty(
+        [FromQuery] GetOccupantsInPropertyQuery request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(data => TypedResults.Json(data), CustomResults.Problem);
     }
 }

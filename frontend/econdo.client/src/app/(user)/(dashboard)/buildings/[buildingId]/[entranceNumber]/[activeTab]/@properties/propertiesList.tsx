@@ -1,86 +1,73 @@
 'use client';
 
-import { BriefPropertyResult, deleteProperty, getPropertiesInEntrance } from "@/actions/property";
+import { deleteProperty, getPropertiesInEntrance } from "@/actions/property";
 import Loading from "@/components/loading";
-import { ApiError, PagedList } from "@/types/apiResponses";
 import { Center, Grid, GridCol, Title, Pagination, Alert } from "@mantine/core";
 import { IconExclamationCircle, IconMoodPuzzled } from "@tabler/icons-react";
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { useState } from "react";
 import PropertyCard from "./propertyCard";
-
-interface PropertiesPageState {
-    state: 'idle' | 'loading' | 'error' | 'success',
-    properties?: PagedList<BriefPropertyResult>,
-    error?: ApiError,
-}
-
-export type ProperiesPageAction = 
-    | { type: 'request_page' }
-    | { type: 'request_page_success', properties?: PagedList<BriefPropertyResult> }
-    | { type: 'request_page_error', error: ApiError };
-
-function propertyPageReducer(state: PropertiesPageState, action: ProperiesPageAction): 
-    PropertiesPageState {
-    switch(action.type) {
-        case 'request_page':
-            return { ...state, state: 'loading' };
-        case 'request_page_success':
-            return { state: 'success', properties: action.properties };
-        case 'request_page_error':
-            return { state: 'error', error: action.error };
-    }
-}
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/types/queryKeys";
 
 // hard coded for now
 const pageSize = 8;
+
+const useQueryPropertiesPaged = (buildingId: string, entranceNumber: string, page: number) => {
+    return useQuery({
+        queryKey: queryKeys.properties.pagedInEntrance(
+            buildingId,
+            entranceNumber,
+            page,
+            pageSize),
+        queryFn: () => getPropertiesInEntrance(
+            buildingId,
+            entranceNumber,
+            page,
+            pageSize),
+    })
+}
 
 export default function PropertiesList() {
     const { buildingId, entranceNumber } = useParams<{
         buildingId: string,
         entranceNumber: string }>();
 
-    const [isMounted, setIsMounted] = useState(false);
-    const [state, dispatch] = useReducer(propertyPageReducer, { state: 'idle' });
     const [isDeleteError, setDeleteError] = useState(false);
+    const [deletedPropertyId, setDeletedPropertyId] = useState<string | undefined>(undefined);
+    const [page, setPage] = useState(0);
 
-    const fetchProperties = useCallback(async (page: number) => {
-        dispatch({ type: 'request_page' });
+    const queryClient = useQueryClient();
+    const { data: properties, isLoading } = useQueryPropertiesPaged(buildingId, entranceNumber, page);
 
-        const response = await 
-            getPropertiesInEntrance(buildingId, entranceNumber, page, pageSize);
-        
-        if(!response.ok) {
-            dispatch({ type: 'request_page_error', error: response.error });
-            return;
-        }
-        
-        dispatch({ type: 'request_page_success', properties: response.value });
-    }, [buildingId, entranceNumber, pageSize]);
-
-    useEffect(() => {
-        fetchProperties(0);
-        setIsMounted(true);
-    }, []);
-    
-    const handlePropertyDelete = async (id: string) => {
-        const res = await deleteProperty({
-            buildingId: buildingId,
-            entranceNumber: entranceNumber,
-            propertyId: id,
+    const useDeleteProperty = () => {
+        return useMutation({
+            mutationFn: (propertyId: string) => deleteProperty({buildingId, entranceNumber, propertyId}),
+            onSuccess: (data) => {
+                if(!data.ok) {
+                    setDeleteError(true);
+                    setDeletedPropertyId(undefined);
+                    return;
+                }
+                
+                queryClient.invalidateQueries({
+                    queryKey: queryKeys.properties.pagedInEntrance(
+                        buildingId,
+                        entranceNumber,
+                        page,
+                        pageSize),
+                    });
+            },
+            onMutate: (propertyId) => {
+                setDeleteError(false);
+                setDeletedPropertyId(propertyId);
+            }
         });
+    }
 
-        fetchProperties(state.properties?.currentPage!);
-        
-        if(!res.ok) {
-            setDeleteError(true);
-            return;
-        }
+    const { mutate: deletePropertyMutation } = useDeleteProperty();
 
-        setDeleteError(false);
-    };
-
-    if(!isMounted || state.state === 'loading')
+    if(isLoading || !properties?.ok)
         return <Loading/>;
 
     return (
@@ -98,25 +85,29 @@ export default function PropertiesList() {
                 <></>
             }
             {
-                state.properties && state.properties.items.length > 0 ?
+                properties.value && properties.value.items.length > 0 ?
                 <>
                     <Grid>
                         {
-                            state
-                            .properties
+                            properties
+                            .value
                             .items.map((value, index) => (
                             <GridCol key={index} span={{ base: 2, xs: 3 }}>
                                 <PropertyCard
                                 key={index}
+                                isDeleting={value.id === deletedPropertyId}
                                 property={value}
-                                handleDelete={handlePropertyDelete} />
+                                handleDelete={(id) => deletePropertyMutation(id)} 
+                                buildingId={buildingId}
+                                entranceNumber={entranceNumber}
+                                />
                             </GridCol>
                             ))    
                         }
                     </Grid>
-                    <Pagination total={state.properties.totalPages}
-                    value={state.properties.currentPage + 1}
-                    onChange={(value) => fetchProperties(value - 1)}
+                    <Pagination total={properties.value.totalPages}
+                    value={page + 1}
+                    onChange={(value) => setPage(value - 1)}
                     mt={'md'}/>
                 </>
                 : 

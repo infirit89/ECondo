@@ -1,15 +1,49 @@
+import { acceptPropertyInvitation } from "@/actions/propertyOccupant";
 import { Anchor, Box, Button, Center, Container, Paper, Stack, Text, Title } from "@mantine/core";
-import { IconArrowRight, IconCheck } from "@tabler/icons-react";
+import { IconArrowRight, IconCheck, IconReload, IconX } from "@tabler/icons-react";
 import Link from "next/link";
 
 export default async function AcceaptInvitationPage(
-    {searchParams} : { searchParams : Promise<{ [key: string]: string | string[] | undefined }> }
+    {searchParams} : 
+    { searchParams : 
+        Promise<{ 
+            [key: string]: string | string[] | undefined }> }
 ) {
     const { token = '', email = '' } = await searchParams;
-    console.log(token);
-    console.log(email);
     
+    const res = await acceptPropertyInvitation(
+        token as string,
+        email as string);
+
     return (
+        !res.ok ?
+        <Container size="sm" py="xl" my={40} mb={100}>
+            <Paper shadow="md" p="xl" radius="md" withBorder>
+                <Stack gap="xl">
+                    <Title order={1} ta="center" c="red">
+                        <Center>
+                            <IconX size={32} />
+                        </Center>
+                    Грешка при приеманета на поканата!
+                    </Title>
+
+                    <Center>
+                        <Button 
+                        component={Link} 
+                        href={`/acceptedInvitation?token=${token}&email=${email}`}>
+                            <Center inline>
+                                <Box mr={5} mb={2}>
+                                    Опитай отново
+                                </Box>
+                                <IconReload size={20}/>
+                            </Center>
+                        </Button>
+                    </Center>
+    
+                </Stack>
+            </Paper>
+        </Container>
+        :
         <Container size="sm" py="xl" my={40} mb={100}>
             <Paper shadow="md" p="xl" radius="md" withBorder>
                 <Stack gap="xl">

@@ -9,8 +9,8 @@ namespace ECondo.Domain.Buildings;
 
 public static class OccupantTypeErrors
 {
-    public static Error Invalid(string propertyType) =>
+    public static Error Invalid(string occupantType) =>
         Error.NotFound(
             "OccupantTypes.NotFound",
-            $"Occupant type with name = '{propertyType}' was not found");
+            $"Occupant type with name = '{occupantType}' was not found");
 }

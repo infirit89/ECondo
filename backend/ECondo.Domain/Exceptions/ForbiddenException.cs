@@ -1,7 +1,7 @@
 ﻿namespace ECondo.Domain.Exceptions;
 
 [Serializable]
-public sealed class UnauthorizedException : Exception
+public sealed class ForbiddenException : Exception
 {
 
 }

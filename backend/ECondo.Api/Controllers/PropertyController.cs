@@ -2,6 +2,7 @@
 using ECondo.Application.Commands.Properties.Create;
 using ECondo.Application.Commands.Properties.Delete;
 using ECondo.Application.Commands.Properties.Update;
+using ECondo.Application.Queries.Properties.GetById;
 using ECondo.Application.Queries.Properties.GetInBuilding;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -75,5 +76,22 @@ public class PropertyController(ISender sender) : ControllerBase
     {
         var result = await sender.Send(request);
         return result.Match(TypedResults.Ok, CustomResults.Problem);
+    }
+
+    [Authorize]
+    [HttpGet(nameof(GetById))]
+    [ProducesResponseType(StatusCodes.Status200OK,
+        Type = typeof(PropertyResult))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest,
+        Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IResult> GetById(
+            [FromQuery] GetPropertyByIdQuery request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(
+            data => TypedResults.Json(data),
+            CustomResults.Problem);
     }
 }

@@ -1,14 +1,16 @@
-﻿using ECondo.Application.Repositories;
+﻿using ECondo.Application.Events.PropertyOccupant;
+using ECondo.Application.Repositories;
 using ECondo.Application.Services;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Shared;
+using MediatR;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Commands.PropertyOccupants.AddToProperty;
 
 internal sealed class AddOccupantToPropertyCommandHandler
-    (IApplicationDbContext dbContext, IEmailService emailService)
+    (IApplicationDbContext dbContext, IPublisher publisher)
     : ICommandHandler<AddOccupantToPropertyCommand>
 {
     public async Task<Result<EmptySuccess, Error>> Handle(
@@ -64,16 +66,14 @@ internal sealed class AddOccupantToPropertyCommandHandler
             propertyOccupant.InvitationExpiresAt = DateTimeOffset.UtcNow.AddHours(48);
             propertyOccupant.InvitationSentAt = DateTimeOffset.UtcNow;
 
-            Dictionary<string, string?> tokenParams = new Dictionary<string, string?>()
-            {
-                { "token", propertyOccupant.InvitationToken.ToString()! },
-                { "email", request.Email },
-            };
-
-            string returnUrl = QueryHelpers.AddQueryString(request.ReturnUri, tokenParams);
-
-            await emailService.SendInvitationEmail(request.Email, returnUrl, request.FirstName,
-                propertyOccupant.InvitationExpiresAt.Value);
+            await publisher.Publish(
+                new OccupantInvitedEvent(
+                    propertyOccupant.InvitationToken, 
+                    propertyOccupant.Email!,
+                    propertyOccupant.FirstName, 
+                    propertyOccupant.InvitationExpiresAt.Value,
+                    request.ReturnUri), 
+                cancellationToken);
         }
 
         await dbContext

@@ -1,5 +1,5 @@
 import { Navbar } from "@/components/navbar/navbar";
-import { AppShell, AppShellFooter, AppShellHeader, AppShellMain } from "@mantine/core";
+import { AppShell, AppShellFooter, AppShellMain } from "@mantine/core";
 
 export default function AuthLayout({ children }:  Readonly<{
     children: React.ReactNode;
