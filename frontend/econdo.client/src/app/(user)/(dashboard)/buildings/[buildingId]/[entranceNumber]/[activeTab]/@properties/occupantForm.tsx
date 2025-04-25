@@ -3,8 +3,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Group, LoadingOverlay, Stack, TextInput, Text, Select } from "@mantine/core";
 import { useReducer } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { addOccupantToProperty, Occupant, OccupantTypeNameResult } from "@/actions/propertyOccupant";
+import { addOccupantToProperty, Occupant, OccupantTypeNameResult, updatePropertyOccupant } from "@/actions/propertyOccupant";
 import formReducer, { initialFormState } from "@/lib/formState";
+import { Result } from "@/types/result";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/types/queryKeys";
 
 
 interface OccupantFormProps {
@@ -24,6 +27,8 @@ export default function OccupantForm({
     propertyId,
     occupantTypes } : OccupantFormProps) {
 
+    console.log(occupant);
+
     const isEditing = !!occupant;
     const {
     control,
@@ -38,7 +43,7 @@ export default function OccupantForm({
         firstName: occupant.firstName,
         middleName: occupant.middleName,
         lastName: occupant.lastName,
-        email: occupant.email,
+        email: occupant.email === null || occupant.email === undefined ? '' : occupant.email,
         occupantType: occupant.type,
     }
     :
@@ -51,8 +56,41 @@ export default function OccupantForm({
     });
        
     const [formState, dispatch] = useReducer(formReducer, initialFormState);
+    const queryClient = useQueryClient();
 
-    const handleFormSubmit = async(data: OccupantFormValues) => {
+    const handleUpdate = async(data: OccupantFormValues) => {
+        dispatch({ type: 'SUBMIT' });
+        const email: string | null = !data.email ? null : data.email;
+        
+        if(!isEditing) {
+            dispatch({type: 'ERROR'});
+            return;
+        }
+
+        const res = await updatePropertyOccupant({
+            occupantId: occupant.id,
+            firstName: data.firstName,
+            middleName: data.middleName,
+            lastName: data.lastName,
+            email: email,
+            type: data.occupantType,
+        });
+
+        if(!res.ok) {
+            dispatch({type: 'ERROR'});
+            return;
+        }
+
+        dispatch({type: 'SUCCESS'});
+
+        queryClient.invalidateQueries({
+            queryKey: queryKeys
+            .occupants
+            .inProperty(propertyId),
+        });
+    }
+
+    const handleCreate = async(data: OccupantFormValues) => {
         dispatch({ type: 'SUBMIT' });
         
         const email: string | null = !data.email ? null : data.email;
@@ -74,12 +112,18 @@ export default function OccupantForm({
         }
 
         dispatch({type: 'SUCCESS'});
+
+        queryClient.invalidateQueries({
+            queryKey: queryKeys
+            .occupants
+            .inProperty(propertyId),
+        });
     }
 
     const isLoading = formState === 'loading';
     const hasError = formState === 'error';
     return (
-        <form onSubmit={handleSubmit(handleFormSubmit)}>
+        <form onSubmit={handleSubmit(!isEditing ? handleCreate : handleUpdate)}>
             <Stack gap="md">
                 <LoadingOverlay
                 visible={isLoading}

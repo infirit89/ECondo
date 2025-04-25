@@ -3,9 +3,11 @@
 import { createProfile } from "@/actions/profile";
 import { isValidationError } from "@/types/apiResponses";
 import { CreateProfileData } from "@/types/profileData";
+import { queryKeys } from "@/types/queryKeys";
 import { firstNameSchema, lastNameSchema, middleNameSchema, phoneNumberSchema } from "@/utils/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, LoadingOverlay, Modal, TextInput, Text } from "@mantine/core";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useReducer } from "react";
 import { useForm } from "react-hook-form";
@@ -46,6 +48,8 @@ export function ProfileCreationModal(
     const [profileCreationState, dispatch] = useReducer(profileCreationReducer, initialProfileCreationState);
     const router = useRouter();
 
+    const queryClient = useQueryClient();
+
     const form = useForm<CreateProfileData>({
         defaultValues: {
             firstName: '',
@@ -56,11 +60,6 @@ export function ProfileCreationModal(
         resolver: zodResolver(ProfileSchema),
     });
 
-    useEffect(() => {
-        if(profileCreationState === 'success')
-            router.refresh();
-    }, [profileCreationState]);
-
     const onSubmit = async (data: CreateProfileData) => {
         dispatch({ type: 'START_CREATION' });
         const res = await createProfile(data);
@@ -70,7 +69,9 @@ export function ProfileCreationModal(
             return;
         }
 
-        dispatch({type: 'CREATION_SUCCESS'});
+        queryClient.invalidateQueries({
+            queryKey: queryKeys.profiles.getBrief(),
+        })
     };
 
     const isLoading = profileCreationState === 'loading';

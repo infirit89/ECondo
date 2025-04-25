@@ -1,10 +1,8 @@
 ﻿using ECondo.Application.Events.PropertyOccupant;
 using ECondo.Application.Repositories;
-using ECondo.Application.Services;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Shared;
 using MediatR;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Commands.PropertyOccupants.AddToProperty;
@@ -65,6 +63,7 @@ internal sealed class AddOccupantToPropertyCommandHandler
             // todo: add a configuration property
             propertyOccupant.InvitationExpiresAt = DateTimeOffset.UtcNow.AddHours(48);
             propertyOccupant.InvitationSentAt = DateTimeOffset.UtcNow;
+            propertyOccupant.InvitationStatus = InvitationStatus.Pending;
 
             await publisher.Publish(
                 new OccupantInvitedEvent(

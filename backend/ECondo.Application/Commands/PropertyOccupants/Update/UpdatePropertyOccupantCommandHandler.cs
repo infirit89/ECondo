@@ -1,10 +1,8 @@
 ﻿using ECondo.Application.Events.PropertyOccupant;
 using ECondo.Application.Repositories;
-using ECondo.Application.Services;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Shared;
 using MediatR;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Commands.PropertyOccupants.Update;
@@ -36,29 +34,33 @@ internal sealed class UpdatePropertyOccupantCommandHandler
         occupant.LastName = request.LastName;
         occupant.OccupantTypeId = occupantType.Id;
 
-        if (occupant.Email != request.Email && !string.IsNullOrEmpty(request.Email))
+        if (occupant.Email != request.Email)
         {
-            occupant.UserId = null;
-            occupant.InvitationToken = Guid.NewGuid();
-            occupant.InvitationExpiresAt = DateTimeOffset.UtcNow.AddHours(48);
-            occupant.InvitationSentAt = DateTimeOffset.UtcNow;
-            
-            Dictionary<string, string?> tokenParams = new Dictionary<string, string?>
+            if (!string.IsNullOrEmpty(request.Email))
             {
-                { "token", occupant.InvitationToken.ToString()! },
-                { "email", request.Email },
-            };
-
-            string returnUrl = QueryHelpers.AddQueryString(request.ReturnUri, tokenParams);
-
-            await publisher.Publish(
-                new OccupantInvitedEvent(
-                    occupant.InvitationToken, 
-                    request.Email!,
-                    occupant.FirstName, 
-                    occupant.InvitationExpiresAt.Value,
-                    request.ReturnUri), 
-                cancellationToken);
+                occupant.UserId = null;
+                occupant.InvitationToken = Guid.NewGuid();
+                occupant.InvitationExpiresAt = DateTimeOffset.UtcNow.AddHours(48);
+                occupant.InvitationSentAt = DateTimeOffset.UtcNow;
+                occupant.InvitationStatus = InvitationStatus.Pending;
+                
+                await publisher.Publish(
+                    new OccupantInvitedEvent(
+                        occupant.InvitationToken, 
+                        request.Email!,
+                        occupant.FirstName, 
+                        occupant.InvitationExpiresAt.Value,
+                        request.ReturnUri), 
+                    cancellationToken);
+            }
+            else
+            {
+                occupant.UserId = null;
+                occupant.InvitationToken = null;
+                occupant.InvitationExpiresAt = null;
+                occupant.InvitationSentAt = null;
+                occupant.InvitationStatus = InvitationStatus.NotInvited;
+            }
         }
 
         occupant.Email = request.Email;

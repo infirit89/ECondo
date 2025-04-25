@@ -1,53 +1,40 @@
 import { BriefPropertyResult } from "@/actions/property";
 import { 
-    Card, 
-    CardSection, 
-    Center, 
-    Text, 
-    Image, 
+    Card,
+    Text,
     Group, 
-    ActionIcon, 
-    useMantineTheme,
+    ActionIcon,
+    Avatar,
+    Badge,
+    Stack,
+    Divider,
 } from "@mantine/core";
-import { IconPencil, IconTrash } from "@tabler/icons-react";
+import { IconBuildingCottage, IconBuildingFactory, IconBuildingSkyscraper, IconBuildingStore, IconBuildingWarehouse, IconChartPie, IconEdit, IconHome, IconPalette, IconPencil, IconRuler, IconStairs, IconTrash, IconUsers } from "@tabler/icons-react";
 import { useState } from "react";
 import PropertyEditModal from "./propertyEditModal";
-import { boolean } from "zod";
 
-const propertyImages = new Map([
-    ['офис', {
-        src: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        alt: 'Офис',
-    }],
-    ['апартамент', {
-        src: 'https://images.pexels.com/photos/1918291/pexels-photo-1918291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        alt: 'Апартамент',
-    }],
-    ['ателие', {
-        src: 'https://images.unsplash.com/photo-1598016677484-ad34c3fd766e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHN0dWRpb3xlbnwwfHwwfHx8MA%3D%3D',
-        alt: 'Ателие',
-    }],
-    ['гараж', {
-        src: 'https://images.unsplash.com/photo-1562631320-c487e97ada24?q=80&w=1971&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        alt: 'Гараж',
-    }],
-    ['магазин', {
-        src: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        alt: 'Магазин',
-    }],
-    ['мазе', {
-        src: 'https://images.unsplash.com/photo-1610306013733-473dbbdf9cfc?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        alt: 'Мазе',
-    }],
-    ['склад', {
-        src: 'https://images.unsplash.com/photo-1622030411594-c282a63aa1bc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        alt: 'Склад',
-    }],
-    ['таванско помещение', {
-        src: 'https://images.pexels.com/photos/3568792/pexels-photo-3568792.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        alt: 'Таванско Помещение',
-    }],
-])
+const getPropertyTypeInfo = (propertyType: string) => {
+    switch (propertyType) {
+        case "апартамент":
+            return { color: "blue", icon: <IconHome size={24} />, label: 'апартамент' }
+        case "гараж":
+            return { color: "gray", icon: <IconBuildingWarehouse size={24} />, label: 'гараж' }
+        case "офис":
+            return { color: "green", icon: <IconBuildingSkyscraper size={24} />, label: 'офис' }
+        case "магазин":
+            return { color: "orange", icon: <IconBuildingStore size={24} />, label: 'магазин' }
+        case "мазе":
+            return { color: "violet", icon: <IconStairs size={24} />, label: 'мазе' }
+        case "склад":
+            return { color: "yellow", icon: <IconBuildingFactory size={24} />, label: 'склад' }
+        case "таванско помещение":
+            return { color: "cyan", icon: <IconBuildingCottage size={24} />, label: 'таванско' }
+        case "ателие":
+            return { color: "pink", icon: <IconPalette size={24} />, label: 'ателие' }
+        default:
+            return { color: "blue", icon: <IconHome size={24} />, label: 'апартамент' }
+    }
+}
 
 interface ProperyCardProps {
     property: BriefPropertyResult,
@@ -64,18 +51,9 @@ export default function PropertyCard({
     entranceNumber,
     isDeleting, } : ProperyCardProps) {
 
-    const theme = useMantineTheme();
-    let propertyImage = 
-        propertyImages.get(
-            property.propertyType.toLowerCase());
+    const propertyInfo = getPropertyTypeInfo(property.propertyType.toLowerCase());
 
     const [ editModalOpened, setEditModalOpen ] = useState(false);
-    propertyImage = propertyImage !== undefined ? 
-    propertyImage :
-    {
-        src: 'https://images.pexels.com/photos/1918291/pexels-photo-1918291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        alt: 'Грешка',
-    };
 
     return (
         <>
@@ -92,52 +70,103 @@ export default function PropertyCard({
             entranceNumber={entranceNumber}
             propertyId={property.id}/> */}
             <Card 
-            padding="lg"
-            radius="md"
-            withBorder>
-                <CardSection>
-                    <Image
-                    className={`h-[180]`}
-                    src={propertyImage.src}
-                    alt={propertyImage.alt}
-                    />
-                </CardSection>
-
-                <Center mb={'xs'} mt={'xs'}>
-                    <Text fw={500}>№ {property.number}</Text>
-                </Center>
-
-                <Text size="sm" c="dimmed" ta={'center'}>
-                    Етаж: {property.floor}
-                </Text>
-                <Text size="sm" c="dimmed" ta={'center'}>
-                    Тип: {property.propertyType}
-                </Text>
-
-                <CardSection mt={'md'} pr={'lg'} pb={'xs'} pt={'xs'}>
-                    <Group justify='end' gap={8} mr={0}>
-                        <ActionIcon 
-                        disabled={isDeleting} 
-                        variant="subtle" 
-                        color="gray"
-                        onClick={() => setEditModalOpen(true)}>
-                            <IconPencil size={20} stroke={1.5} />
-                        </ActionIcon>
-                        <ActionIcon
-                        disabled={isDeleting}
-                        variant="subtle" 
-                        color="red" 
-                        onClick={
-                            !handleDelete ? 
-                            () => {} : 
-                            () => {
-                                handleDelete(property.id);
-                            }}>
-                            <IconTrash size={20} color={theme.colors.red[6]} stroke={1.5} />
-                        </ActionIcon>
+            shadow="sm" 
+            padding="xl" 
+            radius="lg" 
+            withBorder
+            style={{ transition: "transform 0.2s ease, box-shadow 0.2s ease" }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-4px)")}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}>
+            <Card.Section 
+            p="md" 
+            style={{
+                background: `var(--mantine-color-${propertyInfo.color}-0)`,
+                borderBottom: `1px solid var(--mantine-color-${propertyInfo.color}-2)`,
+                borderRadius: "var(--mantine-radius-lg) var(--mantine-radius-lg) 0 0",
+            }}>
+              <Group justify='space-between'>
+                <Group>
+                  <Avatar size="md" radius="xl" color={propertyInfo.color}>
+                    {propertyInfo.icon}
+                  </Avatar>
+                  <div>
+                    <Group gap="xs">
+                      <Text fw={700} size="xl">
+                        {property.number}
+                      </Text>
+                      <Badge color={propertyInfo.color} size="sm">
+                        {propertyInfo.label.charAt(0).toUpperCase() + propertyInfo.label.slice(1)}
+                      </Badge>
                     </Group>
-                </CardSection>
-            </Card>
+                    <Text size="sm" c="dimmed">
+                      Етаж {property.floor}
+                    </Text>
+                  </div>
+                </Group>
+                <Group gap={8}>
+                  <ActionIcon variant='subtle' color="blue" onClick={() => setEditModalOpen(true)}>
+                    <IconEdit size={18} />
+                  </ActionIcon>
+                  <ActionIcon variant='subtle' color="red" onClick={() => handleDelete!(property.id)}>
+                    <IconTrash size={18} />
+                  </ActionIcon>
+                </Group>
+              </Group>
+            </Card.Section>
+
+            <Stack gap="xs" mt="md">
+              <Group gap="xs">
+                <IconRuler size={16} color="gray" />
+                <Text size="sm">
+                  <Text span fw={500}>
+                    Застроена площ:
+                  </Text>{" "}
+                  {20} m²
+                </Text>
+              </Group>
+
+              <Group gap="xs">
+                <IconChartPie size={16} color="gray" />
+                <Text size="sm">
+                  <Text span fw={500}>
+                    Идеални части:
+                  </Text>{" "}
+                  {20}
+                </Text>
+              </Group>
+
+              <Divider
+                my="xs"
+                label={
+                  <Group gap="xs">
+                    <IconUsers size={16} />
+                    <Text size="sm">Контакти</Text>
+                  </Group>
+                }
+                labelPosition="left"
+              />
+
+              {/* {property.occupants.length > 0 ? (
+                <Group spacing="xs">
+                  {property.occupants.map((occupant) => (
+                    <Avatar
+                      key={occupant.id}
+                      size="sm"
+                      radius="xl"
+                      color={stringToColor(occupant.name)}
+                      title={occupant.name}
+                    >
+                      {getInitials(occupant.name)}
+                    </Avatar>
+                  ))}
+                </Group>
+              ) : ( */}
+                <Text size="sm" c="dimmed" fs={'italic'}>
+                    Няма назначени контакти
+                </Text>
+              {/* )} */}
+            </Stack>
+          </Card>
         </>
     );
 }

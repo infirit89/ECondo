@@ -20,7 +20,8 @@ public sealed class PropertyOccupant
     public Guid? InvitationToken { get; set; }
     public DateTimeOffset? InvitationSentAt { get; set; }
     public DateTimeOffset? InvitationExpiresAt { get; set; }
-
+    public InvitationStatus InvitationStatus { get; set; }
+    
     public Guid? UserId { get; set; }
     public User? User { get; set; }
 

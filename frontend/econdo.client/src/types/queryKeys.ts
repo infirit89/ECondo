@@ -16,5 +16,9 @@ export const queryKeys = {
     occupants: {
         all: ['ocupants'] as const,
         inProperty: (id: string) => [...queryKeys.occupants.all, id] as const,
+    },
+    profiles: {
+        all: ['profiles'] as const,
+        getBrief: () => [...queryKeys.profiles.all, 'brief'] as const,
     }
 }

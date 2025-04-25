@@ -1,13 +1,12 @@
 import { accessTokenCookieKey, refreshTokenCookieKey } from "@/utils/constants";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { generateAccessToken, setAccessTokenCookie } from "./actions/auth";
+import { generateAccessToken, logout, setAccessTokenCookie } from "./actions/auth";
 import { jwtDecode } from "jwt-decode";
 
 const protectedRoutes = [
-    '/condos/buildings', 
-    '/condos/properties', 
-    '/logout', 
+    '/condos/buildings',
+    '/condos/properties',
     '/profile',
     '/acceptedInvitation',
     '/buildings',
@@ -47,7 +46,17 @@ export default async function middleware(req: NextRequest) {
 
         return NextResponse.redirect(req.nextUrl);
     }
-    
+
+    if(path.startsWith('/logout')) {
+        try {
+            await logout();
+            return NextResponse.redirect(new URL('/', req.nextUrl));
+        }
+        catch(error) {
+            console.error(error);
+        }
+    }
+
     if(protectedRoutes.includes(path) && !accessToken)
         return NextResponse.redirect(new URL('/login', req.nextUrl));
 

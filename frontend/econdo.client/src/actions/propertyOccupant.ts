@@ -2,6 +2,7 @@
 
 import { authInstance } from "@/lib/axiosInstance";
 import { ApiError } from "@/types/apiResponses";
+import { InvitationStatus } from "@/types/propertyOccupant";
 import { Result, resultFail, resultOk } from "@/types/result";
 import { isAxiosError } from "axios";
 import { cache } from "react";
@@ -54,6 +55,31 @@ Promise<Result> => {
     throw new Error('Unexpected code flow');
 });
 
+interface UpdateOccupantData {
+    occupantId: string,
+    firstName: string,
+    middleName: string,
+    lastName: string,
+    type: string,
+    email: string | null,
+}
+
+export const updatePropertyOccupant =
+cache(async (data: UpdateOccupantData): Promise<Result> => {
+    try {
+        await authInstance.put('/api/propertyOccupant/update', {
+            ...data,
+            returnUri: `${baseUrl}/acceptInvitation`,
+        });
+        return resultOk();
+    } catch(error) {
+        if(isAxiosError<ApiError, Record<string, string[]>>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+});
+
 export interface OccupantTypeNameResult {
     occupantTypes: string[],
 }
@@ -81,6 +107,7 @@ export interface Occupant {
     lastName: string,
     type: string,
     email?: string,
+    invitationStatus: InvitationStatus,
 }
 
 export const getOccupantsInProperty =

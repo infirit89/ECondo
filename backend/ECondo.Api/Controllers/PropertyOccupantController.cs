@@ -1,6 +1,8 @@
 ﻿using ECondo.Api.Extensions;
 using ECondo.Application.Commands.PropertyOccupants.AcceptInvitation;
 using ECondo.Application.Commands.PropertyOccupants.AddToProperty;
+using ECondo.Application.Commands.PropertyOccupants.Delete;
+using ECondo.Application.Commands.PropertyOccupants.Update;
 using ECondo.Application.Queries.PropertyOccupants.GetInProperty;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -60,5 +62,35 @@ public class PropertyOccupantController(ISender sender)
         var result = await sender.Send(request);
 
         return result.Match(data => TypedResults.Json(data), CustomResults.Problem);
+    }
+    
+    [Authorize]
+    [HttpPut(nameof(Update))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest,
+        Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IResult> Update(
+        [FromBody] UpdatePropertyOccupantCommand request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
+    }
+    
+    [Authorize]
+    [HttpDelete(nameof(Delete))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest,
+        Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IResult> Delete(
+        [FromQuery] DeletePropertyOccupantCommand request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
     }
 }

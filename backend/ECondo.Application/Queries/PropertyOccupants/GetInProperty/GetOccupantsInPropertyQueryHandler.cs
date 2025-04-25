@@ -25,10 +25,18 @@ internal sealed class GetOccupantsInPropertyQueryHandler
                 po.LastName,
                 Type = po.OccupantType.Name,
                 po.Email,
+                po.InvitationStatus,
             })
             .ToArrayAsync(cancellationToken: cancellationToken);
 
         return Result<IEnumerable<OccupantResult>, Error>.Ok(result.Select(po =>
-            new OccupantResult(po.Id, po.FirstName, po.MiddleName, po.LastName, po.Type, po.Email)));
+            new OccupantResult(
+                po.Id, 
+                po.FirstName, 
+                po.MiddleName, 
+                po.LastName, 
+                po.Type, 
+                po.Email,
+                po.InvitationStatus)));
     }
 }

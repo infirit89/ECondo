@@ -1,34 +1,19 @@
-import { OccupantFormValues } from "@/utils/validationSchemas";
-import { Box, Button, Group, Title, Text, Stack, Paper, ActionIcon, Flex, Badge } from "@mantine/core";
+import { Box, Button, Group, Title, Text, Stack, Flex } from "@mantine/core";
 import { useModals } from "@mantine/modals";
-import { IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconPlus } from "@tabler/icons-react";
 import OccupantForm from "./occupantForm";
 import { useOccupantTypes } from "./occupantTypeProvider";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/types/queryKeys";
 import { getOccupantsInProperty, Occupant } from "@/actions/propertyOccupant";
 import Loading from "@/app/(user)/(other)/condos/[activeTab]/loading";
+import OccupantPaper from "./occupantPaper";
 
 interface OccupantsListProps {
     onClose?: () => void,
     propertyId: string,
     buildingId: string,
     entranceNumber: string,
-}
-
-const getBadgeColor = (occupantType: string): string => {
-    switch (occupantType) {
-        case "Собственик":
-            return "blue"
-        case "Наемател":
-            return "green"
-        case "Представител":
-            return "violet"
-        case "Ползвател":
-            return "yellow"
-        default:
-            return "gray"
-}
 }
 
 const useQueryOccupantsInProperty = (propertyId: string) => {
@@ -53,21 +38,21 @@ export default function OccupantsList({
         const modalId = modals.openModal({
           title: "Add New Occupant",
           children: (
-            <OccupantForm
-                buildingId={buildingId}
-                entranceNumber={entranceNumber}
-                propertyId={propertyId}
-                occupantTypes={occupantTypes}
-                onCancel={() => modals.closeModal(modalId)}
-            //   onSubmit={(newOccupant) => {
-            //     const occupantWithId = {
-            //       ...newOccupant,
-            //       id: Date.now().toString(),
-            //     }
-            //     onUpdate([...occupants, occupantWithId])
-            //     modals.closeModal(modalId)
-            //   }}
-            />
+              <OccupantForm
+                  buildingId={buildingId}
+                  entranceNumber={entranceNumber}
+                  propertyId={propertyId}
+                  occupantTypes={occupantTypes}
+                  onCancel={() => modals.closeModal(modalId)}
+              //   onSubmit={(newOccupant) => {
+              //     const occupantWithId = {
+              //       ...newOccupant,
+              //       id: Date.now().toString(),
+              //     }
+              //     onUpdate([...occupants, occupantWithId])
+              //     modals.closeModal(modalId)
+              //   }}
+              />
           ),
         })
       }
@@ -76,18 +61,18 @@ export default function OccupantsList({
         const modalId = modals.openModal({
           title: "Edit Occupant",
           children: (
-            <OccupantForm
-                occupant={occupant}
-                buildingId={buildingId}
-                entranceNumber={entranceNumber}
-                propertyId={propertyId}
-                occupantTypes={occupantTypes}
-                onCancel={() => modals.closeModal(modalId)}
-            //   onSubmit={(updatedOccupant) => {
-            //     // onUpdate(occupants.map((occ) => (occ.id === updatedOccupant.id ? updatedOccupant : occ)))
-            //     // modals.closeModal(modalId)
-            //   }}
-            />
+              <OccupantForm
+                  occupant={occupant}
+                  buildingId={buildingId}
+                  entranceNumber={entranceNumber}
+                  propertyId={propertyId}
+                  occupantTypes={occupantTypes}
+                  onCancel={() => modals.closeModal(modalId)}
+              //   onSubmit={(updatedOccupant) => {
+              //     // onUpdate(occupants.map((occ) => (occ.id === updatedOccupant.id ? updatedOccupant : occ)))
+              //     // modals.closeModal(modalId)
+              //   }}
+              />
           ),
         })
       }
@@ -119,44 +104,11 @@ export default function OccupantsList({
       { occupants.value && occupants.value.length > 0 ? (
         <Stack gap="md" style={{ maxHeight: "400px", overflowY: "auto" }}>
           {occupants.value.map((occupant, index) => (
-            <Paper key={index} p="md" withBorder>
-              <Group justify="space-between">
-                <Box>
-                    <Group align="center" gap="xs">
-                        <Text fw={500}>
-                            {occupant.firstName} {occupant.middleName} {occupant.lastName}
-                        </Text>
-                        <Badge color={getBadgeColor(occupant.type)} size="sm">
-                            {occupant.type}
-                        </Badge>
-                    </Group>
-                    {
-                    occupant.email && (
-                        <Text size="sm" c="dimmed">
-                        {occupant.email}
-                        </Text>
-                    )}
-                </Box>
-                <Group>
-                  <ActionIcon
-                    variant="light"
-                    color="blue"
-                    onClick={() => handleEditOccupant(occupant)}
-                    aria-label="Edit occupant"
-                  >
-                    <IconEdit size={16} />
-                  </ActionIcon>
-                  <ActionIcon
-                    variant="light"
-                    color="red"
-                    onClick={() => handleDeleteOccupant('')}
-                    aria-label="Delete occupant"
-                  >
-                    <IconTrash size={16} />
-                  </ActionIcon>
-                </Group>
-              </Group>
-            </Paper>
+            <OccupantPaper
+            key={index}
+            occupant={occupant} 
+            handleEdit={handleEditOccupant} 
+            handleDelete={handleDeleteOccupant}/>
           ))}
         </Stack>
         

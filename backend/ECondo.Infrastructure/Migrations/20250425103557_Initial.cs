@@ -311,6 +311,7 @@ namespace ECondo.Infrastructure.Migrations
                     InvitationToken = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     InvitationSentAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     InvitationExpiresAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    InvitationStatus = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>

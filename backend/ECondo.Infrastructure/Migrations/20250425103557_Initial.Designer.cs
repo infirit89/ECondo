@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECondo.Infrastructure.Migrations
 {
     [DbContext(typeof(ECondoDbContext))]
-    [Migration("20250423174621_Initial")]
+    [Migration("20250425103557_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -182,6 +182,9 @@ namespace ECondo.Infrastructure.Migrations
 
                     b.Property<DateTimeOffset?>("InvitationSentAt")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("InvitationStatus")
+                        .HasColumnType("int");
 
                     b.Property<Guid?>("InvitationToken")
                         .HasColumnType("uniqueidentifier");

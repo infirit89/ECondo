@@ -180,6 +180,9 @@ namespace ECondo.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("InvitationSentAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<int>("InvitationStatus")
+                        .HasColumnType("int");
+
                     b.Property<Guid?>("InvitationToken")
                         .HasColumnType("uniqueidentifier");
 

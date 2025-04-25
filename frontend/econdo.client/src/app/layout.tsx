@@ -12,13 +12,14 @@ import {
 import HealthProvider from "./healthProvider";
 import { Suspense } from "react";
 import Loading from "@/components/loading";
+import QueryProvider from "./queryProvider";
 
 export const metadata: Metadata = {
   title: "ECondo",
   description: "A condomium managment app",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -31,13 +32,15 @@ export default async function RootLayout({
       </head>
       <body>
         <MantineProvider>
-          <ModalsProvider>
-            <HealthProvider>
-              <Suspense fallback={<Loading/>}>
-                {children}
-              </Suspense>
-            </HealthProvider>
-          </ModalsProvider>
+          <HealthProvider>
+            <QueryProvider>
+              <ModalsProvider>
+                <Suspense fallback={<Loading/>}>
+                  {children}
+                </Suspense>
+              </ModalsProvider>
+            </QueryProvider>
+          </HealthProvider>
         </MantineProvider>
       </body>
     </html>

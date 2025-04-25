@@ -2,7 +2,7 @@
 
 import { deleteProperty, getPropertiesInEntrance } from "@/actions/property";
 import Loading from "@/components/loading";
-import { Center, Grid, GridCol, Title, Pagination, Alert } from "@mantine/core";
+import { Center, Grid, GridCol, Title, Pagination, Alert, SimpleGrid, Flex } from "@mantine/core";
 import { IconExclamationCircle, IconMoodPuzzled } from "@tabler/icons-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
@@ -11,7 +11,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/types/queryKeys";
 
 // hard coded for now
-const pageSize = 8;
+const pageSize = 9;
 
 const useQueryPropertiesPaged = (buildingId: string, entranceNumber: string, page: number) => {
     return useQuery({
@@ -87,12 +87,18 @@ export default function PropertiesList() {
             {
                 properties.value && properties.value.items.length > 0 ?
                 <>
-                    <Grid>
+                    <Flex justify={'center'} mt={'lg'} mb={'lg'} hiddenFrom='lg'>
+                        <Pagination total={properties.value.totalPages}
+                        value={page + 1}
+                        onChange={(value) => setPage(value - 1)}/>
+                    </Flex>
+                    <SimpleGrid
+                    cols={{ base: 1, md: 2, lg: 3 }}
+                    spacing={{ base: 'sm', md: 'md', lg: 'lg' }}>
                         {
                             properties
                             .value
                             .items.map((value, index) => (
-                            <GridCol key={index} span={{ base: 2, xs: 3 }}>
                                 <PropertyCard
                                 key={index}
                                 isDeleting={value.id === deletedPropertyId}
@@ -101,14 +107,14 @@ export default function PropertiesList() {
                                 buildingId={buildingId}
                                 entranceNumber={entranceNumber}
                                 />
-                            </GridCol>
                             ))    
                         }
-                    </Grid>
-                    <Pagination total={properties.value.totalPages}
-                    value={page + 1}
-                    onChange={(value) => setPage(value - 1)}
-                    mt={'md'}/>
+                    </SimpleGrid>
+                    <Flex justify={'center'} mt={'xl'}>
+                        <Pagination total={properties.value.totalPages}
+                        value={page + 1}
+                        onChange={(value) => setPage(value - 1)}/>
+                    </Flex>
                 </>
                 : 
                 <>

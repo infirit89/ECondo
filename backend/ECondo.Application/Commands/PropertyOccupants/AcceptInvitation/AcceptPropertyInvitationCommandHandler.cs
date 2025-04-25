@@ -41,6 +41,7 @@ internal sealed class AcceptPropertyInvitationCommandHandler
         propertyOccupant.InvitationToken = null;
         propertyOccupant.InvitationExpiresAt = null;
         propertyOccupant.InvitationSentAt = null;
+        propertyOccupant.InvitationStatus = InvitationStatus.Accepted;
 
         dbContext.PropertyOccupants.Update(propertyOccupant);
         await dbContext.SaveChangesAsync(cancellationToken);
