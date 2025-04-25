@@ -106,7 +106,7 @@ export default function OccupantPaper({ occupant, handleEdit, handleDelete } : O
                 <ActionIcon
                 variant="light"
                 color="red"
-                onClick={() => handleDelete('')}
+                onClick={() => handleDelete(occupant.id)}
                 aria-label="Delete occupant">
                     <IconTrash size={16} />
                 </ActionIcon>

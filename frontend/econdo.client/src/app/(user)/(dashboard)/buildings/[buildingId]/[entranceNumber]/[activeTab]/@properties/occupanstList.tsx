@@ -3,9 +3,9 @@ import { useModals } from "@mantine/modals";
 import { IconPlus } from "@tabler/icons-react";
 import OccupantForm from "./occupantForm";
 import { useOccupantTypes } from "./occupantTypeProvider";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/types/queryKeys";
-import { getOccupantsInProperty, Occupant } from "@/actions/propertyOccupant";
+import { deleteOccupant, getOccupantsInProperty, Occupant } from "@/actions/propertyOccupant";
 import Loading from "@/app/(user)/(other)/condos/[activeTab]/loading";
 import OccupantPaper from "./occupantPaper";
 
@@ -23,6 +23,22 @@ const useQueryOccupantsInProperty = (propertyId: string) => {
   })
 }
 
+const useDeleteOccupantMutation = (
+  queryClient: QueryClient,
+  propertyId: string) => {
+  return useMutation({
+    mutationFn: (occupantId: string) => deleteOccupant(occupantId),
+    onSuccess: (data) => {
+      if(!data.ok)
+        return; // TODO:
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.occupants.inProperty(propertyId),
+      });
+    },
+  });
+}
+
 export default function OccupantsList({
     onClose,
     propertyId,
@@ -32,7 +48,10 @@ export default function OccupantsList({
     const { occupantTypes } = useOccupantTypes();
     const modals = useModals();
 
+    const queryClient = useQueryClient();
     const { data: occupants, isLoading } = useQueryOccupantsInProperty(propertyId);
+    const { mutate: deleteOccupantMutation } = 
+      useDeleteOccupantMutation(queryClient, propertyId);
 
     const handleAddOccupant = () => {
         const modalId = modals.openModal({
@@ -79,12 +98,13 @@ export default function OccupantsList({
 
     const handleDeleteOccupant = (id: string) => {
         const modalId = modals.openConfirmModal({
-          title: "Confirm deletion",
-          children: <Text size="sm">Are you sure you want to delete this occupant? This action cannot be undone.</Text>,
-          labels: { confirm: "Delete", cancel: "Cancel" },
+          title: "Потвърди изтриване",
+          children: <Text size="sm">Сигурни ли сте, че искате да изтриете този контакт? Това действие не може да бъде отменено.</Text>,
+          labels: { confirm: "Изтрий", cancel: "Отмяна" },
           confirmProps: { color: "red" },
           onConfirm: () => {
-            // TODO:
+            deleteOccupantMutation(id);
+            modals.closeModal(modalId);
           },
         })
       }

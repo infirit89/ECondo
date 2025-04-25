@@ -129,3 +129,22 @@ Promise<Result<Occupant[]>> => {
 
     throw new Error('Unexpected code flow');
 });
+
+export const deleteOccupant =
+cache(async (occupantId: string) : Promise<Result> => {
+    try {
+        await authInstance.delete('/api/propertyOccupant/delete', {
+            params: {
+                occupantId,
+            },
+        });
+        
+        return resultOk();
+    } catch(error) {
+        if(isAxiosError<ApiError, Record<string, string[]>>(error)) {
+            return resultFail(error.response?.data!);
+        }
+    }
+
+    throw new Error('Unexpected code flow');
+});

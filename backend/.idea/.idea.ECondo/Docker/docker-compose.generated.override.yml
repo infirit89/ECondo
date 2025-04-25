@@ -22,8 +22,8 @@ services:
       RESHARPER_LOG_CONF: "/etc/opt/rider-debugger/backend-log.xml"
     image: "econdoapi:dev"
     ports:
-    - "127.0.0.1:57021:57100"
-    - "127.0.0.1:57221:57300"
+    - "127.0.0.1:57022:57100"
+    - "127.0.0.1:57222:57300"
     volumes:
     - "C:\\Users\\georg\\.nuget\\packages:/home/app/.nuget/packages"
     - "C:\\Projects\\Condominium-Management-App\\backend\\ECondo.Api:/app:rw"
@@ -32,5 +32,5 @@ services:
       Linux64:/opt/rider-debugger"
     - "C:\\Program Files\\JetBrains\\JetBrains Rider 2024.1.4\\bin:/etc/opt/rider-debugger/backend-log.xml"
     - "C:\\Users\\georg\\AppData\\Local\\JetBrains\\Rider2024.1\\log\\DebuggerWorker\\\
-      JetBrains.Debugger.Worker.2025_4_25_17_16_04:/var/opt/rider-debugger:rw"
+      JetBrains.Debugger.Worker.2025_4_25_23_22_34:/var/opt/rider-debugger:rw"
     working_dir: "/app"
