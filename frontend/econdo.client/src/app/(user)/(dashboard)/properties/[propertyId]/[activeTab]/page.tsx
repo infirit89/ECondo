@@ -1,10 +1,9 @@
 import { notFound } from "next/navigation";
 
-export default function PropertyPage() {
+export default function PropertiesHomePage() {
     notFound();
-
+    
     return (
-        <>
-        </>
+        <></>
     );
 }

@@ -100,7 +100,7 @@ public class PropertyController(ISender sender) : ControllerBase
     [Authorize]
     [HttpGet(nameof(GetForUser))]
     [ProducesResponseType(StatusCodes.Status200OK,
-        Type = typeof(PropertyOccupantResult))]
+        Type = typeof(PagedListResponse<PropertyOccupantResult>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest,
         Type = typeof(HttpValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

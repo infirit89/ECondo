@@ -1,4 +1,5 @@
 ﻿using ECondo.Application.Data;
+using ECondo.Application.Extensions;
 using ECondo.Application.Repositories;
 using ECondo.Application.Services;
 using ECondo.Domain.Shared;
@@ -12,7 +13,7 @@ internal sealed class GetPropertiesInBuildingQueryHandler
 {
     public async Task<Result<PagedList<PropertyOccupantResult>, Error>> Handle(GetPropertiesInBuildingQuery request, CancellationToken cancellationToken)
     {
-        var propertyQuery = dbContext.Entrances
+        var properties = await dbContext.Entrances
             .Include(e => e.Properties)
             .ThenInclude(p => p.PropertyType)
             .AsNoTracking()
@@ -29,22 +30,13 @@ internal sealed class GetPropertiesInBuildingQueryHandler
                             p.Number,
                             p.PropertyType.Name,
                             p.BuiltArea,
-                            p.IdealParts)));
-
-        var propertyCount = await propertyQuery.CountAsync(cancellationToken: cancellationToken);
-
-        var properties = await propertyQuery
-            .Skip(request.Page * request.PageSize)
-            .Take(request.PageSize)
-            
-            .ToArrayAsync(cancellationToken: cancellationToken);
-
-        return Result<PagedList<PropertyOccupantResult>, Error>.Ok(
-            new PagedList<PropertyOccupantResult>(
-                properties,
-                propertyCount,
-                request.Page,
-                request.PageSize));
+                            p.IdealParts)))
+            .ToPagedListAsync(
+                request.Page, 
+                request.PageSize, 
+                cancellationToken: cancellationToken);
+        
+        return Result<PagedList<PropertyOccupantResult>, Error>.Ok(properties);
 
     }
 }

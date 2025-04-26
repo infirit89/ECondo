@@ -1,7 +1,7 @@
 'use server';
 
 import normalInstance, { authInstance } from "@/lib/axiosInstance";
-import { ApiError } from "@/types/apiResponses";
+import { ApiError, PagedList } from "@/types/apiResponses";
 import { Result, resultFail, resultOk } from "@/types/result";
 import { isAxiosError } from "axios";
 import { unstable_cache } from "next/cache";
@@ -21,9 +21,17 @@ export interface BuildingResult {
     entranceNumber: string,
 }
 
-export const getBuildingsForUser = cache(async (): Promise<Result<BuildingResult[]>> => {
+export const getBuildingsForUser = 
+cache(async (page: number, pageSize: number): 
+Promise<Result<PagedList<BuildingResult>>> => {
     try {
-        const buildings = await authInstance.get<BuildingResult[]>('/api/building/getBuildingsForUser');
+        const buildings = await authInstance.get<PagedList<BuildingResult>>(
+            '/api/building/getBuildingsForUser', {
+                params: {
+                    page,
+                    pageSize,
+                }
+            });
         return resultOk(buildings.data);
     }
     catch(error) {

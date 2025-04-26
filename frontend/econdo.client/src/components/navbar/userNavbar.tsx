@@ -12,9 +12,8 @@ import {
     MenuDropdown,
     MenuItem,
     MenuTarget,
-    rem,
     ScrollArea,
-    Stack
+    Stack,
 } from "@mantine/core";
 import classes from './navbar.module.css';
 import { useDisclosure } from "@mantine/hooks";
@@ -22,7 +21,12 @@ import { ECondoLogo } from '@/components/logo/econdoLogo';
 import UserAvatar from "./userAvatar";
 import Link from "next/link";
 
-export function UserNavbar() {
+interface UserNavbarProps
+{
+    additionalLinks?: { link: string, label: string }[]
+}
+
+export function UserNavbar({ additionalLinks } : UserNavbarProps) {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
     
     return (
@@ -84,33 +88,37 @@ export function UserNavbar() {
                     hiddenFrom="sm"
                     zIndex={1000000}
                 >
-                    <ScrollArea h={`calc(100vh - ${rem(600)})`} mx="-md">
-                    {/* <Divider my="sm" /> */}
-
-                    {/* <a href="#" className={classes.link}>
+                    <ScrollArea h={`100%`} mx="-md" mb={'xl'}>
+                        <Divider my='sm'/>
+                        <Link href="/" className={classes.drawerlink}>
                         Начало
-                    </a>
-                    <a href="#" className={classes.link}>
-                        За нас
-                    </a>
-                    <a href="#" className={classes.link}>
-                        Контакти
-                    </a> */}
+                        </Link>
+                        {
+                        additionalLinks && (
+                        <>
+                            {
+                            additionalLinks.map((value, index) => (
+                                <Link
+                                href={value.link}
+                                key={index}
+                                className={classes.drawerlink}>
+                                    {value.label}
+                                </Link>
+                            ))
+                            }
+                        </>
+                        )
+                        }
 
-                    <Divider my="sm" />
+                        <Link href="/profile" className={classes.drawerlink}>
+                        Профил
+                        </Link>
+                        <Divider my={'sm'}/>
 
-                    <Link href="/" className={classes.drawerlink}>
-                    Начало
-                    </Link>
-                    <Link href="/profile" className={classes.drawerlink}>
-                    Профил
-                    </Link>
                     </ScrollArea>
-                    <Stack justify={'flex-end'} h={`calc(100vh - ${rem(300)})`} mx={'-md'}>
                     <Group justify={'center'} grow pb={'xl'} px={'md'}>
                         <Button component={Link} href='/logout' variant='filled' color={'red'}>Изход</Button>
                     </Group>
-                    </Stack>
                 </Drawer>
             </Box>
         </AppShellHeader>

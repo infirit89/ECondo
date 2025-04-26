@@ -35,7 +35,7 @@ export default function RootLayout({
           <HealthProvider>
             <QueryProvider>
               <ModalsProvider>
-                <Suspense fallback={<Loading/>}>
+                <Suspense fallback={<Loading height={'100vh'}/>}>
                   {children}
                 </Suspense>
               </ModalsProvider>

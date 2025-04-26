@@ -65,3 +65,14 @@
     }
   }
     
+.drawer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.drawerBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--mantine-spacing-md);
+}

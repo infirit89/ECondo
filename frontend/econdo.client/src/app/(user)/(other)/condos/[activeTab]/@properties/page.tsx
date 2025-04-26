@@ -48,7 +48,7 @@ export default function CondosPage() {
                         properties
                         .value
                         .items.map((value, index) => (
-                            <Link key={index} href={''}>
+                            <Link key={index} href={`/properties/${value.id}/occupants`}>
                                 <PropertyCard
                                 key={index}
                                 isDeleting={false}

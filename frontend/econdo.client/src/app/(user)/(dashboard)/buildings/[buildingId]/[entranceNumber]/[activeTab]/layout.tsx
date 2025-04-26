@@ -1,15 +1,15 @@
 import { isUserInBuilding } from "@/actions/condo";
-import DashboardSidebar, { ActiveTab } from "@/components/dashboardSidebar/dashboardSidebar";
+import DashboardSidebar, { ActiveTab } from "./dashboardSidebar";
 import { UserNavbar } from "@/components/navbar/userNavbar";
 import { AppShell, AppShellFooter, AppShellMain } from "@mantine/core";
 import { notFound, redirect } from "next/navigation";
-import { ReactNode, Suspense } from "react";
+import { ReactNode } from "react";
 
 export default async function Dashboard(
-  { properties, ownership, bills, params }:
+  { children, properties, bills, params }:
   Readonly<{
+    children: ReactNode,
     properties: ReactNode,
-    ownership: ReactNode,
     bills: ReactNode,
     params: Promise<{
       buildingId: string, entranceNumber: string, activeTab: ActiveTab
@@ -33,12 +33,10 @@ export default async function Dashboard(
     switch (activeTab) {
       case 'properties':
         return properties;
-      case 'ownership':
-        return ownership;
       case 'bills':
         return bills;
       default:
-        notFound();
+        return children;
     }
   }
 
@@ -46,7 +44,10 @@ export default async function Dashboard(
     <AppShell 
     header={{ height: 60 }}
     navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: true }} }>
-        <UserNavbar />
+        <UserNavbar additionalLinks={[
+          { link: `/buildings/${buildingId}/${entranceNumber}/properties`, label: 'Имоти' },
+          { link: `/buildings/${buildingId}/${entranceNumber}/bills`, label: 'Сметки' },
+        ]}/>
         <DashboardSidebar 
         activeTab={activeTab}
         buildingId={buildingId}

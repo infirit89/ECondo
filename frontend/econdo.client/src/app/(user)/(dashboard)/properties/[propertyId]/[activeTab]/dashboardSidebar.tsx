@@ -2,19 +2,18 @@
 import { Anchor, AppShellNavbar, AppShellSection, Box, Center, ScrollArea } from "@mantine/core";
 import classes from './dashboardSidebar.module.css';
 
-import { IconArrowLeft, IconBuildingEstate, IconReceipt, IconUsersGroup, } from '@tabler/icons-react';
+import { IconArrowLeft, IconReceipt, IconUsersGroup, } from '@tabler/icons-react';
 import Link from "next/link";
 
-export type ActiveTab = 'properties' | 'ownership' | 'bills';
+export type ActiveTab = 'occupants' | 'bills';
 
 export default function DashboardSidebar(
-    { buildingId, entranceNumber, activeTab } : 
-    { buildingId: string, entranceNumber: string, activeTab: ActiveTab }) {
+    { propertyId, activeTab } : 
+    { propertyId: string, activeTab: ActiveTab }) {
 
     const data = [
-        { id: 'properties', link: `/buildings/${buildingId}/${entranceNumber}/properties`, label: 'Имоти', icon: IconBuildingEstate },
-        { id: 'ownership', link: `/buildings/${buildingId}/${entranceNumber}/ownership`, label: 'Собственост', icon: IconUsersGroup },
-        { id: 'bills', link: `/buildings/${buildingId}/${entranceNumber}/bills`, label: 'Сметки', icon: IconReceipt },
+        { id: 'occupants', link: `/properties/${propertyId}/occupants`, label: 'Контакти', icon: IconUsersGroup },
+        { id: 'bills', link: `/properties/${propertyId}/bills`, label: 'Сметки', icon: IconReceipt },
       ];
     
 
@@ -34,7 +33,7 @@ export default function DashboardSidebar(
             <nav className={classes.navbar}>
                 <div className={classes.navbarMain}>
                     <AppShellSection className={classes.header}>
-                        <Anchor component={Link} size="sm" href="/condos/buildings">
+                        <Anchor component={Link} size="sm" href="/condos/properties">
                             <Center inline>
                                 <IconArrowLeft size={12}/>
                                 <Box ml={5}>Към начало</Box>

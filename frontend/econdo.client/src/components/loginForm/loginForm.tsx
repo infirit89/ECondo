@@ -2,7 +2,15 @@
 
 import { TextInput } from "@mantine/core";
 
-import { Box, LoadingOverlay, PasswordInput, Group, Checkbox, Anchor, Button, Text } from "@mantine/core";
+import { 
+    Box,
+    LoadingOverlay,
+    PasswordInput,
+    Group,
+    Checkbox,
+    Anchor,
+    Button,
+    Text } from "@mantine/core";
 import { useEffect, useReducer } from "react";
 import { useForm } from "react-hook-form";
 import { UserErrorCode } from "@/types/apiErrors";
@@ -13,7 +21,6 @@ import { z, ZodSchema } from "zod";
 import { emailSchema } from "@/utils/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/types/queryKeys";
 
 interface LoginFormFields {
     email: string;

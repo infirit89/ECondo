@@ -28,5 +28,16 @@ export const queryKeys = {
     profiles: {
         all: ['profiles'] as const,
         getBrief: () => [...queryKeys.profiles.all, 'brief'] as const,
-    }
+    },
+    buildings: {
+        all: ['buildings'] as const,
+        pagedForUser: (
+            page: number,
+            pageSize: number,
+        ) => [
+            ...queryKeys.buildings.all,
+            page,
+            pageSize,
+        ] as const,
+    },
 }

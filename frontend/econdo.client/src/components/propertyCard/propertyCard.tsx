@@ -9,8 +9,21 @@ import {
     Stack,
     Divider,
 } from "@mantine/core";
-import { IconBuildingCottage, IconBuildingFactory, IconBuildingSkyscraper, IconBuildingStore, IconBuildingWarehouse, IconChartPie, IconEdit, IconHome, IconPalette, IconPencil, IconRuler, IconStairs, IconTrash, IconUsers } from "@tabler/icons-react";
-import { MouseEventHandler, useState } from "react";
+import { 
+    IconBuildingCottage,
+    IconBuildingFactory,
+    IconBuildingSkyscraper,
+    IconBuildingStore,
+    IconBuildingWarehouse,
+    IconChartPie,
+    IconEdit,
+    IconHome,
+    IconPalette,
+    IconRuler,
+    IconStairs,
+    IconTrash,
+    IconUsers } from "@tabler/icons-react";
+import { useState } from "react";
 import PropertyEditModal from "@/components/propertyEditModal";
 
 const getPropertyTypeInfo = (propertyType: string) => {
