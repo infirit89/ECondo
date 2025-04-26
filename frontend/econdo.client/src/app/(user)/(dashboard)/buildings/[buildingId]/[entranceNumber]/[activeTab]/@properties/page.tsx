@@ -3,8 +3,8 @@ import PropertyPageContent from "./propertyPageContent";
 import { Suspense } from "react";
 import Loading from "@/components/loading";
 import { getAllOccupantTypes } from "@/actions/propertyOccupant";
-import PropertyTypeProvider from "./propertyTypeProvider";
-import OccupantTypeProvider from "./occupantTypeProvider";
+import PropertyTypeProvider from "@/providers/propertyTypeProvider";
+import OccupantTypeProvider from "@/providers/occupantTypeProvider";
 
 export default function PropertiesPage() {
     const propertyTypes = getAllPropertyTypes();

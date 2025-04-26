@@ -6,19 +6,21 @@ import { Result, resultFail, resultOk } from "@/types/result";
 import { isAxiosError } from "axios";
 import { cache } from "react";
 
-export interface BriefPropertyResult {
+export interface PropertyResult {
     id: string,
     floor: string,
     number: string,
     propertyType: string,
+    builtArea: number,
+    idealParts: number,
 }
 
 export const getPropertiesInEntrance = 
     cache(async (buildingId: string, entranceNumber: string, page: number, pageSize: number): 
-        Promise<Result<PagedList<BriefPropertyResult>>> => {
+        Promise<Result<PagedList<PropertyResult>>> => {
     try {
         const properties = await authInstance
-        .get<PagedList<BriefPropertyResult>>('/api/property/getPropertiesInBuilding', { 
+        .get<PagedList<PropertyResult>>('/api/property/getPropertiesInBuilding', { 
             params: {
                 buildingId,
                 entranceNumber,
@@ -36,6 +38,27 @@ export const getPropertiesInEntrance =
 
     throw new Error('Unexpected code flow');
 });
+
+export const getPropertiesForUser =
+cache(async(page: number, pageSize: number): Promise<Result<PagedList<PropertyResult>>> => {
+    try {
+        const properties = await authInstance
+        .get<PagedList<PropertyResult>>('/api/property/getForUser', { 
+            params: {
+                page,
+                pageSize
+            },
+        });
+
+        return resultOk(properties.data);
+    }
+    catch(error) {
+        if(isAxiosError<ApiError, Record<string, string[]>>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+})
 
 export interface CreatePropertyData {
     buildingId: string,
@@ -82,20 +105,12 @@ export const getAllPropertyTypes =
         throw new Error('Unexpected code flow');
     });
 
-export interface DeletePropertyData {
-    buildingId: string,
-    entranceNumber: string,
-    propertyId: string,
-}
-
 export const deleteProperty =
-    cache(async ({ buildingId, entranceNumber, propertyId }: DeletePropertyData):
+    cache(async (propertyId: string):
     Promise<Result> => {
         try {
             await authInstance.delete('/api/property/delete', {
                 params: {
-                    buildingId,
-                    entranceNumber,
                     propertyId,
                 },
             });

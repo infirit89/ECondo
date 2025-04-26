@@ -2,7 +2,9 @@
 using ECondo.Application.Commands.Properties.Create;
 using ECondo.Application.Commands.Properties.Delete;
 using ECondo.Application.Commands.Properties.Update;
+using ECondo.Application.Data;
 using ECondo.Application.Queries.Properties.GetById;
+using ECondo.Application.Queries.Properties.GetForUser;
 using ECondo.Application.Queries.Properties.GetInBuilding;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +19,7 @@ public class PropertyController(ISender sender) : ControllerBase
     [Authorize]
     [HttpGet(nameof(GetPropertiesInBuilding))]
     [ProducesResponseType(StatusCodes.Status200OK,
-        Type = typeof(PagedListResponse<BriefPropertyResult>))]
+        Type = typeof(PagedListResponse<PropertyOccupantResult>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest,
         Type = typeof(HttpValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -92,6 +94,23 @@ public class PropertyController(ISender sender) : ControllerBase
 
         return result.Match(
             data => TypedResults.Json(data),
+            CustomResults.Problem);
+    }
+    
+    [Authorize]
+    [HttpGet(nameof(GetForUser))]
+    [ProducesResponseType(StatusCodes.Status200OK,
+        Type = typeof(PropertyOccupantResult))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest,
+        Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IResult> GetForUser(
+        [FromQuery] GetPropertiesForUserQuery request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(
+            data => TypedResults.Json(data.ToPagedListResponse()),
             CustomResults.Problem);
     }
 }

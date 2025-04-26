@@ -12,6 +12,14 @@ export const queryKeys = {
                 entranceNumber,
                 page,
                 pageSize] as const,
+        pagedForUser: (
+            page: number,
+            pageSize: number
+        ) => [
+            ...queryKeys.properties.all,
+            page,
+            pageSize,
+        ] as const
     },
     occupants: {
         all: ['ocupants'] as const,

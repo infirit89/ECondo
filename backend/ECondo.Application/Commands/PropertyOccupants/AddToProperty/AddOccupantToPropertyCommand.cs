@@ -3,8 +3,6 @@
 namespace ECondo.Application.Commands.PropertyOccupants.AddToProperty;
 
 public sealed record AddOccupantToPropertyCommand(
-    Guid BuildingId,
-    string EntranceNumber,
     Guid PropertyId,
     string FirstName,
     string MiddleName,
@@ -12,4 +10,4 @@ public sealed record AddOccupantToPropertyCommand(
     string OccupantType,
     string? Email,
     string ReturnUri)
-    : ICommand, IRequireEntranceManager;
+    : ICommand, ICanAddOccupant;

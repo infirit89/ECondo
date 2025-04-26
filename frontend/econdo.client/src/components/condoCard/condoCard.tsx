@@ -1,5 +1,5 @@
 'use client';
-import { Card, CardSection, Text, Image, Center } from "@mantine/core";
+import { Card, CardSection, Text, Image, Center, Divider } from "@mantine/core";
 import classes from './condoCard.module.css';
 import { useHover } from "@mantine/hooks";
 import Link from "next/link";
@@ -27,7 +27,6 @@ export default function CondoCard({
     municipality,
     settlementPlace,
     neighborhood,
-    postalCode,
     street,
     streetNumber,
     buildingNumber,
@@ -39,12 +38,15 @@ export default function CondoCard({
         <Card 
         component={Link} 
         href={`/buildings/${id}/${entranceNumber}/properties`} 
-        className={`max-w-xs ${classes.condoCard}`} 
+        className={`${classes.condoCard}`} 
         ref={ref} 
         shadow={hovered ? 'xl' : 'sm'} 
-        padding="lg" 
-        radius="md" 
-        withBorder>
+        padding="xl"
+        radius="lg"
+        withBorder
+        style={{ transition: "transform 0.2s ease, box-shadow 0.2s ease" }}
+        onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-4px)")}
+        onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}>
             <CardSection>
                 <Image
                 className={`h-[180]`}

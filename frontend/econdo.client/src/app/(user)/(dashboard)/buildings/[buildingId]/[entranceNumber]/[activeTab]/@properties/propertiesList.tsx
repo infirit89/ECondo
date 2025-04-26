@@ -2,13 +2,14 @@
 
 import { deleteProperty, getPropertiesInEntrance } from "@/actions/property";
 import Loading from "@/components/loading";
-import { Center, Grid, GridCol, Title, Pagination, Alert, SimpleGrid, Flex } from "@mantine/core";
+import { Center, Title, Pagination, Alert, SimpleGrid, Flex, Text } from "@mantine/core";
 import { IconExclamationCircle, IconMoodPuzzled } from "@tabler/icons-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import PropertyCard from "./propertyCard";
+import PropertyCard from "@/components/propertyCard";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/types/queryKeys";
+import { useModals } from "@mantine/modals";
 
 // hard coded for now
 const pageSize = 9;
@@ -37,12 +38,13 @@ export default function PropertiesList() {
     const [deletedPropertyId, setDeletedPropertyId] = useState<string | undefined>(undefined);
     const [page, setPage] = useState(0);
 
+    const modals = useModals();
     const queryClient = useQueryClient();
     const { data: properties, isLoading } = useQueryPropertiesPaged(buildingId, entranceNumber, page);
 
     const useDeleteProperty = () => {
         return useMutation({
-            mutationFn: (propertyId: string) => deleteProperty({buildingId, entranceNumber, propertyId}),
+            mutationFn: (propertyId: string) => deleteProperty(propertyId),
             onSuccess: (data) => {
                 if(!data.ok) {
                     setDeleteError(true);
@@ -66,6 +68,19 @@ export default function PropertiesList() {
     }
 
     const { mutate: deletePropertyMutation } = useDeleteProperty();
+
+    const handleDeleteProperty = (id: string) => {
+        const modalId = modals.openConfirmModal({
+            title: "Потвърди изтриване",
+            children: <Text size="sm">Сигурни ли сте, че искате да изтриете този имот? Това действие не може да бъде отменено.</Text>,
+            labels: { confirm: "Изтрий", cancel: "Отмяна" },
+            confirmProps: { color: "red" },
+            onConfirm: () => {
+                deletePropertyMutation(id);
+                modals.closeModal(modalId);
+            },
+        })
+    }
 
     if(isLoading || !properties?.ok)
         return <Loading/>;
@@ -103,9 +118,8 @@ export default function PropertiesList() {
                                 key={index}
                                 isDeleting={value.id === deletedPropertyId}
                                 property={value}
-                                handleDelete={(id) => deletePropertyMutation(id)} 
-                                buildingId={buildingId}
-                                entranceNumber={entranceNumber}
+                                handleDelete={handleDeleteProperty}
+                                canEdit
                                 />
                             ))    
                         }

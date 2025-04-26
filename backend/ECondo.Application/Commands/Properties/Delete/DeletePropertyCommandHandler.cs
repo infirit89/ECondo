@@ -13,19 +13,11 @@ internal sealed class DeletePropertyCommandHandler
         DeletePropertyCommand request,
         CancellationToken cancellationToken)
     {
-        var entrance = await dbContext
-            .Entrances
-            .FirstAsync(e =>
-                e.BuildingId == request.BuildingId &&
-                e.Number == request.EntranceNumber,
-                cancellationToken: cancellationToken);
-
         var property = await dbContext
             .Properties
             .Include(p => p.PropertyOccupants)
             .FirstOrDefaultAsync(p => 
-                p.Id == request.PropertyId &&
-                p.EntranceId == entrance.Id,
+                p.Id == request.PropertyId,
                 cancellationToken: cancellationToken);
 
         if(property is null)

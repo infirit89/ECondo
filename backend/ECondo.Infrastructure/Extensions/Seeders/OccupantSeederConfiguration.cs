@@ -7,26 +7,26 @@ using Microsoft.Extensions.Logging;
 namespace ECondo.Infrastructure.Extensions.Seeders;
 
 // NOTE: here for in order for ILogger to function properly
-internal class PropertySeeder;
+internal class OccupantSeeder;
 
-internal static class PropertySeederConfiguration
+internal static class OccupantSeederConfiguration
 {
-    public static async Task<IApplicationBuilder> SeedProperties(this IApplicationBuilder appBuilder)
+    public static async Task<IApplicationBuilder> SeedOccupants(this IApplicationBuilder appBuilder)
     {
         await using var scope = appBuilder.ApplicationServices.CreateAsyncScope();
         var services = scope.ServiceProvider;
 
         var dbContext = services.GetRequiredService<IApplicationDbContext>();
-        var logger = services.GetRequiredService<ILogger<PropertySeeder>>();
-
-        using (logger.BeginScope("Property creation"))
+        var logger = services.GetRequiredService<ILogger<OccupantSeeder>>();
+        
+        using (logger.BeginScope("Basic tenant occupations creation"))
         {
             try
             {
-                logger.LogInformation("Creating properties");
-                await dbContext.Properties.AddRangeAsync(PropertySeedData.Properties);
+                logger.LogInformation("Creating basic tenant occupations");
+                await dbContext.PropertyOccupants.AddRangeAsync(OccupantSeedData.BasicTenantOccupants);
                 await dbContext.SaveChangesAsync();
-                logger.LogInformation("Property creation completed");
+                logger.LogInformation("Basic tenant occupations creation completed");
             }
             catch (Exception e)
             {

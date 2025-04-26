@@ -12,6 +12,8 @@ import formReducer, { initialFormState } from "@/lib/formState";
 import { z, ZodSchema } from "zod";
 import { emailSchema } from "@/utils/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/types/queryKeys";
 
 interface LoginFormFields {
     email: string;
@@ -26,6 +28,7 @@ const LoginSchema: ZodSchema<LoginFormFields> = z
 
 export default function LoginForm() {
     const [loginState, dispatch] = useReducer(formReducer, initialFormState);
+    const queryClient = useQueryClient();
  
     useEffect(() => {
         if(loginState === 'success') 
@@ -53,6 +56,7 @@ export default function LoginForm() {
         }
 
         dispatch({type: 'SUCCESS'});
+        queryClient.clear();
     }
 
     const isLoading = loginState === 'loading';

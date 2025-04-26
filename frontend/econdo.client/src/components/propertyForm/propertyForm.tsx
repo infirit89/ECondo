@@ -2,7 +2,7 @@ import { PropertyFormValues, propertySchema } from "@/utils/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, Box, Button, Group, LoadingOverlay, NumberInput, Select, Stack, TextInput } from "@mantine/core";
 import { Controller, useForm } from "react-hook-form";
-import { usePropertyTypes } from "./propertyTypeProvider";
+import { usePropertyTypes } from "@/providers/propertyTypeProvider";
 import { useEffect, useReducer } from "react";
 import formReducer, { initialFormState } from "@/lib/formState";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -23,7 +23,7 @@ export const useQueryPropertyById = (propertyId: string) => {
     });
 }
 
-export default function PropertyForm({ onCancel, propertyId } : PropertyFormProps) {
+export function PropertyForm({ onCancel, propertyId } : PropertyFormProps) {
 
     const queryClient = useQueryClient();
     const { propertyTypes } = usePropertyTypes();

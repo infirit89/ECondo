@@ -15,23 +15,11 @@ internal sealed class AddOccupantToPropertyCommandHandler
         AddOccupantToPropertyCommand request,
         CancellationToken cancellationToken)
     {
-        var entrance = await dbContext
-            .Entrances
-            .FirstAsync(e =>
-                    e.BuildingId == request.BuildingId &&
-                    e.Number == request.EntranceNumber,
-                cancellationToken: cancellationToken);
-
         var property = await dbContext
             .Properties
-            .FirstOrDefaultAsync(p =>
-                p.EntranceId == entrance.Id &&
+            .FirstAsync(p =>
                 p.Id == request.PropertyId,
                 cancellationToken: cancellationToken);
-
-        if(property is null)
-            return Result<EmptySuccess, Error>.Fail(
-                PropertyErrors.InvalidProperty(request.PropertyId));
 
         var occupantType = await dbContext
             .OccupantTypes

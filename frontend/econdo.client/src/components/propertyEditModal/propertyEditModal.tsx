@@ -2,24 +2,20 @@
 
 import { Modal, Tabs } from "@mantine/core";
 import { useState } from "react";
-import PropertyForm from "./propertyForm";
-import OccupantsList from "./occupanstList";
+import PropertyForm from "@/components/propertyForm";
+import OccupantsList from "@/components/occupantsList";
 
 interface PropertyEditModalProps {
     opened: boolean,
     onClose: () => void,
     propertyId: string,
-    buildingId: string,
-    entranceNumber: string,
 }
 
-export default function PropertyEditModal(
+export function PropertyEditModal(
     {
         opened,
         onClose,
         propertyId,
-        buildingId,
-        entranceNumber,
     } : PropertyEditModalProps) {
 
     const [activeTab, setActiveTab] = useState<string | null>("property")
@@ -44,8 +40,6 @@ export default function PropertyEditModal(
                 <Tabs.Panel value="occupants">
                     <OccupantsList
                     onClose={onClose}
-                    buildingId={buildingId}
-                    entranceNumber={entranceNumber}
                     propertyId={propertyId}/>
                 </Tabs.Panel>
             </Tabs>

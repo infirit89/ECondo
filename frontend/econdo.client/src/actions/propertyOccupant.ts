@@ -26,8 +26,6 @@ export const acceptPropertyInvitation =
     });
 
 interface AddOccupantToPropertyData {
-    buildingId: string,
-    entranceNumber: string,
     propertyId: string,
     firstName: string,
     middleName: string,

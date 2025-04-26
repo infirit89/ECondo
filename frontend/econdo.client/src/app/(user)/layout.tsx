@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from "react";
-import ProfileProvider from "../profileProvider";
+import ProfileProvider from "@/providers/profileProvider";
 
 export default function UserLayout(
     {children} : {children: ReactNode}) {

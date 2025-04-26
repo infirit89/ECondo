@@ -1,4 +1,4 @@
-import { BriefPropertyResult } from "@/actions/property";
+import { PropertyResult } from "@/actions/property";
 import { 
     Card,
     Text,
@@ -10,8 +10,8 @@ import {
     Divider,
 } from "@mantine/core";
 import { IconBuildingCottage, IconBuildingFactory, IconBuildingSkyscraper, IconBuildingStore, IconBuildingWarehouse, IconChartPie, IconEdit, IconHome, IconPalette, IconPencil, IconRuler, IconStairs, IconTrash, IconUsers } from "@tabler/icons-react";
-import { useState } from "react";
-import PropertyEditModal from "./propertyEditModal";
+import { MouseEventHandler, useState } from "react";
+import PropertyEditModal from "@/components/propertyEditModal";
 
 const getPropertyTypeInfo = (propertyType: string) => {
     switch (propertyType) {
@@ -37,42 +37,37 @@ const getPropertyTypeInfo = (propertyType: string) => {
 }
 
 interface ProperyCardProps {
-    property: BriefPropertyResult,
+    property: PropertyResult,
     handleDelete?: (id: string) => void,
-    buildingId: string,
-    entranceNumber: string,
+    canEdit: boolean,
     isDeleting: boolean,
 }
 
-export default function PropertyCard({ 
+export function PropertyCard({ 
     property, 
     handleDelete,
-    buildingId, 
-    entranceNumber,
+    canEdit,
     isDeleting, } : ProperyCardProps) {
 
     const propertyInfo = getPropertyTypeInfo(property.propertyType.toLowerCase());
 
-    const [ editModalOpened, setEditModalOpen ] = useState(false);
+    const [editModalOpened, setEditModalOpen] = useState(false);
 
     return (
         <>
-            <PropertyEditModal
-            opened={editModalOpened}
-            onClose={() => setEditModalOpen(false)}
-            buildingId={buildingId}
-            entranceNumber={entranceNumber}
-            propertyId={property.id}
-            />
-            {/* <AddOccupantModal
-            addOccupantModal={stack.register('add-occupant-modal')}
-            buildingId={buildingId}
-            entranceNumber={entranceNumber}
-            propertyId={property.id}/> */}
-            <Card 
+            {
+                canEdit && (
+                    <PropertyEditModal
+                    opened={editModalOpened}
+                    onClose={() => setEditModalOpen(false)}
+                    propertyId={property.id}
+                    />
+                )
+            }
+            <Card
             shadow="sm" 
-            padding="xl" 
-            radius="lg" 
+            padding="xl"
+            radius="lg"
             withBorder
             style={{ transition: "transform 0.2s ease, box-shadow 0.2s ease" }}
             onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-4px)")}
@@ -103,14 +98,26 @@ export default function PropertyCard({
                     </Text>
                   </div>
                 </Group>
-                <Group gap={8}>
-                  <ActionIcon variant='subtle' color="blue" onClick={() => setEditModalOpen(true)}>
-                    <IconEdit size={18} />
-                  </ActionIcon>
-                  <ActionIcon variant='subtle' color="red" onClick={() => handleDelete!(property.id)}>
-                    <IconTrash size={18} />
-                  </ActionIcon>
-                </Group>
+                {
+                    canEdit && handleDelete && (
+                        <Group gap={8}>
+                            <ActionIcon
+                            variant='subtle'
+                            color="blue"
+                            disabled={isDeleting}
+                            onClick={() => setEditModalOpen(true)}>
+                                <IconEdit size={18} />
+                            </ActionIcon>
+                            <ActionIcon 
+                            variant='subtle'
+                            color="red"
+                            disabled={isDeleting}
+                            onClick={() => handleDelete(property.id)}>
+                                <IconTrash size={18} />
+                            </ActionIcon>
+                        </Group>
+                    )
+                }
               </Group>
             </Card.Section>
 
@@ -121,7 +128,7 @@ export default function PropertyCard({
                   <Text span fw={500}>
                     Застроена площ:
                   </Text>{" "}
-                  {20} m²
+                  {property.builtArea} m²
                 </Text>
               </Group>
 
@@ -131,7 +138,7 @@ export default function PropertyCard({
                   <Text span fw={500}>
                     Идеални части:
                   </Text>{" "}
-                  {20}
+                  {property.idealParts}
                 </Text>
               </Group>
 

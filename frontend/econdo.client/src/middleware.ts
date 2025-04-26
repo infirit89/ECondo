@@ -57,7 +57,7 @@ export default async function middleware(req: NextRequest) {
         }
     }
 
-    if(protectedRoutes.includes(path) && !accessToken)
+    if(protectedRoutes.some(route => path.startsWith(route)) && !accessToken)
         return NextResponse.redirect(new URL('/login', req.nextUrl));
 
     if(publicRoutes.includes(path) && accessToken && !path.startsWith('/condos/properties')) {

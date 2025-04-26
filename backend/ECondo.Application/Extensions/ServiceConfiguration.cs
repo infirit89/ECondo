@@ -19,6 +19,7 @@ public static class ServiceConfiguration
             configuration.AddOpenBehavior(typeof(AccessPropertyAuthorizationPipelineBehaviour<,>));
             configuration.AddOpenBehavior(typeof(EditPropertyAuthorizationPipelineBehaviour<,>));
             configuration.AddOpenBehavior(typeof(EditOccupantAuthorizationPipelineBehaviour<,>));
+            configuration.AddOpenBehavior(typeof(AddOccupantAuthorizationPipelineBehaviour<,>));
         });
 
         services.AddValidatorsFromAssembly(currentAssembly, includeInternalTypes: true);

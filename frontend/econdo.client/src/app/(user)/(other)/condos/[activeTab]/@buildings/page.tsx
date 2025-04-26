@@ -4,14 +4,12 @@ import {
     Center,
     Title,
     Button,
-    Flex, 
-    Grid,
-    GridCol,
-    Container
+    Flex,
+    Container,
+    SimpleGrid
 } from "@mantine/core";
 import { IconMoodPuzzled } from "@tabler/icons-react";
 
-import classes from './buildingsPage.module.css';
 import Link from "next/link";
 
 export default async function BuildingsPage() {
@@ -24,15 +22,13 @@ export default async function BuildingsPage() {
             </Flex>
             {
                 buildingsResult.ok && buildingsResult.value?.length! > 0 ?
-                <Grid justify='center' gutter={'xl'} columns={2} mt={50}>
+                <SimpleGrid
+                cols={{ base: 1, md: 2, lg: 3 }}
+                spacing={{ base: 'sm', md: 'md', lg: 'lg' }}>
                     {buildingsResult.value?.map((value, index) => (
-                        <GridCol key={index} span={{ base: 2, xs: 1 }}>
-                            <Flex className={classes.cardContainer} justify={index % 2 == 0 ? 'flex-end' : 'flex-start'}>
-                                <CondoCard key={index} {...value}/>
-                            </Flex>
-                        </GridCol>
+                        <CondoCard key={index} {...value}/>
                     ))}
-                </Grid>
+                </SimpleGrid>
                 :
                 <>
                     <Center mt={90} mb={20}>

@@ -1,7 +1,7 @@
 'use client';
 
 import { createProperty } from "@/actions/property";
-import { usePropertyTypes } from "@/app/(user)/(dashboard)/buildings/[buildingId]/[entranceNumber]/[activeTab]/@properties/propertyTypeProvider";
+import { usePropertyTypes } from "@/providers/propertyTypeProvider";
 import formReducer, { initialFormState } from "@/lib/formState";
 import { queryKeys } from "@/types/queryKeys";
 import { propertySchema } from "@/utils/validationSchemas";

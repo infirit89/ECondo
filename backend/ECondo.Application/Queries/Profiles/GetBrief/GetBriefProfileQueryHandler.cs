@@ -11,7 +11,7 @@ internal sealed class GetBriefProfileQueryHandler(
     IApplicationDbContext dbContext,
     IUserContext userContext) 
     : IQueryHandler<
-        GetBriefProfileQuery, 
+        GetBriefProfileQuery,
         BriefProfileResult>
 {
     public async Task<Result<BriefProfileResult, Error>> 

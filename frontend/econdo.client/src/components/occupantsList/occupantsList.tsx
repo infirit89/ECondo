@@ -1,19 +1,17 @@
 import { Box, Button, Group, Title, Text, Stack, Flex } from "@mantine/core";
 import { useModals } from "@mantine/modals";
 import { IconPlus } from "@tabler/icons-react";
-import OccupantForm from "./occupantForm";
-import { useOccupantTypes } from "./occupantTypeProvider";
+import OccupantForm from "@/components/occupantForm";
+import { useOccupantTypes } from "@/providers/occupantTypeProvider";
 import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/types/queryKeys";
 import { deleteOccupant, getOccupantsInProperty, Occupant } from "@/actions/propertyOccupant";
-import Loading from "@/app/(user)/(other)/condos/[activeTab]/loading";
-import OccupantPaper from "./occupantPaper";
+import Loading from "@/components/loading";
+import OccupantPaper from "@/components/occupantPaper";
 
 interface OccupantsListProps {
     onClose?: () => void,
     propertyId: string,
-    buildingId: string,
-    entranceNumber: string,
 }
 
 const useQueryOccupantsInProperty = (propertyId: string) => {
@@ -41,9 +39,7 @@ const useDeleteOccupantMutation = (
 
 export default function OccupantsList({
     onClose,
-    propertyId,
-    buildingId,
-    entranceNumber } : OccupantsListProps) {
+    propertyId, } : OccupantsListProps) {
 
     const { occupantTypes } = useOccupantTypes();
     const modals = useModals();
@@ -58,19 +54,9 @@ export default function OccupantsList({
           title: "Add New Occupant",
           children: (
               <OccupantForm
-                  buildingId={buildingId}
-                  entranceNumber={entranceNumber}
                   propertyId={propertyId}
                   occupantTypes={occupantTypes}
                   onCancel={() => modals.closeModal(modalId)}
-              //   onSubmit={(newOccupant) => {
-              //     const occupantWithId = {
-              //       ...newOccupant,
-              //       id: Date.now().toString(),
-              //     }
-              //     onUpdate([...occupants, occupantWithId])
-              //     modals.closeModal(modalId)
-              //   }}
               />
           ),
         })
@@ -82,15 +68,9 @@ export default function OccupantsList({
           children: (
               <OccupantForm
                   occupant={occupant}
-                  buildingId={buildingId}
-                  entranceNumber={entranceNumber}
                   propertyId={propertyId}
                   occupantTypes={occupantTypes}
                   onCancel={() => modals.closeModal(modalId)}
-              //   onSubmit={(updatedOccupant) => {
-              //     // onUpdate(occupants.map((occ) => (occ.id === updatedOccupant.id ? updatedOccupant : occ)))
-              //     // modals.closeModal(modalId)
-              //   }}
               />
           ),
         })

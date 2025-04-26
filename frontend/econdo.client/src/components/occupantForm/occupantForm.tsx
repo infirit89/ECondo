@@ -5,7 +5,6 @@ import { useReducer } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { addOccupantToProperty, Occupant, OccupantTypeNameResult, updatePropertyOccupant } from "@/actions/propertyOccupant";
 import formReducer, { initialFormState } from "@/lib/formState";
-import { Result } from "@/types/result";
 import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/types/queryKeys";
 
@@ -13,8 +12,6 @@ import { queryKeys } from "@/types/queryKeys";
 interface OccupantFormProps {
     occupant?: Occupant,
     onCancel?: () => void,
-    buildingId: string,
-    entranceNumber: string,
     propertyId: string,
     occupantTypes: OccupantTypeNameResult,
 }
@@ -22,8 +19,6 @@ interface OccupantFormProps {
 export default function OccupantForm({
     occupant,
     onCancel,
-    buildingId,
-    entranceNumber,
     propertyId,
     occupantTypes } : OccupantFormProps) {
 
@@ -100,8 +95,6 @@ export default function OccupantForm({
             middleName: data.middleName,
             lastName: data.lastName,
             email: email,
-            buildingId: buildingId,
-            entranceNumber: entranceNumber,
             propertyId: propertyId,
             occupantType: data.occupantType,
         });

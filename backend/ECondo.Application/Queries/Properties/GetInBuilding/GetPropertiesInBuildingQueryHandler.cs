@@ -1,4 +1,5 @@
-﻿using ECondo.Application.Repositories;
+﻿using ECondo.Application.Data;
+using ECondo.Application.Repositories;
 using ECondo.Application.Services;
 using ECondo.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -7,9 +8,9 @@ namespace ECondo.Application.Queries.Properties.GetInBuilding;
 
 internal sealed class GetPropertiesInBuildingQueryHandler
     (IApplicationDbContext dbContext, IUserContext userContext)
-    : IQueryHandler<GetPropertiesInBuildingQuery, PagedList<BriefPropertyResult>>
+    : IQueryHandler<GetPropertiesInBuildingQuery, PagedList<PropertyOccupantResult>>
 {
-    public async Task<Result<PagedList<BriefPropertyResult>, Error>> Handle(GetPropertiesInBuildingQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PagedList<PropertyOccupantResult>, Error>> Handle(GetPropertiesInBuildingQuery request, CancellationToken cancellationToken)
     {
         var propertyQuery = dbContext.Entrances
             .Include(e => e.Properties)
@@ -22,11 +23,13 @@ internal sealed class GetPropertiesInBuildingQueryHandler
             .SelectMany(e =>
                 e.Properties
                     .Select(p =>
-                        new BriefPropertyResult(
+                        new PropertyOccupantResult(
                             p.Id,
                             p.Floor,
                             p.Number,
-                            p.PropertyType.Name)));
+                            p.PropertyType.Name,
+                            p.BuiltArea,
+                            p.IdealParts)));
 
         var propertyCount = await propertyQuery.CountAsync(cancellationToken: cancellationToken);
 
@@ -36,8 +39,8 @@ internal sealed class GetPropertiesInBuildingQueryHandler
             
             .ToArrayAsync(cancellationToken: cancellationToken);
 
-        return Result<PagedList<BriefPropertyResult>, Error>.Ok(
-            new PagedList<BriefPropertyResult>(
+        return Result<PagedList<PropertyOccupantResult>, Error>.Ok(
+            new PagedList<PropertyOccupantResult>(
                 properties,
                 propertyCount,
                 request.Page,
