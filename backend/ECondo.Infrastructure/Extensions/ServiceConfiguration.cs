@@ -29,6 +29,7 @@ public static class ServiceConfiguration
         services.AddHttpContextAccessor();
 
         services.AddScoped<IAuthTokenService, AuthTokenService>();
+        services.AddSingleton<IEmailTemplateService, HtmlEmailTemplateService>();
         services.AddScoped<IEmailService, MailService>();
         services.AddScoped<IUserContext, UserContext>();
 

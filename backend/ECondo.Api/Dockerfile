@@ -30,4 +30,6 @@ RUN dotnet publish "./ECondo.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+# Create directory for email templates
+RUN mkdir -p /app/EmailTemplates
 ENTRYPOINT ["dotnet", "ECondo.Api.dll"]

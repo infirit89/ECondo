@@ -11,6 +11,8 @@ services:
     depends_on:
         - econdo.mssqldb
         - econdo.redis
+    volumes:
+      - ./Econdo.EmailTemplates:/app/EmailTemplates
 
   econdo.mssqldb:
     image: mcr.microsoft.com/mssql/server:2022-latest

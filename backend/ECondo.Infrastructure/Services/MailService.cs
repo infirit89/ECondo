@@ -1,27 +1,20 @@
-﻿using System.Reflection;
-using ECondo.Application.Services;
+﻿using ECondo.Application.Services;
 using Resend;
 
 namespace ECondo.Infrastructure.Services;
 
-// NOTE: the email HTML SHOULD NOT BE HERE, im leaving it for now cause too much work
-// TODO: SHOULD BE IN ANOTHER FILE, MAYBE EVEN ANOTHER PROJECT!!!
-internal class MailService(IResend resend) : IEmailService
+internal class MailService(IResend resend, IEmailTemplateService templateService) : IEmailService
 {
     public async Task SendAccountConfirmationMail(string recipientMail, string confirmationLink)
     {
-        var templateDirectory = Path.Combine(
-            Directory.GetCurrentDirectory(), "EmailTemplates");
-
-        var templatePath = Path.Combine(templateDirectory, "RegisterTemplate.html");
-        var template = await File.ReadAllTextAsync(templatePath);
+        string emailBody = await templateService.RenderTemplateAsync(
+            "RegisterTemplate.html", new { confirmationLink });
         
-        // todo: this html should be in a separate file
         var message = new EmailMessage
         {
-            From = "support@econdo.online",
+            From = "noreply@econdo.online",
             Subject = "Account Confirmation",
-            HtmlBody = ""
+            HtmlBody = emailBody,
         };
         message.To.Add(recipientMail);
 
@@ -30,30 +23,35 @@ internal class MailService(IResend resend) : IEmailService
 
     public async Task SendPasswordResetMail(string recipientMail, string resetLink)
     {
-        // todo: this html should be in a separate file
+        string emailBody = await templateService.RenderTemplateAsync(
+            "PasswordResetTemplate.html", new { resetLink });
+
+        
         var message = new EmailMessage
         {
-            From = "support@econdo.online",
+            From = "noreply@econdo.online",
             Subject = "Reset NewPassword",
-            HtmlBody = ""
+            HtmlBody = emailBody,
         };
         message.To.Add(recipientMail);
 
         await resend.EmailSendAsync(message);
     }
 
-    public Task SendInvitationEmail(string recipientMail, string invitationLink, string firstName, DateTimeOffset expiresAt)
+    public async Task SendInvitationEmail(string recipientMail, string invitationLink, string firstName, DateTimeOffset expiresAt)
     {
-
-        // todo: this html should be in a separate file
+        string emailBody = await templateService.RenderTemplateAsync(
+            "PropertyInvitationTemplate.html", 
+            new { firstName, invitationLink, expiresAt = $"{expiresAt:f}" });
+        
         var message = new EmailMessage
         {
-            From = "invitations@econdo.online",
+            From = "noreply@econdo.online",
             Subject = "You've been invited to join ECondo",
-            HtmlBody = ""
+            HtmlBody = emailBody,
         };
 
         message.To.Add(recipientMail);
-        return resend.EmailSendAsync(message);
+        await resend.EmailSendAsync(message);
     }
 }
