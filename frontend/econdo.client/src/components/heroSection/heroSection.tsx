@@ -38,7 +38,7 @@ export function HeroSection() {
                 <Title order={1} size="48px" fw={900} style={{
                     textShadow: '0 2px 4px rgba(0,0,0,0.7)'
                 }}>
-                    Управлявай сгради си лесно
+                    Управлявай сградите си лесно
                 </Title>
                 </motion.div>
 
@@ -67,7 +67,7 @@ export function HeroSection() {
                         mt="xl"
                         component={Link}
                         href={'/register'}>
-                            Започнете сега
+                            Започни сега
                         </Button>
                     </motion.div>
                 </motion.div>

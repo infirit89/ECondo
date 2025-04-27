@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using ECondo.Domain.Buildings;
+﻿using ECondo.Domain.Buildings;
+using ECondo.Infrastructure.Shared;
 
-namespace ECondo.Infrastructure.Shared;
+namespace ECondo.Infrastructure.Data;
 
 internal static class OccupantSeedData
 {

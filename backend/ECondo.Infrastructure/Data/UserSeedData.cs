@@ -1,11 +1,11 @@
 ﻿using ECondo.Domain.Profiles;
 using ECondo.Domain.Users;
 
-namespace ECondo.Infrastructure.Shared;
+namespace ECondo.Infrastructure.Data;
 
 internal static class UserSeedData
 {
-    internal record UserSeedInfo(User User, string Password);
+    internal record UserSeedInfo(User User, string Password, string[] Roles);
 
     public static readonly UserSeedInfo BasicUser = new(
         new User
@@ -16,7 +16,7 @@ internal static class UserSeedData
             PhoneNumber = "0881231231",
             EmailConfirmed = true,
         },
-        Password: "testPass@T1"
+        Password: "testPass@T1", []
     );
 
 
@@ -29,7 +29,7 @@ internal static class UserSeedData
             PhoneNumber = "0881231231",
             EmailConfirmed = true,
         },
-        Password: "testPass@T1"
+        Password: "testPass@T1", []
     );
     
     public static readonly UserSeedInfo BasicOwner = new(
@@ -41,7 +41,19 @@ internal static class UserSeedData
             PhoneNumber = "0881231231",
             EmailConfirmed = true,
         },
-        Password: "testPass@T1"
+        Password: "testPass@T1", []
+    );
+    
+    public static readonly UserSeedInfo BasicAdmin = new(
+        new User
+        {
+            Id = Guid.Parse("23fd9982-39e8-45b5-8b72-22e7db8f16b6"),
+            Email = "testAdmin@mail.com",
+            UserName = "testAdmin@mail.com",
+            PhoneNumber = "0881231231",
+            EmailConfirmed = true,
+        },
+        Password: "testPass@T1", ["admin"]
     );
 
     public static readonly ProfileDetails BasicUserProfile =
@@ -70,12 +82,22 @@ internal static class UserSeedData
             LastName = "Owner",
             UserId = BasicOwner.User.Id,
         };
+    
+    public static readonly ProfileDetails BasicAdminProfile =
+        new ProfileDetails
+        {
+            FirstName = "Test",
+            MiddleName = "Basic",
+            LastName = "Admin",
+            UserId = BasicAdmin.User.Id,
+        };
 
     public static readonly IEnumerable<UserSeedInfo> Users =
     [
         BasicUser,
         BasicTenant,
         BasicOwner,
+        BasicAdmin,
     ];
 
     public static readonly IEnumerable<ProfileDetails> Profiles =
@@ -83,5 +105,6 @@ internal static class UserSeedData
         BasicUserProfile,
         BasicTenantProfile,
         BasicOwnerProfile,
+        BasicAdminProfile,
     ];
 }

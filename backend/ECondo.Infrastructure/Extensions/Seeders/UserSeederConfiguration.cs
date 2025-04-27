@@ -1,5 +1,6 @@
 ﻿using ECondo.Application.Repositories;
 using ECondo.Domain.Users;
+using ECondo.Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -25,13 +26,7 @@ internal static class UserSeederConfiguration
 
         var dbContext = services
             .GetRequiredService<IApplicationDbContext>();
-
-        void PrintIdentityErrors(IEnumerable<IdentityError>  errors)
-        {
-            foreach (var error in errors)
-                logger.LogError($"Code: '{error.Code}'; Description: '{error.Description}'");
-        }
-
+        
         using (logger.BeginScope("User creation"))
         {
             foreach (var userData in UserSeedData.Users)
@@ -41,11 +36,22 @@ internal static class UserSeederConfiguration
                     logger.LogInformation($"Creating User '{userData.User.UserName}'");
                     var userRes = await userManager
                         .CreateAsync(userData.User, userData.Password);
-
+                    
                     if (!userRes.Succeeded)
                     {
-                        PrintIdentityErrors(userRes.Errors);
+                        logger.LogIdentityErrors(userRes.Errors);
                         continue;
+                    }
+
+                    foreach (var role in userData.Roles)
+                    {
+                        var userRoleRes = await userManager.AddToRoleAsync(userData.User, role);
+                        if (!userRoleRes.Succeeded)
+                        {
+                            logger.LogIdentityErrors(userRoleRes.Errors);
+                            continue;
+                        }
+                        
                     }
 
                     logger.LogInformation("User successfully created");

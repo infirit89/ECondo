@@ -7,7 +7,7 @@ export function CallToActionSection() {
     return (
     <MotionSection>
         <Container size="lg" py="xl" style={{ textAlign: 'center' }}>
-            <Title order={2} mb="md">Готови ли сте да опростите управлението на вашата сграда?</Title>
+            <Title order={2} mb="md">Готов ли си да опростиш управлението на сграда си?</Title>
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
                 <Button 
                 size="lg" 
@@ -15,7 +15,7 @@ export function CallToActionSection() {
                 gradient={{ from: 'blue', to: 'cyan' }}
                 component={Link}
                 href="/register">
-                Присъединете се към ECondo днес
+                Присъеди се към ECondo
                 </Button>
             </motion.div>
         </Container>

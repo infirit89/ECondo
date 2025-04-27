@@ -25,9 +25,9 @@ export function UserRoleSection() {
 
             <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl" mt="xl">
             {[ 
-                {icon: IconShieldCheck, role: "Домоуправители", description: "Управлявайте регистрациите на сгради, общи части и дейности."},
-                {icon: IconKey, role: "Собственици на имоти", description: "Регистрирайте единици, добавяйте или актуализирайте наематели и управлявайте плащания."},
-                {icon: IconUser, role: "Наематели", description: "Лесно плащайте наем и такси за поддръжка онлайн."}
+                {icon: IconShieldCheck, role: "Домоуправители", description: "Управлявай регистрациите на сгради, общи части и дейности."},
+                {icon: IconKey, role: "Собственици на имоти", description: "Регистрирай имоти, добавяй или актуализирай наематели и управлявай плащания."},
+                {icon: IconUser, role: "Наематели", description: "Лесно плащай наем и такси за поддръжка онлайн."}
             ].map((item, idx) => (
                 <motion.div
                     whileHover={{ scale: 1.05 }}

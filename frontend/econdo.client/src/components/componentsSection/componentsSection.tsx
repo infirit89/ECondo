@@ -21,15 +21,15 @@ export function ComponentsSection() {
             color: 'transparent',
           }}
         >
-          Всичко, от което се нуждаете, за да управлявате имота си
+          Всичко, от което се нуждаеш, за да управляваш имота си
         </Title>
 
         <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="xl" mt="xl">
           {[ 
-            {icon: IconBuilding, title: "Управление на сгради", description: "Регистрирайте и следете множество сгради лесно."},
-            {icon: IconHome, title: "Регистриране на имоти", description: "Добавете единици и възлагайте собственици или наематели без усилия."},
+            {icon: IconBuilding, title: "Управление на сгради", description: "Регистрирай и следи множество сгради лесно."},
+            {icon: IconHome, title: "Регистриране на имоти", description: "Добави имоти и възложи собственици или наематели без усилия."},
             {icon: IconUsers, title: "Управление на обитатели", description: "Собствениците могат да управляват наемателите си по всяко време."},
-            {icon: IconCash, title: "Плащане на сметки онлайн", description: "Плащайте такси за поддръжка, ремонти и почистване сигурно."}
+            {icon: IconCash, title: "Плащане на сметки онлайн", description: "Плащай такси за поддръжка, ремонти и почистване сигурно и лесно."}
           ].map((item, idx) => (
             <motion.div
               key={idx}

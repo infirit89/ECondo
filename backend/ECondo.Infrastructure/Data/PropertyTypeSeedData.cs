@@ -1,6 +1,6 @@
 ﻿using ECondo.Domain.Buildings;
 
-namespace ECondo.Infrastructure.Shared;
+namespace ECondo.Infrastructure.Data;
 
 internal static class PropertyTypeSeedData
 {
