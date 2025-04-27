@@ -1,9 +1,10 @@
 import { isUserInBuilding } from "@/actions/condo";
 import DashboardSidebar, { ActiveTab } from "./dashboardSidebar";
 import { UserNavbar } from "@/components/navbar/userNavbar";
-import { AppShell, AppShellFooter, AppShellMain } from "@mantine/core";
+import { AppShell, AppShellMain } from "@mantine/core";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
+import Footer from "@/components/footer";
 
 export default async function Dashboard(
   { children, properties, bills, params }:
@@ -41,23 +42,21 @@ export default async function Dashboard(
   }
 
   return (
-    <AppShell 
-    header={{ height: 60 }}
-    navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: true }} }>
-        <UserNavbar additionalLinks={[
-          { link: `/buildings/${buildingId}/${entranceNumber}/properties`, label: 'Имоти' },
-          { link: `/buildings/${buildingId}/${entranceNumber}/bills`, label: 'Сметки' },
-        ]}/>
-        <DashboardSidebar 
-        activeTab={activeTab}
-        buildingId={buildingId}
-        entranceNumber={entranceNumber}/>
-        <AppShellMain>
-            { getChild() }
-        </AppShellMain>
-        <AppShellFooter>
-            
-        </AppShellFooter>
-    </AppShell>
+  <AppShell 
+  header={{ height: 60 }}
+  navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: true }} }>
+      <UserNavbar additionalLinks={[
+        { link: `/buildings/${buildingId}/${entranceNumber}/properties`, label: 'Имоти' },
+        { link: `/buildings/${buildingId}/${entranceNumber}/bills`, label: 'Сметки' },
+      ]}/>
+      <DashboardSidebar 
+      activeTab={activeTab}
+      buildingId={buildingId}
+      entranceNumber={entranceNumber}/>
+      <AppShellMain>
+          { getChild() }
+      </AppShellMain>
+      <Footer/>
+  </AppShell>
   );
 }

@@ -8,7 +8,7 @@ import { queryKeys } from "@/types/queryKeys";
 import { Center, Flex, Pagination, SimpleGrid, Title, Text } from "@mantine/core";
 import { useModals } from "@mantine/modals";
 import { IconMoodPuzzled } from "@tabler/icons-react";
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 interface OccupantsListProps {

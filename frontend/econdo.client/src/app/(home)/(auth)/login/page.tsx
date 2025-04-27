@@ -1,4 +1,4 @@
-import { Alert, Anchor, Container, Paper, Text, Title } from "@mantine/core";
+import { Alert, Anchor, Container, Text, Title } from "@mantine/core";
 import LoginForm from "@/components/loginForm/loginForm";
 import AccountConfirmationAlert from "@/components/accountConfirmationAlert/accountConfirmationAlert";
 import { AuthEvent } from "@/types/auth";
@@ -33,9 +33,7 @@ export default async function Login({ searchParams } : { searchParams : Promise<
             </Anchor>
             </Text>
 
-            <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-                <LoginForm/>
-            </Paper>
+            <LoginForm/>
         </Container>
     )
 }

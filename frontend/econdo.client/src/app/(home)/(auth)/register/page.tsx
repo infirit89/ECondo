@@ -1,4 +1,4 @@
-import { Container, Title, Text, Anchor, Paper } from "@mantine/core";
+import { Container, Title, Text, Anchor } from "@mantine/core";
 import RegisterForm from "@/components/registerForm/registerForm";
 
 export default function Register() {
@@ -14,9 +14,8 @@ export default function Register() {
                 </Anchor>
             </Text>
 
-            <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-                <RegisterForm/>
-            </Paper>
+            
+            <RegisterForm/>
         </Container>
     )
 }

@@ -4,6 +4,7 @@ import DashboardSidebar, { ActiveTab } from "./dashboardSidebar";
 import { ReactNode } from "react";
 import { isUserOccupant } from "@/actions/propertyOccupant";
 import { redirect } from "next/navigation";
+import Footer from "@/components/footer";
 
 export default async function PropertyLayout({ children, occupants, bills, params } :
     Readonly<{
@@ -51,25 +52,23 @@ export default async function PropertyLayout({ children, occupants, bills, param
     const child = getChild();
 
     return (
-        <AppShell 
-        header={{ height: 60 }}
-        navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: true }} }>
-            <UserNavbar additionalLinks={occupantType === 'Собственик' ? [
-                { link: `/properties/${propertyId}/occupants`, label: 'Контакти' },
-                { link: `/properties/${propertyId}/bills`, label: 'Сметки' },
-            ] : [
-                { link: `/properties/${propertyId}/bills`, label: 'Сметки' },
-            ]}/>
-            <DashboardSidebar 
-            activeTab={activeTab as ActiveTab}
-            propertyId={propertyId}
-            isOwner={occupantType === 'Собственик'}/>
-            <AppShellMain>
-                { child }
-            </AppShellMain>
-            <AppShellFooter>
-                
-            </AppShellFooter>
-        </AppShell>
+    <AppShell 
+    header={{ height: 60 }}
+    navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: true }} }>
+        <UserNavbar additionalLinks={occupantType === 'Собственик' ? [
+            { link: `/properties/${propertyId}/occupants`, label: 'Контакти' },
+            { link: `/properties/${propertyId}/bills`, label: 'Сметки' },
+        ] : [
+            { link: `/properties/${propertyId}/bills`, label: 'Сметки' },
+        ]}/>
+        <DashboardSidebar 
+        activeTab={activeTab as ActiveTab}
+        propertyId={propertyId}
+        isOwner={occupantType === 'Собственик'}/>
+        <AppShellMain>
+            { child }
+        </AppShellMain>
+        <Footer/>
+    </AppShell>
     )
 }

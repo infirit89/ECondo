@@ -1,9 +1,19 @@
-'use server';
+'use client';
 
-export default async function Home() {
+import HeroSection from '@/components/heroSection';
+import { ComponentsSection } from '@/components/componentsSection/componentsSection';
+import UserRoleSection from '@/components/userRoleSection';
+import TestimonialSection from '@/components/testimonialSection';
+import CallToActionSection from '@/components/callToActionSection';
 
+export default function HomePage() {
   return (
     <>
+      <HeroSection/>
+      <ComponentsSection/>
+      <UserRoleSection/>
+      <TestimonialSection/>
+      <CallToActionSection/>
     </>
   );
 }

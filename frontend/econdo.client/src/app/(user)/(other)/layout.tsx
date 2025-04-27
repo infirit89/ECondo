@@ -1,3 +1,4 @@
+import Footer from "@/components/footer";
 import Loading from "@/components/loading";
 import { UserNavbar } from "@/components/navbar/userNavbar";
 import { AppShell, AppShellMain } from "@mantine/core";
@@ -15,9 +16,7 @@ export default function CommonUserLayout(
                     {children}
                 </Suspense>
             </AppShellMain>
-            {/* <AppShellFooter> */}
-                
-            {/* </AppShellFooter> */}
+            <Footer/>
         </AppShell>
     );
 }

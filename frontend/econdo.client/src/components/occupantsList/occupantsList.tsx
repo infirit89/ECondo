@@ -76,7 +76,7 @@ export default function OccupantsList({
               />
           ),
         })
-      }
+    }
 
     const handleDeleteOccupant = (id: string) => {
         const modalId = modals.openConfirmModal({

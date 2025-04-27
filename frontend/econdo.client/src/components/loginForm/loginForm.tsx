@@ -1,6 +1,6 @@
 'use client';
 
-import { TextInput } from "@mantine/core";
+import { Paper, TextInput } from "@mantine/core";
 
 import { 
     Box,
@@ -21,6 +21,7 @@ import { z, ZodSchema } from "zod";
 import { emailSchema } from "@/utils/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 
 interface LoginFormFields {
     email: string;
@@ -70,26 +71,60 @@ export default function LoginForm() {
     const hasError = loginState === 'error';
 
     return (
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-            <Box pos={'relative'}>
-                <LoadingOverlay visible={isLoading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }}/>
-                <TextInput ta={'start'} label="Имейл" required {...form.register('email')} withAsterisk
-                error={form.formState.errors.email && form.formState.errors.email.message}/>
-                
-                <PasswordInput ta={'start'} label="Парола" required mt="md" {...form.register('password')} withAsterisk
-                error={form.formState.errors.password && form.formState.errors.password.message} />
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}>
+        <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+                <Box pos={'relative'}>
+                    <LoadingOverlay visible={isLoading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }}/>
+                    <TextInput 
+                    ta={'start'} 
+                    label="Имейл" 
+                    required {...form.register('email')} 
+                    withAsterisk
+                    error={form.formState.errors.email && form.formState.errors.email.message}
+                    styles={{
+                        input: { transition: 'border-color 0.2s ease' },
+                    }}/>
+                    
+                    <PasswordInput 
+                    ta={'start'} 
+                    label="Парола" 
+                    required 
+                    mt="md" 
+                    {...form.register('password')} 
+                    withAsterisk
+                    error={form.formState.errors.password && form.formState.errors.password.message} 
+                    styles={{
+                        input: { transition: 'border-color 0.2s ease' },
+                    }}/>
 
-                { hasError ? <Text c={'red'} pt={10} fw={500} size={'sm'}>Потребителското име или паролата са неправилни!</Text> : <></> }
-                <Group justify="space-between" mt="lg">
-                <Checkbox label="Запомни ме" />
-                <Anchor size="sm" href="/forgotPassword">
-                    Забравена парола?
-                </Anchor>
-                </Group>
-            </Box>
-            <Button fullWidth mt="xl" type={'submit'} disabled={isLoading}>
-                Влез
-            </Button>
-        </form>
+                    { hasError ? <Text c={'red'} pt={10} fw={500} size={'sm'}>Потребителското име или паролата са неправилни!</Text> : <></> }
+                    <Group justify="space-between" mt="lg">
+                        <Checkbox label="Запомни ме" />
+                        <Anchor size="sm" href="/forgotPassword">
+                            Забравена парола?
+                        </Anchor>
+                    </Group>
+                </Box>
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                    <Button
+                    fullWidth 
+                    mt="xl" 
+                    type={'submit'} 
+                    disabled={isLoading}
+                    size="md"
+                    style={{
+                        background: 'linear-gradient(135deg, #228be6, #15aabf)',
+                        transition: 'background 0.3s ease',
+                    }}>
+                        Влез
+                    </Button>
+                </motion.div>
+            </form>
+        </Paper>
+    </motion.div>
     )
 }
