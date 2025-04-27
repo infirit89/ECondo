@@ -17,4 +17,9 @@ public static class UserErrors
 
     public static Error EmailNotConfirmed() => 
         Error.Conflict("Users.NotConfirmed", "The user's email is not confirmed");
+
+    public static Error Forbidden(Guid id) =>
+        Error.Forbidden(
+            "Users.Forbidden", 
+            $"The user with id '{id}' doesn't have the right access");
 }
