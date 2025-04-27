@@ -19,7 +19,19 @@ export const queryKeys = {
             ...queryKeys.properties.all,
             page,
             pageSize,
-        ] as const
+        ] as const,
+        allPaged: (
+            page: number,
+            pageSize: number,
+            buildingId?: string,
+            entranceNumber?: string,
+        ) => [
+            ...queryKeys.properties.all,
+            page,
+            pageSize,
+            buildingId,
+            entranceNumber,
+        ] as const,
     },
     occupants: {
         all: ['ocupants'] as const,
@@ -42,6 +54,16 @@ export const queryKeys = {
     buildings: {
         all: ['buildings'] as const,
         pagedForUser: (
+            page: number,
+            pageSize: number,
+            buildingName?: string,
+        ) => [
+            ...queryKeys.buildings.all,
+            page,
+            pageSize,
+            buildingName,
+        ] as const,
+        allPaged: (
             page: number,
             pageSize: number,
         ) => [

@@ -72,7 +72,7 @@ export function PropertyCreationModal({
             await createProperty({
                 ...data,
                 buildingId: buildingId,
-                entranceNumber: entranceNumber,
+                entranceNumber: decodeURIComponent(entranceNumber),
             });
 
         if(!createResult.ok) {

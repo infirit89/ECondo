@@ -17,11 +17,19 @@ internal sealed class GetBuildingsForUserQueryHandler(
         Handle(GetBuildingsForUserQuery request, 
             CancellationToken cancellationToken)
     {
-        var buildings = await dbContext.Entrances
+        var buildingsQuery = dbContext.Entrances
             .AsNoTracking()
             .Include(e => e.Building)
             .ThenInclude(b => b.Province)
-            .Where(e => e.ManagerId == userContext.UserId)
+            .Where(e => e.ManagerId == userContext.UserId);
+
+        if (request.BuildingName is not null)
+        {
+            buildingsQuery = buildingsQuery
+                .Where(b => b.Building.Name.Contains(request.BuildingName));
+        }
+
+        var buildings = await buildingsQuery
             .Select(e => new BuildingResult(
                 e.BuildingId,
                 e.Building.Name,
@@ -33,11 +41,12 @@ internal sealed class GetBuildingsForUserQueryHandler(
                 e.Building.Street,
                 e.Building.StreetNumber,
                 e.Building.BuildingNumber,
-                e.Number)
-            ).ToPagedListAsync(
-                request.Page, 
-                request.PageSize, 
+                e.Number))
+            .ToPagedListAsync(
+                request.Page,
+                request.PageSize,
                 cancellationToken: cancellationToken);
+        
         return Result<PagedList<BuildingResult>, Error>.Ok(buildings);
     }
 }

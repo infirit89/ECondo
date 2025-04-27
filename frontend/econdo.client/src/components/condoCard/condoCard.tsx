@@ -35,9 +35,7 @@ export default function CondoCard({
     const {hovered, ref} = useHover();
 
     return (
-        <Card 
-        component={Link} 
-        href={`/buildings/${id}/${entranceNumber}/properties`} 
+        <Card
         className={`${classes.condoCard}`} 
         ref={ref} 
         shadow={hovered ? 'xl' : 'sm'} 

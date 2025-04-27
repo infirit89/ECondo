@@ -3,6 +3,7 @@ using ECondo.Application.Commands.Properties.Create;
 using ECondo.Application.Commands.Properties.Delete;
 using ECondo.Application.Commands.Properties.Update;
 using ECondo.Application.Data;
+using ECondo.Application.Queries.Properties.GetAll;
 using ECondo.Application.Queries.Properties.GetById;
 using ECondo.Application.Queries.Properties.GetForUser;
 using ECondo.Application.Queries.Properties.GetInBuilding;
@@ -106,6 +107,23 @@ public class PropertyController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IResult> GetForUser(
         [FromQuery] GetPropertiesForUserQuery request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(
+            data => TypedResults.Json(data.ToPagedListResponse()),
+            CustomResults.Problem);
+    }
+    
+    [Authorize]
+    [HttpGet(nameof(GetAll))]
+    [ProducesResponseType(StatusCodes.Status200OK,
+        Type = typeof(PagedListResponse<PropertyOccupantResult>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest,
+        Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IResult> GetAll(
+        [FromQuery] GetAllPropertiesQuery request)
     {
         var result = await sender.Send(request);
 

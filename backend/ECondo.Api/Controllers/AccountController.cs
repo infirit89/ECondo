@@ -11,6 +11,7 @@ using ECondo.Application.Commands.Identity.Login;
 using ECondo.Application.Commands.Identity.Register;
 using ECondo.Application.Commands.Identity.ResetPassword;
 using ECondo.Application.Commands.Identity.UpdatePassword;
+using ECondo.Application.Queries.Identity.IsInRole;
 
 namespace ECondo.Api.Controllers;
 
@@ -101,6 +102,19 @@ public class AccountController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IResult>
         UpdatePassword([FromBody] UpdatePasswordCommand request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
+    }
+    
+    [Authorize]
+    [HttpGet(nameof(IsInRole))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult>
+        IsInRole([FromQuery] IsUserInRoleQuery request)
     {
         var result = await sender.Send(request);
 

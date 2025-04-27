@@ -1,7 +1,7 @@
 import { accessTokenCookieKey, refreshTokenCookieKey } from "@/utils/constants";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { generateAccessToken, logout, setAccessTokenCookie } from "./actions/auth";
+import { generateAccessToken, isUserInRole, logout, setAccessTokenCookie } from "./actions/auth";
 import { jwtDecode } from "jwt-decode";
 
 const protectedRoutes = [
@@ -58,9 +58,19 @@ export default async function middleware(req: NextRequest) {
         }
     }
 
+    // TODO: move in admin layout
+    const isAdmin = (await isUserInRole('admin')).ok;
+    if(path.startsWith('/admin')) {
+        if(!isAdmin)
+            return NextResponse.redirect(new URL('/', req.nextUrl));
+    }
+
+    if(isAdmin && !path.startsWith('/admin'))
+        return NextResponse.redirect(new URL('/admin/buildings', req.nextUrl));
+    
     if(protectedRoutes.some(route => path.startsWith(route)) && !accessToken)
         return NextResponse.redirect(new URL('/login', req.nextUrl));
-
+    
     if(publicRoutes.includes(path) && accessToken && !path.startsWith('/condos/properties')) {
         return NextResponse.redirect(new URL('/condos/properties', req.nextUrl));
     }

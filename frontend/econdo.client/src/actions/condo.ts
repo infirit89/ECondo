@@ -22,7 +22,7 @@ export interface BuildingResult {
 }
 
 export const getBuildingsForUser = 
-cache(async (page: number, pageSize: number): 
+cache(async (page: number, pageSize: number, buildingName?: string): 
 Promise<Result<PagedList<BuildingResult>>> => {
     try {
         const buildings = await authInstance.get<PagedList<BuildingResult>>(
@@ -30,6 +30,7 @@ Promise<Result<PagedList<BuildingResult>>> => {
                 params: {
                     page,
                     pageSize,
+                    buildingName: buildingName,
                 }
             });
         return resultOk(buildings.data);
@@ -89,3 +90,23 @@ export const getProvinces = unstable_cache(async (): Promise<ProvinceNameResult>
     return  (await normalInstance
         .get<ProvinceNameResult>('/api/province/getProvinces')).data;
 });
+
+export const getAllBuildings =
+cache(async (page: number, pageSize: number):
+Promise<Result<PagedList<BuildingResult>>> => {
+    try {
+        const res = await authInstance.get<PagedList<BuildingResult>>(
+            '/api/building/getAll', {
+            params: {
+                page,
+                pageSize,
+            }
+        });
+        return resultOk(res.data);
+    } catch(error) {
+        if(isAxiosError<ApiError>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+})

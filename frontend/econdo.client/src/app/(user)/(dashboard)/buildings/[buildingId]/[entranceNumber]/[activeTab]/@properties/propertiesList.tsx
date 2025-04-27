@@ -34,13 +34,14 @@ export default function PropertiesList() {
         buildingId: string,
         entranceNumber: string }>();
 
+    const decodedEntranceNumber = decodeURIComponent(entranceNumber);
     const [isDeleteError, setDeleteError] = useState(false);
     const [deletedPropertyId, setDeletedPropertyId] = useState<string | undefined>(undefined);
     const [page, setPage] = useState(0);
 
     const modals = useModals();
     const queryClient = useQueryClient();
-    const { data: properties, isLoading } = useQueryPropertiesPaged(buildingId, entranceNumber, page);
+    const { data: properties, isLoading } = useQueryPropertiesPaged(buildingId, decodedEntranceNumber, page);
 
     const useDeleteProperty = () => {
         return useMutation({
@@ -55,7 +56,7 @@ export default function PropertiesList() {
                 queryClient.invalidateQueries({
                     queryKey: queryKeys.properties.pagedInEntrance(
                         buildingId,
-                        entranceNumber,
+                        decodedEntranceNumber,
                         page,
                         pageSize),
                     });

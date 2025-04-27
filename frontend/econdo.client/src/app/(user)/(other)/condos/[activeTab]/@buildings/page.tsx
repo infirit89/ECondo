@@ -1,80 +1,84 @@
 'use client';
-import { getBuildingsForUser } from "@/actions/condo";
-import CondoCard from "@/components/condoCard/condoCard";
-import { queryKeys } from "@/types/queryKeys";
-import { 
-    Center,
-    Title,
+
+import {
     Button,
     Flex,
     Container,
-    SimpleGrid,
-    Pagination
+    ActionIcon,
+    useMantineTheme,
+    TextInput,
+    Stack
 } from "@mantine/core";
-import { IconMoodPuzzled } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
+import { IconArrowRight, IconSearch } from "@tabler/icons-react";
 
 import Link from "next/link";
 import { useState } from "react";
-import Loading from "../loading";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import BuildingsList from "./buildingsList";
 
-// note: hard coded for now
-const pageSize = 9;
+const searchSchema = z.object({
+    searchQuery: z.string()
+    .optional()
+    .or(z.literal('')),
+});
 
-const useBuildingsPagedQuery = (page: number) => {
-    return useQuery({
-        queryKey: queryKeys.buildings.pagedForUser(page, pageSize),
-        queryFn: () => getBuildingsForUser(
-            page,
-            pageSize,
-        )
-    });
-}
+type SearchFormValues = z.infer<typeof searchSchema>;
 
 export default function BuildingsPage() {
 
-    const [page, setPage] = useState(0);
-    const { data: buildings, isLoading } = useBuildingsPagedQuery(page);
+    const theme = useMantineTheme();
 
-    if(isLoading || !buildings?.ok)
-        return <Loading/>;
+    const [buildingQuery, setBuildingQuery] = useState<string | undefined>();
+
+    const { register, handleSubmit } = useForm<SearchFormValues>({
+        resolver: zodResolver(searchSchema),
+    });
+
+    const handleSearch = (data: SearchFormValues) => {
+        setBuildingQuery(data.searchQuery);
+    }
 
     return (
         <Container size="lg" py="xl">
-            <Flex justify={'flex-end'} align="center" mb="lg">
+            <Flex justify={'space-between'} align="center" mb="xl" visibleFrom="sm">
+                <form onSubmit={handleSubmit(handleSearch)} style={{ width: '80%' }}>
+                    <TextInput
+                    radius="xl"
+                    size="md"
+                    placeholder="Потърси сграда по име"
+                    rightSectionWidth={42}
+                    pr={'xs'}
+                    w={'100%'}
+                    leftSection={<IconSearch size={18} stroke={1.5} />}
+                    rightSection={
+                        <ActionIcon type="submit" size={32} radius="xl" color={theme.primaryColor} variant="filled">
+                            <IconArrowRight size={18} stroke={1.5} />
+                        </ActionIcon>
+                    }
+                    {...register('searchQuery')}
+                    />
+                </form>
                 <Button size="md" component={Link} href="/createBuilding">Добави сграда</Button>
             </Flex>
-            {
-                buildings.value && buildings.value.items.length > 0 ?
-                <>
-                    <Flex justify={'center'} mt={'lg'} mb={'lg'} hiddenFrom='lg'>
-                        <Pagination total={buildings.value.totalPages}
-                        value={page + 1}
-                        onChange={(value) => setPage(value - 1)}/>
-                    </Flex>
-                    <SimpleGrid
-                    cols={{ base: 1, md: 2, lg: 3 }}
-                    spacing={{ base: 'sm', md: 'md', lg: 'lg' }}>
-                        {buildings.value.items.map((value, index) => (
-                            <CondoCard key={index} {...value}/>
-                        ))}
-                    </SimpleGrid>
-                    <Flex justify={'center'} mt={'xl'}>
-                        <Pagination total={buildings.value.totalPages}
-                        value={page + 1}
-                        onChange={(value) => setPage(value - 1)}/>
-                    </Flex>
-                </>
-                :
-                <>
-                    <Center mt={90} mb={20}>
-                        <IconMoodPuzzled size={100} color="#868e96"/>
-                    </Center>
-                    <Center>
-                        <Title c={'dimmed'}>Нямате регистрирани сгради</Title>
-                    </Center>
-                </>
-            }
+            <Stack align="center" mb="xl" hiddenFrom="sm">
+                <TextInput
+                radius="xl"
+                size="md"
+                placeholder="Потърси сграда по име"
+                rightSectionWidth={42}
+                w={'100%'}
+                leftSection={<IconSearch size={18} stroke={1.5} />}
+                rightSection={
+                    <ActionIcon size={32} radius="xl" color={theme.primaryColor} variant="filled">
+                    <IconArrowRight size={18} stroke={1.5} />
+                    </ActionIcon>
+                }
+                />
+                <Button size="md" component={Link} href="/createBuilding">Добави сграда</Button>
+            </Stack>
+            <BuildingsList buildingQuery={buildingQuery}/>
         </Container>
     );
 }

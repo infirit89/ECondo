@@ -10,6 +10,7 @@ import {
 import normalInstance, { authInstance } from '@/lib/axiosInstance';
 import { RegisterData, LoginData, TokenResponse } from '@/types/auth';
 import { Result, resultFail, resultOk } from '@/types/result';
+import { cache } from 'react';
 
 const backendApiUrl = process.env.NEXT_PRIVATE_BACKEND_URL;
 
@@ -175,3 +176,21 @@ export async function updatePassword(currentPassword: string, newPassword: strin
 
     throw new Error('Unexpected code flow');
 }
+
+export const isUserInRole =
+cache(async (roleName: string): Promise<Result> => {
+    try {
+        await authInstance.get('/api/account/isInRole', {
+            params: {
+                roleName
+            },
+        });
+
+        return resultOk();
+    } catch(error) {
+        if(isAxiosError<ApiError>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+})

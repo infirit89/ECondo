@@ -38,7 +38,7 @@ internal sealed class UpdatePropertyCommandHandler
                 p.EntranceId == propertyToUpdate.EntranceId, 
                 cancellationToken: cancellationToken);
         
-        if(property is not null)
+        if(property is not null && property.Id != propertyToUpdate.Id)
             return Result<EmptySuccess, Error>.Fail(
                 PropertyErrors.AlreadyExists(
                     property.Number, property.EntranceId));

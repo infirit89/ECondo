@@ -1,9 +1,9 @@
 ﻿using ECondo.Api.Extensions;
 using ECondo.Application.Commands.Buildings.RegisterEntrance;
 using ECondo.Application.Data;
+using ECondo.Application.Queries.Buildings.GetAll;
 using ECondo.Application.Queries.Buildings.GetForUser;
 using ECondo.Application.Queries.Buildings.IsUserIn;
-using ECondo.Domain.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -61,5 +61,23 @@ public class BuildingController(ISender sender) : ControllerBase
         var result = await sender.Send(request);
 
         return result.Match(TypedResults.Ok, CustomResults.Problem);
+    }
+    
+    [Authorize]
+    [HttpGet(nameof(GetAll))]
+    [ProducesResponseType(StatusCodes.Status200OK,
+        Type = typeof(PagedListResponse<BuildingResult>))]
+    [ProducesResponseType(
+        StatusCodes.Status400BadRequest,
+        Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IResult>
+        GetAll([FromQuery] GetAllBuildingsQuery request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(
+            data => TypedResults.Json(data.ToPagedListResponse()), 
+            CustomResults.Problem);
     }
 }

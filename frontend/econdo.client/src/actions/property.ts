@@ -172,3 +172,29 @@ Promise<Result> => {
 
     throw new Error('Unexpected code flow');
 });
+
+export const getAllProperties =
+cache(async (
+    page: number, 
+    pageSize: number, 
+    entranceFilter : { buildingId: string, entranceNumber: string } | undefined):
+Promise<Result<PagedList<PropertyResult>>> => {
+    try {
+        const res = await authInstance.get<PagedList<PropertyResult>>(
+            '/api/property/getAll', {
+            params: {
+                page,
+                pageSize,
+                'entranceFilter.buildingId': entranceFilter?.buildingId,
+                'entranceFilter.entranceNumber': entranceFilter?.entranceNumber,
+            }
+        });
+
+        return resultOk(res.data);
+    } catch(error) {
+        if(isAxiosError<ApiError, Record<string, string[]>>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+})
