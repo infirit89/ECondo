@@ -2,7 +2,7 @@ import { isUserInBuilding } from "@/actions/condo";
 import DashboardSidebar, { ActiveTab } from "./dashboardSidebar";
 import { UserNavbar } from "@/components/navbar/userNavbar";
 import { AppShell, AppShellFooter, AppShellMain } from "@mantine/core";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 
 export default async function Dashboard(

@@ -10,6 +10,7 @@ const protectedRoutes = [
     '/profile',
     '/acceptedInvitation',
     '/buildings',
+    '/properties'
 ];
 
 const publicRoutes = ['/login', '/register', '/'];

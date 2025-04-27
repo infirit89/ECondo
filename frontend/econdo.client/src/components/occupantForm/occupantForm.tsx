@@ -12,6 +12,7 @@ import { queryKeys } from "@/types/queryKeys";
 interface OccupantFormProps {
     occupant?: Occupant,
     onCancel?: () => void,
+    onSucess?: () => void,
     propertyId: string,
     occupantTypes: OccupantTypeNameResult,
 }
@@ -19,10 +20,9 @@ interface OccupantFormProps {
 export default function OccupantForm({
     occupant,
     onCancel,
+    onSucess,
     propertyId,
     occupantTypes } : OccupantFormProps) {
-
-    console.log(occupant);
 
     const isEditing = !!occupant;
     const {
@@ -83,6 +83,8 @@ export default function OccupantForm({
             .occupants
             .inProperty(propertyId),
         });
+
+        onSucess && onSucess();
     }
 
     const handleCreate = async(data: OccupantFormValues) => {
@@ -111,6 +113,8 @@ export default function OccupantForm({
             .occupants
             .inProperty(propertyId),
         });
+
+        onSucess && onSucess();
     }
 
     const isLoading = formState === 'loading';

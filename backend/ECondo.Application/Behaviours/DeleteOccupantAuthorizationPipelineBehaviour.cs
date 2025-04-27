@@ -9,28 +9,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Behaviours;
 
-internal sealed class EditOccupantAuthorizationPipelineBehaviour
+internal sealed class DeleteOccupantAuthorizationPipelineBehaviour
     <TRequest, TResponse>
     (IUserContext userContext, IApplicationDbContext dbContext)
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : ICanEditOccupant
+    where TRequest : ICanDeleteOccupant
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        var canEdit = await dbContext
+        var canDelete = await dbContext
             .PropertyOccupants
             .AsNoTracking()
             .Where(p =>
                 p.Id == request.OccupantId &&
                 (p.Property.Entrance.ManagerId == userContext.UserId ||
-                 (p.Property.PropertyOccupants.Any(po => 
-                     po.UserId == userContext.UserId && 
-                     po.OccupantType.Name == "Собственик") &&
-                  request.Type != "Собственик" &&
+                 (p.Property.PropertyOccupants.Any(po =>
+                      po.UserId == userContext.UserId &&
+                      po.OccupantType.Name == "Собственик") &&
                   p.OccupantType.Name != "Собственик")))
             .AnyAsync(cancellationToken: cancellationToken);
 
-        if (canEdit)
+        if (canDelete)
             return await next();
         
         if (Utils.IsTypeResultType<TResponse>())

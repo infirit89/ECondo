@@ -24,6 +24,16 @@ export const queryKeys = {
     occupants: {
         all: ['ocupants'] as const,
         inProperty: (id: string) => [...queryKeys.occupants.all, id] as const,
+        tenantsInPropertyPaged: (
+            id: string,
+            page: number,
+            pageSize: number,
+        ) => [
+            ...queryKeys.occupants.all,
+            id,
+            page,
+            pageSize
+        ] as const,
     },
     profiles: {
         all: ['profiles'] as const,

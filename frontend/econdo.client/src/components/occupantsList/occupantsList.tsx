@@ -21,33 +21,33 @@ const useQueryOccupantsInProperty = (propertyId: string) => {
   })
 }
 
-const useDeleteOccupantMutation = (
-  queryClient: QueryClient,
-  propertyId: string) => {
-  return useMutation({
-    mutationFn: (occupantId: string) => deleteOccupant(occupantId),
-    onSuccess: (data) => {
-      if(!data.ok)
-        return; // TODO:
-
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.occupants.inProperty(propertyId),
-      });
-    },
-  });
-}
 
 export default function OccupantsList({
     onClose,
     propertyId, } : OccupantsListProps) {
-
+      
     const { occupantTypes } = useOccupantTypes();
     const modals = useModals();
-
+    
     const queryClient = useQueryClient();
     const { data: occupants, isLoading } = useQueryOccupantsInProperty(propertyId);
+
+    const useDeleteOccupantMutation = (
+      propertyId: string) => {
+      return useMutation({
+        mutationFn: (occupantId: string) => deleteOccupant(occupantId),
+        onSuccess: (data) => {
+          if(!data.ok)
+            return; // TODO:
+    
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.occupants.inProperty(propertyId),
+          });
+        },
+      });
+    }
     const { mutate: deleteOccupantMutation } = 
-      useDeleteOccupantMutation(queryClient, propertyId);
+      useDeleteOccupantMutation(propertyId);
 
     const handleAddOccupant = () => {
         const modalId = modals.openModal({
@@ -57,6 +57,7 @@ export default function OccupantsList({
                   propertyId={propertyId}
                   occupantTypes={occupantTypes}
                   onCancel={() => modals.closeModal(modalId)}
+                  onSucess={() => modals.closeModal(modalId)}
               />
           ),
         })
@@ -71,6 +72,7 @@ export default function OccupantsList({
                   propertyId={propertyId}
                   occupantTypes={occupantTypes}
                   onCancel={() => modals.closeModal(modalId)}
+                  onSucess={() => modals.closeModal(modalId)}
               />
           ),
         })
@@ -106,6 +108,7 @@ export default function OccupantsList({
           {occupants.value.map((occupant, index) => (
             <OccupantPaper
             key={index}
+            isDeleting={false}
             occupant={occupant} 
             handleEdit={handleEditOccupant} 
             handleDelete={handleDeleteOccupant}/>

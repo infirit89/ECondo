@@ -31,6 +31,18 @@ internal static class UserSeedData
         },
         Password: "testPass@T1"
     );
+    
+    public static readonly UserSeedInfo BasicOwner = new(
+        new User
+        {
+            Id = Guid.Parse("d45bcc26-77c9-4ea4-a852-b2c35f7e11dc"),
+            Email = "testOwner@mail.com",
+            UserName = "testOwner@mail.com",
+            PhoneNumber = "0881231231",
+            EmailConfirmed = true,
+        },
+        Password: "testPass@T1"
+    );
 
     public static readonly ProfileDetails BasicUserProfile =
         new ProfileDetails
@@ -49,16 +61,27 @@ internal static class UserSeedData
             LastName = "Tenant",
             UserId = BasicTenant.User.Id,
         };
+    
+    public static readonly ProfileDetails BasicOwnerProfile =
+        new ProfileDetails
+        {
+            FirstName = "Test",
+            MiddleName = "Basic",
+            LastName = "Owner",
+            UserId = BasicOwner.User.Id,
+        };
 
     public static readonly IEnumerable<UserSeedInfo> Users =
     [
         BasicUser,
         BasicTenant,
+        BasicOwner,
     ];
 
     public static readonly IEnumerable<ProfileDetails> Profiles =
     [
         BasicUserProfile,
         BasicTenantProfile,
+        BasicOwnerProfile,
     ];
 }

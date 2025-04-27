@@ -8,13 +8,15 @@ import Link from "next/link";
 export type ActiveTab = 'occupants' | 'bills';
 
 export default function DashboardSidebar(
-    { propertyId, activeTab } : 
-    { propertyId: string, activeTab: ActiveTab }) {
+    { propertyId, activeTab, isOwner, } : 
+    { propertyId: string, activeTab: ActiveTab, isOwner: boolean }) {
 
-    const data = [
-        { id: 'occupants', link: `/properties/${propertyId}/occupants`, label: 'Контакти', icon: IconUsersGroup },
+    const data = isOwner ? [
+        { id: 'occupants', link: `/properties/${propertyId}/occupants`, label: 'Ползватели', icon: IconUsersGroup },
         { id: 'bills', link: `/properties/${propertyId}/bills`, label: 'Сметки', icon: IconReceipt },
-      ];
+    ] : [
+        { id: 'bills', link: `/properties/${propertyId}/bills`, label: 'Сметки', icon: IconReceipt }
+    ];
     
 
     const links = data.map((item) => (

@@ -1,7 +1,7 @@
 'use server';
 
 import { authInstance } from "@/lib/axiosInstance";
-import { ApiError } from "@/types/apiResponses";
+import { ApiError, PagedList } from "@/types/apiResponses";
 import { InvitationStatus } from "@/types/propertyOccupant";
 import { Result, resultFail, resultOk } from "@/types/result";
 import { isAxiosError } from "axios";
@@ -123,6 +123,52 @@ Promise<Result<Occupant[]>> => {
     } catch(error) {
         if(isAxiosError<ApiError, Record<string, string[]>>(error))
             return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+});
+
+export interface UserOccupantResult {
+    occupantType: string,
+}
+
+export const isUserOccupant =
+cache(async (propertyId: string): Promise<Result<UserOccupantResult>> => {
+    try {
+        const res = await authInstance.get<UserOccupantResult>(
+            '/api/propertyOccupant/isOccupant', {
+            params: {
+                propertyId,
+            },
+        });
+        
+        return resultOk(res.data);
+    } catch(error) {
+        if(isAxiosError<ApiError, Record<string, string[]>>(error)) {
+            return resultFail(error.response?.data!);
+        }
+    }
+
+    throw new Error('Unexpected code flow');
+})
+
+export const getTenantsForProperty =
+cache(async (propertyId: string, page: number, pageSize: number): Promise<Result<PagedList<Occupant>>> => {
+    try {
+        const res = await authInstance.get<PagedList<Occupant>>(
+            '/api/propertyOccupant/getTenantsInProperty', {
+            params: {
+                propertyId,
+                page,
+                pageSize,
+            },
+        });
+        
+        return resultOk(res.data);
+    } catch(error) {
+        if(isAxiosError<ApiError, Record<string, string[]>>(error)) {
+            return resultFail(error.response?.data!);
+        }
     }
 
     throw new Error('Unexpected code flow');

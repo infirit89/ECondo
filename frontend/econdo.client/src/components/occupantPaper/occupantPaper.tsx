@@ -59,9 +59,11 @@ interface OccupantPaperProps {
     occupant: Occupant,
     handleEdit: (occupant: Occupant) => void,
     handleDelete: (id: string) => void,
+    isDeleting: boolean,
 }
 
-export default function OccupantPaper({ occupant, handleEdit, handleDelete } : OccupantPaperProps) {
+export default function OccupantPaper(
+  { occupant, handleEdit, handleDelete, isDeleting } : OccupantPaperProps) {
     const invitationStatusInfo = getInvitationStatusInfo(occupant.invitationStatus);
     
     return (
@@ -99,6 +101,7 @@ export default function OccupantPaper({ occupant, handleEdit, handleDelete } : O
                 <ActionIcon
                 variant="light"
                 color="blue"
+                disabled={isDeleting}
                 onClick={() => handleEdit(occupant)}
                 aria-label="Edit occupant">
                     <IconEdit size={16} />
@@ -106,6 +109,7 @@ export default function OccupantPaper({ occupant, handleEdit, handleDelete } : O
                 <ActionIcon
                 variant="light"
                 color="red"
+                disabled={isDeleting}
                 onClick={() => handleDelete(occupant.id)}
                 aria-label="Delete occupant">
                     <IconTrash size={16} />

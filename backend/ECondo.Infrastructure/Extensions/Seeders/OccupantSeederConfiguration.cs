@@ -33,6 +33,21 @@ internal static class OccupantSeederConfiguration
                 logger.LogError(e.Message);
             }
         }
+        
+        using (logger.BeginScope("Basic owner occupations creation"))
+        {
+            try
+            {
+                logger.LogInformation("Creating basic owner occupations");
+                await dbContext.PropertyOccupants.AddRangeAsync(OccupantSeedData.BasicOwnerOccupants);
+                await dbContext.SaveChangesAsync();
+                logger.LogInformation("Basic owner occupations creation completed");
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+            }
+        }
 
         return appBuilder;
     }

@@ -22,7 +22,11 @@ internal sealed class AddOccupantAuthorizationPipelineBehaviour
             .AsNoTracking()
             .Where(p =>
                 p.Id == request.PropertyId &&
-                p.Entrance.ManagerId == userContext.UserId)
+                (p.Entrance.ManagerId == userContext.UserId ||
+                 (p.PropertyOccupants.Any(po => 
+                     po.UserId == userContext.UserId && 
+                     po.OccupantType.Name == "Собственик") &&
+                  request.OccupantType != "Собственик")))
             .AnyAsync(cancellationToken: cancellationToken);
 
         if (canAdd)

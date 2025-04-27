@@ -3,7 +3,10 @@ using ECondo.Application.Commands.PropertyOccupants.AcceptInvitation;
 using ECondo.Application.Commands.PropertyOccupants.AddToProperty;
 using ECondo.Application.Commands.PropertyOccupants.Delete;
 using ECondo.Application.Commands.PropertyOccupants.Update;
+using ECondo.Application.Data.PropertyOccupant;
 using ECondo.Application.Queries.PropertyOccupants.GetInProperty;
+using ECondo.Application.Queries.PropertyOccupants.GetTenantsInProperty;
+using ECondo.Application.Queries.PropertyOccupants.IsUser;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -61,7 +64,46 @@ public class PropertyOccupantController(ISender sender)
     {
         var result = await sender.Send(request);
 
-        return result.Match(data => TypedResults.Json(data), CustomResults.Problem);
+        return result.Match(
+            data => TypedResults.Json(data),
+            CustomResults.Problem);
+    }
+    
+    [Authorize]
+    [HttpGet(nameof(GetTenantsInProperty))]
+    [ProducesResponseType(StatusCodes.Status200OK,
+        Type = typeof(PagedListResponse<OccupantResult>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest,
+        Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IResult> GetTenantsInProperty(
+        [FromQuery] GetTenantsInPropertyQuery request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(
+            data => TypedResults.Json(data.ToPagedListResponse()),
+            CustomResults.Problem);
+    }
+    
+    [Authorize]
+    [HttpGet(nameof(IsOccupant))]
+    [ProducesResponseType(StatusCodes.Status200OK,
+        Type = typeof(UserOccupantResult))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest,
+        Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IResult> IsOccupant(
+        [FromQuery] IsUserPropertyOccupantQuery request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(
+            data => TypedResults.Json(data),
+            CustomResults.Problem);
     }
     
     [Authorize]

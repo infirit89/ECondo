@@ -14,7 +14,7 @@ internal static class OccupantSeedData
         MiddleName = UserSeedData.BasicTenantProfile.FirstName,
         LastName = UserSeedData.BasicTenantProfile.LastName,
         Email = UserSeedData.BasicTenant.User.Email,
-        OccupantTypeId = OccupantTypeSeedData.OwnerType.Id,
+        OccupantTypeId = OccupantTypeSeedData.ТenantType.Id,
         InvitationStatus = InvitationStatus.Accepted,
     };
     
@@ -50,4 +50,51 @@ internal static class OccupantSeedData
         BasicTenantStudioOccupant,
         BasicTenantOfficeOccupant,
     ];
+    
+    public static readonly PropertyOccupant BasicOwnerApartmentOccupant = new PropertyOccupant
+    {
+        Id = Guid.Parse("b14afc55-02b6-4eeb-a08e-6ce1d14e0308"),
+        PropertyId = PropertySeedData.ApartmentProperty.Id,
+        UserId = UserSeedData.BasicOwner.User.Id,
+        FirstName = UserSeedData.BasicOwnerProfile.FirstName,
+        MiddleName = UserSeedData.BasicOwnerProfile.FirstName,
+        LastName = UserSeedData.BasicOwnerProfile.LastName,
+        Email = UserSeedData.BasicOwner.User.Email,
+        OccupantTypeId = OccupantTypeSeedData.OwnerType.Id,
+        InvitationStatus = InvitationStatus.Accepted,
+    };
+    
+    public static readonly PropertyOccupant BasicOwnerStudioOccupant = new PropertyOccupant
+    {
+        Id = Guid.Parse("c323652c-6493-47bd-b2d0-60210ea7b762"),
+        PropertyId = PropertySeedData.StudioProperty.Id,
+        UserId = UserSeedData.BasicOwner.User.Id,
+        FirstName = UserSeedData.BasicOwnerProfile.FirstName,
+        MiddleName = UserSeedData.BasicOwnerProfile.FirstName,
+        LastName = UserSeedData.BasicOwnerProfile.LastName,
+        Email = UserSeedData.BasicOwner.User.Email,
+        OccupantTypeId = OccupantTypeSeedData.OwnerType.Id,
+        InvitationStatus = InvitationStatus.Accepted,
+    };
+    
+    public static readonly PropertyOccupant BasicOwnerOfficeOccupant = new PropertyOccupant
+    {
+        Id = Guid.Parse("933d23ab-96a2-4ac5-8d6b-0a9f607f0920"),
+        PropertyId = PropertySeedData.OfficeProperty.Id,
+        UserId = UserSeedData.BasicOwner.User.Id,
+        FirstName = UserSeedData.BasicOwnerProfile.FirstName,
+        MiddleName = UserSeedData.BasicOwnerProfile.FirstName,
+        LastName = UserSeedData.BasicOwnerProfile.LastName,
+        Email = UserSeedData.BasicOwner.User.Email,
+        OccupantTypeId = OccupantTypeSeedData.OwnerType.Id,
+        InvitationStatus = InvitationStatus.Accepted,
+    };
+    
+    public static readonly IEnumerable<PropertyOccupant> BasicOwnerOccupants =
+    [
+        BasicOwnerApartmentOccupant,
+        BasicOwnerStudioOccupant,
+        BasicOwnerOfficeOccupant,
+    ];
+
 }

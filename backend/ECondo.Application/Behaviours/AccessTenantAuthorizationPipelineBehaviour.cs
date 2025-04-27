@@ -9,34 +9,31 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Behaviours;
 
-internal sealed class EditOccupantAuthorizationPipelineBehaviour
+internal sealed class AccessTenantAuthorizationPipelineBehaviour
     <TRequest, TResponse>
     (IUserContext userContext, IApplicationDbContext dbContext)
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : ICanEditOccupant
+    where TRequest : ICanSeeTenants
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        var canEdit = await dbContext
-            .PropertyOccupants
+        var canSee = await dbContext
+            .Properties
             .AsNoTracking()
             .Where(p =>
-                p.Id == request.OccupantId &&
-                (p.Property.Entrance.ManagerId == userContext.UserId ||
-                 (p.Property.PropertyOccupants.Any(po => 
+                p.Id == request.PropertyId &&
+                 p.PropertyOccupants.Any(po => 
                      po.UserId == userContext.UserId && 
-                     po.OccupantType.Name == "Собственик") &&
-                  request.Type != "Собственик" &&
-                  p.OccupantType.Name != "Собственик")))
+                     po.OccupantType.Name == "Собственик"))
             .AnyAsync(cancellationToken: cancellationToken);
 
-        if (canEdit)
+        if (canSee)
             return await next();
-        
+
         if (Utils.IsTypeResultType<TResponse>())
         {
             var res = Utils.InvokeResultFail<TResponse>(
-                [PropertyOccupantError.Forbidden(request.OccupantId)]);
+                [PropertyErrors.Forbidden(request.PropertyId)]);
 
             if (res is not null)
                 return res;
