@@ -4,7 +4,7 @@ import { BriefProfileResponse, CreateProfileData, ProfileDetails } from "@/types
 import { authInstance } from "@/lib/axiosInstance";
 import { resultFail, resultOk, Result } from "@/types/result";
 import { isAxiosError } from "axios";
-import { ApiError } from "@/types/apiResponses";
+import { ApiError, PagedList } from "@/types/apiResponses";
 import { cache } from "react";
 import { userProfileCookieKey } from "@/utils/constants";
 import { cookies } from "next/headers";
@@ -56,6 +56,34 @@ export async function getProfileFromCookie(): Promise<BriefProfileResponse | und
 export const getProfile = cache(async (): Promise<Result<ProfileDetails>> => {
     try {
         const res = await authInstance.get<ProfileDetails>('/api/profile/getProfile');
+        return resultOk(res.data);
+    } catch(error) {
+        if(isAxiosError<ApiError>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+});
+
+export interface UserProfileResult {
+    firstName: string,
+    middleName: string,
+    lastName: string,
+    email: string,
+}
+
+export const getAllProfiles = 
+cache(async (page: number, pageSize: number): 
+Promise<Result<PagedList<UserProfileResult>>> => {
+    try {
+        const res = await authInstance.get<PagedList<UserProfileResult>>(
+            '/api/profile/getAll', {
+                params: {
+                    page,
+                    pageSize,
+                },
+            });
+            
         return resultOk(res.data);
     } catch(error) {
         if(isAxiosError<ApiError>(error))

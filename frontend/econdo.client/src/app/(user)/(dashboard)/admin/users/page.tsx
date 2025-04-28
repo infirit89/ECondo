@@ -1,59 +1,57 @@
 'use client';
-import { getAllBuildings } from "@/actions/condo";
-import CondoCard from "@/components/condoCard/condoCard";
+
+import { getAllProfiles } from "@/actions/profile";
 import Loading from "@/components/loading";
+import UserPaper from "@/components/userPaper/userPaper";
 import { queryKeys } from "@/types/queryKeys";
 import { Center, Container, Flex, Pagination, SimpleGrid, Title } from "@mantine/core";
 import { IconMoodPuzzled } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
 import { useState } from "react";
 
 // note: hard coded for now
 const pageSize = 9;
 
-const useBuildingsPagedQuery = (page: number) => {
+const useProfilesPagedQuery = (page: number) => {
     return useQuery({
-        queryKey: queryKeys.buildings.allPaged(page, pageSize),
-        queryFn: () => getAllBuildings(
+        queryKey: queryKeys.profiles.allPaged(page, pageSize),
+        queryFn: () => getAllProfiles(
             page,
             pageSize,
-        )
+        ),
     });
 }
 
-
-export default function BuildingsPage() {
+export default function UserPage() {
     const [page, setPage] = useState(0);
-    const { data: buildings, isLoading } = useBuildingsPagedQuery(page);
+    const { data: profiles, isLoading } = useProfilesPagedQuery(page);
 
-    if(isLoading || !buildings?.ok)
+    if(isLoading || !profiles?.ok)
         return <Loading/>;
+    
     
     return (
         <Container size="lg" py="xl">
             <Flex justify={'space-between'} mb={'md'}>
-                <Title>Сгради</Title>
+                <Title>Потребители</Title>
             </Flex>
             {
-                buildings.value && buildings.value.items.length > 0 ?
+                profiles.value && profiles.value.items.length > 0 ?
                 <>
                     <Flex justify={'center'} mt={'lg'} mb={'lg'} hiddenFrom='lg'>
-                        <Pagination total={buildings.value.totalPages}
+                        <Pagination total={profiles.value.totalPages}
                         value={page + 1}
                         onChange={(value) => setPage(value - 1)}/>
                     </Flex>
                     <SimpleGrid
                     cols={{ base: 1, md: 2, lg: 3 }}
                     spacing={{ base: 'sm', md: 'md', lg: 'lg' }}>
-                        {buildings.value.items.map((value, index) => (
-                            <Link key={index} href={`/admin/properties/${value.id}/${value.entranceNumber}`}>
-                                <CondoCard key={index} {...value} canEdit={false} canDelete/>
-                            </Link>
+                        {profiles.value.items.map((value, index) => (
+                            <UserPaper user={value} key={index}/>
                         ))}
                     </SimpleGrid>
                     <Flex justify={'center'} mt={'xl'}>
-                        <Pagination total={buildings.value.totalPages}
+                        <Pagination total={profiles.value.totalPages}
                         value={page + 1}
                         onChange={(value) => setPage(value - 1)}/>
                     </Flex>
@@ -64,7 +62,7 @@ export default function BuildingsPage() {
                         <IconMoodPuzzled size={100} color="#868e96"/>
                     </Center>
                     <Center>
-                        <Title c={'dimmed'}>Няма намерени сгради</Title>
+                        <Title c={'dimmed'}>Няма намерени потребители</Title>
                     </Center>
                 </>
             }

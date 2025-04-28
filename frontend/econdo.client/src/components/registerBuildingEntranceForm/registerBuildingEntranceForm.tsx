@@ -10,15 +10,14 @@ import {
     Select,
     Grid,
     GridCol,
-    Text
+    Text,
+    Group
 } from "@mantine/core";
-import { useEffect, useReducer } from "react";
+import { useReducer } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z, ZodSchema } from "zod";
-import { ProvinceNameResult, RegisterBuilding, registerBuildingEntrance } from '@/actions/condo';
+import { BuildingResult, ProvinceNameResult, RegisterBuilding, registerBuildingEntrance } from '@/actions/condo';
 import formReducer, { initialFormState } from "@/lib/formState";
-import { redirect } from "next/navigation";
-
 
 const RegisterBuildingSchema: ZodSchema<RegisterBuilding> = z
     .object({
@@ -47,14 +46,36 @@ const RegisterBuildingSchema: ZodSchema<RegisterBuilding> = z
             .nonempty('Входът е задължително поле'),
     });
 
-export default function RegisterBuildingEntranceForm(
-    { provinces }: { provinces: ProvinceNameResult }) {
+interface BuildingEntraceFormProps {
+    provinces: ProvinceNameResult,
+    onSuccess?: () => void,
+    onCancel?: () => void,
+    building?: BuildingResult,
+}
 
+export default function RegisterBuildingEntranceForm(
+    { provinces, onSuccess, onCancel, building, }: BuildingEntraceFormProps) {
+
+    const isEditing = !!building;
     const [registerState, dispatch] =
         useReducer(formReducer, initialFormState);
 
     const form = useForm<RegisterBuilding>({
-        defaultValues: {
+        defaultValues: building ? 
+        {
+            buildingName: building.name,
+            provinceName: building.provinceName,
+            municipality: building.municipality,
+            settlementPlace: building.settlementPlace,
+            neighborhood: building.neighborhood,
+            postalCode: building.postalCode,
+            street: building.street,
+            streetNumber: building.streetNumber,
+            buildingNumber: building.buildingNumber,
+            entranceNumber: building.entranceNumber,
+        }
+        :
+        {
             buildingName: '',
             provinceName: '',
             municipality: '',
@@ -69,12 +90,6 @@ export default function RegisterBuildingEntranceForm(
         resolver: zodResolver(RegisterBuildingSchema),
     });
 
-    useEffect(() => {
-        if (registerState === 'success')
-            redirect('/condos/buildings');
-
-    }, [registerState]);
-
     const onSubmit = async (data: RegisterBuilding) => {
         dispatch({ type: 'SUBMIT' });
 
@@ -83,23 +98,8 @@ export default function RegisterBuildingEntranceForm(
             dispatch({ type: 'ERROR' });
             return;
         }
-        // data.username = data.email;
-        // const registerResult = await register({
-        //     email: data.email,
-        //     username: data.username,
-        //     password: data.password,
-        // });
-        // if(!registerResult.ok && isValidationError(registerResult.error)) {
-        //     form.setError(
-        //         'email',
-        //         {
-        //             message: `Имейлът ${data.email} вече съществува`,
-        //         },
-        //     );
-        //     dispatch({ type: 'REGISTER_ERROR' });
-        //     return;
-        // }
 
+        onSuccess && onSuccess();
         dispatch({ type: 'SUCCESS' });
     }
 
@@ -175,11 +175,24 @@ export default function RegisterBuildingEntranceForm(
                     </GridCol>
                 </Grid>
 
-                { hasError ? <Text c={'red'} pt={10} fw={500} size={'sm'}>Грешка при добавянето на сградата! Моля пробвайте отново!</Text> : <></> }
+                { hasError ? <Text c={'red'} pt={10} fw={500} size={'sm'}>Грешка при {isEditing ? 'промяната' : 'добавянето'} на сградата! Моля пробвайте отново!</Text> : <></> }
             </Box>
-            <Button fullWidth mt="xl" type={'submit'} disabled={isLoading}>
-                Добави
-            </Button>
+            {
+                !onCancel ? (
+                <Button fullWidth mt="xl" type={'submit'} disabled={isLoading}>
+                    Добави
+                </Button>
+                ) : (
+                <Group justify="flex-end" gap={8}>
+                    <Button variant="outline" onClick={onCancel}>
+                        Затвори
+                    </Button>
+                    <Button mt="xl" type={'submit'} disabled={isLoading}>
+                        { !isEditing ? 'Добави' : 'Запази' }
+                    </Button>
+                </Group>
+                )
+            }
         </form>
     )
 }

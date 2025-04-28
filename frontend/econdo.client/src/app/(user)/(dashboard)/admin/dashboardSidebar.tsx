@@ -2,7 +2,7 @@
 import { AppShellNavbar, ScrollArea } from "@mantine/core";
 import classes from './dashboardSidebar.module.css';
 
-import { IconBuildings, IconHome } from '@tabler/icons-react';
+import { IconBuildings, IconHome, IconUsers } from '@tabler/icons-react';
 import Link from "next/link";
 export default function DashboardSidebar(
     { activeTab, } : 
@@ -11,6 +11,7 @@ export default function DashboardSidebar(
     const data = [
         { id: 'buildings', link: `/admin/buildings`, label: 'Сгради', icon: IconBuildings },
         { id: 'properties', link: `/admin/properties`, label: 'Имоти', icon: IconHome },
+        { id: 'users', link: `/admin/users`, label: 'Потребители', icon: IconUsers },
     ];
     
 

@@ -36,51 +36,13 @@ export default function PropertiesList() {
 
     const decodedEntranceNumber = decodeURIComponent(entranceNumber);
     const [isDeleteError, setDeleteError] = useState(false);
-    const [deletedPropertyId, setDeletedPropertyId] = useState<string | undefined>(undefined);
     const [page, setPage] = useState(0);
 
-    const modals = useModals();
-    const queryClient = useQueryClient();
+
     const { data: properties, isLoading } = useQueryPropertiesPaged(buildingId, decodedEntranceNumber, page);
 
-    const useDeleteProperty = () => {
-        return useMutation({
-            mutationFn: (propertyId: string) => deleteProperty(propertyId),
-            onSuccess: (data) => {
-                if(!data.ok) {
-                    setDeleteError(true);
-                    setDeletedPropertyId(undefined);
-                    return;
-                }
-                
-                queryClient.invalidateQueries({
-                    queryKey: queryKeys.properties.pagedInEntrance(
-                        buildingId,
-                        decodedEntranceNumber,
-                        page,
-                        pageSize),
-                    });
-            },
-            onMutate: (propertyId) => {
-                setDeleteError(false);
-                setDeletedPropertyId(propertyId);
-            }
-        });
-    }
-
-    const { mutate: deletePropertyMutation } = useDeleteProperty();
-
-    const handleDeleteProperty = (id: string) => {
-        const modalId = modals.openConfirmModal({
-            title: "Потвърди изтриване",
-            children: <Text size="sm">Сигурни ли сте, че искате да изтриете този имот? Това действие не може да бъде отменено.</Text>,
-            labels: { confirm: "Изтрий", cancel: "Отмяна" },
-            confirmProps: { color: "red" },
-            onConfirm: () => {
-                deletePropertyMutation(id);
-                modals.closeModal(modalId);
-            },
-        })
+    const onPropertyDeleteError = () => {
+        setDeleteError(true);
     }
 
     if(isLoading || !properties?.ok)
@@ -117,10 +79,10 @@ export default function PropertiesList() {
                             .items.map((value, index) => (
                                 <PropertyCard
                                 key={index}
-                                isDeleting={value.id === deletedPropertyId}
                                 property={value}
-                                handleDelete={handleDeleteProperty}
+                                canDelete
                                 canEdit
+                                onDeleteError={onPropertyDeleteError}
                                 />
                             ))    
                         }

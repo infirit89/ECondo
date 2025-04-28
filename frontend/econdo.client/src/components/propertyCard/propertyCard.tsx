@@ -1,4 +1,4 @@
-import { PropertyResult } from "@/actions/property";
+import { deleteProperty, PropertyResult } from "@/actions/property";
 import { 
     Card,
     Text,
@@ -25,6 +25,9 @@ import {
     IconUsers } from "@tabler/icons-react";
 import { useState } from "react";
 import PropertyEditModal from "@/components/propertyEditModal";
+import { queryKeys } from "@/types/queryKeys";
+import { useModals } from "@mantine/modals";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const getPropertyTypeInfo = (propertyType: string) => {
     switch (propertyType) {
@@ -51,20 +54,60 @@ const getPropertyTypeInfo = (propertyType: string) => {
 
 interface ProperyCardProps {
     property: PropertyResult,
-    handleDelete?: (id: string) => void,
+    canDelete: boolean,
     canEdit: boolean,
-    isDeleting: boolean,
+    onDeleteError?: () => void
 }
 
 export function PropertyCard({ 
     property, 
-    handleDelete,
-    canEdit,
-    isDeleting, } : ProperyCardProps) {
+    canDelete,
+    canEdit, 
+    onDeleteError } : ProperyCardProps) {
 
     const propertyInfo = getPropertyTypeInfo(property.propertyType.toLowerCase());
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const [editModalOpened, setEditModalOpen] = useState(false);
+
+    const modals = useModals();
+    const queryClient = useQueryClient();
+    const useDeleteProperty = () => {
+        return useMutation({
+            mutationFn: (propertyId: string) => deleteProperty(propertyId),
+            onSuccess: (data) => {
+                if(!data.ok) {
+                    onDeleteError && onDeleteError();
+                    setIsDeleting(false);
+                    return;
+                }
+                
+                queryClient.invalidateQueries({
+                    queryKey: queryKeys.properties.all,
+                });
+
+                setIsDeleting(false);
+            },
+            onMutate: () => {
+                setIsDeleting(true);
+            }
+        });
+    }
+
+    const { mutate: deletePropertyMutation } = useDeleteProperty();
+
+    const handleDeleteProperty = (id: string) => {
+        const modalId = modals.openConfirmModal({
+            title: "Потвърди изтриване",
+            children: <Text size="sm">Сигурни ли сте, че искате да изтриете този имот? Това действие не може да бъде отменено.</Text>,
+            labels: { confirm: "Изтрий", cancel: "Отмяна" },
+            confirmProps: { color: "red" },
+            onConfirm: () => {
+                deletePropertyMutation(id);
+                modals.closeModal(modalId);
+            },
+        })
+    }
 
     return (
         <>
@@ -112,7 +155,7 @@ export function PropertyCard({
                   </div>
                 </Group>
                 {
-                    canEdit && handleDelete && (
+                    canEdit && canDelete && (
                         <Group gap={8}>
                             <ActionIcon
                             variant='subtle'
@@ -125,7 +168,7 @@ export function PropertyCard({
                             variant='subtle'
                             color="red"
                             disabled={isDeleting}
-                            onClick={() => handleDelete(property.id)}>
+                            onClick={() => handleDeleteProperty(property.id)}>
                                 <IconTrash size={18} />
                             </ActionIcon>
                         </Group>

@@ -1,8 +1,13 @@
 'use client';
-import { Card, CardSection, Text, Image, Center, Divider } from "@mantine/core";
+import { Card, CardSection, Text, Image, Center, Group, ActionIcon } from "@mantine/core";
 import classes from './condoCard.module.css';
 import { useHover } from "@mantine/hooks";
-import Link from "next/link";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { useState } from "react";
+import { useModals } from "@mantine/modals";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteEntrance } from "@/actions/condo";
+import { queryKeys } from "@/types/queryKeys";
 
 export interface CondoCardProps {
     id: string;
@@ -17,6 +22,8 @@ export interface CondoCardProps {
     streetNumber: string;
     buildingNumber: string;
     entranceNumber: string;
+    canEdit: boolean;
+    canDelete: boolean;
 }
 
 export default function CondoCard({ 
@@ -31,8 +38,48 @@ export default function CondoCard({
     streetNumber,
     buildingNumber,
     entranceNumber,
+    canEdit,
+    canDelete,
 }: CondoCardProps) {
     const {hovered, ref} = useHover();
+
+    const [isDeleting, setIsDeleting] = useState(false);
+    const modals = useModals();
+    const queryClient = useQueryClient();
+
+    const useDeleteEntrance = () => {
+        return useMutation({
+            mutationFn: () => deleteEntrance(id, entranceNumber),
+            onSuccess: () => {
+
+                queryClient.invalidateQueries({
+                    queryKey: queryKeys.buildings.all,
+                });
+                setIsDeleting(false);
+            },
+            onMutate: () => {
+                setIsDeleting(true);
+            }
+        });
+    }
+
+    const { mutate: deleteEntranceMutation } = useDeleteEntrance();
+
+    const handleDelete = () => {
+        const modalId = modals.openConfirmModal({
+            title: "Потвърди изтриване",
+            children: <Text size="sm">Сигурни ли сте, че искате да изтриете този вход? Това действие не може да бъде отменено.</Text>,
+            labels: { confirm: "Изтрий", cancel: "Отмяна" },
+            confirmProps: { color: "red" },
+            onConfirm: () => {
+                deleteEntranceMutation();
+                modals.closeModal(modalId);
+            },
+        });
+    }
+    const handleEdit = () => {
+        
+    }
 
     return (
         <Card
@@ -63,6 +110,39 @@ export default function CondoCard({
             <Text size="sm" c="dimmed" ta={'center'}>
                 обл. {provinceName}, общ. {municipality}, {settlementPlace}, кв. {neighborhood}, ул. {street} {streetNumber}, сг. {buildingNumber}, вх. {entranceNumber}
             </Text>
+
+            <Group gap={8} justify='flex-end' mt={'md'}>
+                {
+                    canEdit && (
+                    <ActionIcon
+                    variant='subtle'
+                    color="blue"
+                    disabled={isDeleting}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        handleEdit()
+                    }}>
+                        <IconEdit size={18} />
+                    </ActionIcon>
+                    )
+                }
+                {
+                    canDelete && (
+                        <ActionIcon 
+                        variant='subtle'
+                        color="red"
+                        disabled={isDeleting}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            handleDelete();
+                        }}>
+                            <IconTrash size={18} />
+                        </ActionIcon>
+                    )
+                }
+            </Group>
         </Card>
     );
 }

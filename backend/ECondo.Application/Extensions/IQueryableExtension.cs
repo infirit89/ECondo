@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Extensions;
 
-public static class IQueryableExtension
+public static class QueryableExtension
 {
     public static async Task<PagedList<T>> ToPagedListAsync<T>(
         this IQueryable<T> queryable,

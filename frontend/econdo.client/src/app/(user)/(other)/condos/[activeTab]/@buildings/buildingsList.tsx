@@ -46,7 +46,7 @@ export default function BuildingsList({ buildingQuery } : { buildingQuery: strin
         spacing={{ base: 'sm', md: 'md', lg: 'lg' }}>
             {buildings.value.items.map((value, index) => (
                 <Link key={index} href={`/buildings/${value.id}/${value.entranceNumber}/properties`}>
-                    <CondoCard key={index} {...value}/>
+                    <CondoCard key={index} {...value} canEdit={false} canDelete/>
                 </Link>
             ))}
         </SimpleGrid>

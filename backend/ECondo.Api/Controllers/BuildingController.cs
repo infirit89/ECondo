@@ -1,4 +1,5 @@
 ﻿using ECondo.Api.Extensions;
+using ECondo.Application.Commands.Buildings.Delete;
 using ECondo.Application.Commands.Buildings.RegisterEntrance;
 using ECondo.Application.Data;
 using ECondo.Application.Queries.Buildings.GetAll;
@@ -23,6 +24,22 @@ public class BuildingController(ISender sender) : ControllerBase
     public async Task<IResult>
         RegisterBuildingEntrance(
             [FromBody] RegisterBuildingEntranceCommand request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
+    }
+    
+    [Authorize]
+    [HttpDelete(nameof(Delete))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, 
+        Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IResult>
+        Delete(
+            [FromQuery] DeleteBuildingEntranceCommand request)
     {
         var result = await sender.Send(request);
 

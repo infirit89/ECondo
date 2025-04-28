@@ -10,38 +10,36 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Behaviours;
 
-internal sealed class AccessPropertyAuthorizationPipelineBehaviour
+internal sealed class EditBuildingEntranceAuthorizationPipelineBehaviour
     <TRequest, TResponse>
     (IUserContext userContext, IApplicationDbContext dbContext)
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : ICanSeeProperty
+    where TRequest : ICanEditEntrance
 {
-    public async Task<TResponse> Handle(
-        TRequest request,
-        RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var isAdmin = await dbContext
             .UserRoles
-            .IsAdminAsync(userContext.UserId, cancellationToken: cancellationToken);
+            .IsAdminAsync(userContext.UserId, 
+                cancellationToken: cancellationToken);
         
-        var canSee = await dbContext
-            .Properties
+        var canDelete = await dbContext
+            .Entrances
             .AsNoTracking()
-            .Where(p =>
-                (p.Id == request.PropertyId &&
-                (p.Entrance.ManagerId == userContext.UserId ||
-                p.PropertyOccupants.Any(po => po.UserId == userContext.UserId))) ||
+            .Where(e =>
+                (e.BuildingId == request.BuildingId &&
+                 e.Number == request.EntranceNumber &&
+                 e.ManagerId == userContext.UserId) ||
                 isAdmin)
             .AnyAsync(cancellationToken: cancellationToken);
 
-        if (canSee)
+        if (canDelete)
             return await next();
-
+        
         if (Utils.IsTypeResultType<TResponse>())
         {
             var res = Utils.InvokeResultFail<TResponse>(
-                [PropertyErrors.Forbidden(request.PropertyId)]);
+                [EntranceErrors.Forbidden(request.BuildingId, request.EntranceNumber)]);
 
             if (res is not null)
                 return res;
@@ -49,5 +47,4 @@ internal sealed class AccessPropertyAuthorizationPipelineBehaviour
 
         throw new ForbiddenException();
     }
-
 }

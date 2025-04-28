@@ -109,4 +109,24 @@ Promise<Result<PagedList<BuildingResult>>> => {
     }
 
     throw new Error('Unexpected code flow');
-})
+});
+
+export const deleteEntrance =
+cache(async (buildingId: string, entranceNumber: string) => {
+    try {
+        await authInstance.delete(
+            '/api/building/delete', {
+            params: {
+                buildingId,
+                entranceNumber,
+            },
+        });
+
+        return resultOk();
+    } catch(error) {
+        if(isAxiosError<ApiError>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+});

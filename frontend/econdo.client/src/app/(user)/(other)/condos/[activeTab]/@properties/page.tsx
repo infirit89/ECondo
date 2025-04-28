@@ -51,9 +51,9 @@ export default function CondosPage() {
                             <Link key={index} href={`/properties/${value.id}`}>
                                 <PropertyCard
                                 key={index}
-                                isDeleting={false}
                                 property={value}
                                 canEdit={false}
+                                canDelete={false}
                                 />
                             </Link>
                         ))    

@@ -1,8 +1,8 @@
 import { getProvinces } from "@/actions/condo";
-import RegisterBuildingEntranceForm from "@/components/registerBuildingEntranceForm/registerBuildingEntranceForm";
-import { Container, Anchor, Paper, Center, Box, AppShellMain, Title } from "@mantine/core";
+import { Container, Anchor, Center, Box, AppShellMain, Title } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
+import RegisterBuildingPaper from "./registerBuildingPaper";
 
 export default async function CreateBuildingPage() {
 
@@ -22,9 +22,7 @@ export default async function CreateBuildingPage() {
                     </Center>
                 </Anchor>
 
-                <Paper withBorder shadow="md" p={30} mt={10} radius="md">
-                    <RegisterBuildingEntranceForm provinces={provinces}/>
-                </Paper>
+                <RegisterBuildingPaper provinces={provinces}/>
             </Container>
         </AppShellMain>
     );

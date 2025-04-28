@@ -2,6 +2,7 @@
 using ECondo.Application.Commands.Profiles.Create;
 using ECondo.Application.Commands.Profiles.Update;
 using ECondo.Application.Data;
+using ECondo.Application.Queries.Profiles.GetAll;
 using ECondo.Application.Queries.Profiles.GetBrief;
 using ECondo.Application.Queries.Profiles.GetForUser;
 using MediatR;
@@ -64,5 +65,21 @@ public class ProfileController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetProfileQuery());
 
         return result.Match(data => TypedResults.Json(data), CustomResults.Problem);
+    }
+    
+    [Authorize]
+    [HttpGet(nameof(GetAll))]
+    [ProducesResponseType(StatusCodes.Status200OK,
+        Type = typeof(PagedListResponse<UserProfileResult>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IResult>
+        GetAll([FromQuery] GetAllProfilesQuery request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(
+            data => TypedResults.Json(data.ToPagedListResponse()), 
+            CustomResults.Problem);
     }
 }

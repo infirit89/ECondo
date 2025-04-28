@@ -50,6 +50,14 @@ export const queryKeys = {
     profiles: {
         all: ['profiles'] as const,
         getBrief: () => [...queryKeys.profiles.all, 'brief'] as const,
+        allPaged: (
+            page: number, 
+            pageSize: number
+        ) => [
+            ...queryKeys.profiles.all,
+            page,
+            pageSize
+        ] as const,
     },
     buildings: {
         all: ['buildings'] as const,

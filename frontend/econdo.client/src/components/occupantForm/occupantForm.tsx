@@ -32,22 +32,22 @@ export default function OccupantForm({
     formState: { errors },
     reset,
     } = useForm<OccupantFormValues>({
-    resolver: zodResolver(occupantSchema),
-    defaultValues: occupant ? 
-    {
-        firstName: occupant.firstName,
-        middleName: occupant.middleName,
-        lastName: occupant.lastName,
-        email: occupant.email === null || occupant.email === undefined ? '' : occupant.email,
-        occupantType: occupant.type,
-    }
-    :
-    {
-        firstName: '',
-        middleName: '',
-        lastName: '',
-        email: '',
-    },
+        resolver: zodResolver(occupantSchema),
+        defaultValues: occupant ? 
+        {
+            firstName: occupant.firstName,
+            middleName: occupant.middleName,
+            lastName: occupant.lastName,
+            email: occupant.email === null || occupant.email === undefined ? '' : occupant.email,
+            occupantType: occupant.type,
+        }
+        :
+        {
+            firstName: '',
+            middleName: '',
+            lastName: '',
+            email: '',
+        },
     });
        
     const [formState, dispatch] = useReducer(formReducer, initialFormState);

@@ -1,4 +1,5 @@
-﻿using ECondo.Application.Policies;
+﻿using ECondo.Application.Extensions;
+using ECondo.Application.Policies;
 using ECondo.Application.Repositories;
 using ECondo.Application.Services;
 using ECondo.Application.Shared;
@@ -20,12 +21,18 @@ internal sealed class EditPropertyAuthorizationPipelineBehaviour
         RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
+        var isAdmin = await dbContext
+            .UserRoles
+            .IsAdminAsync(userContext.UserId, 
+                cancellationToken: cancellationToken);
+        
         var canEdit = await dbContext
             .Properties
             .AsNoTracking()
             .Where(p =>
-                p.Id == request.PropertyId &&
-                p.Entrance.ManagerId == userContext.UserId)
+                (p.Id == request.PropertyId &&
+                p.Entrance.ManagerId == userContext.UserId) ||
+                isAdmin)
             .AnyAsync(cancellationToken: cancellationToken);
 
         if (canEdit)
