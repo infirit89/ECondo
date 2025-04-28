@@ -4,6 +4,7 @@ using ECondo.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using ECondo.Application.Repositories;
+using ECondo.Infrastructure.Interceptors;
 using ECondo.Infrastructure.Shared;
 
 namespace ECondo.Infrastructure.Extensions;
@@ -30,7 +31,8 @@ internal static class ConnectionConfiguration
                 .UseSqlServer(
                     dbConnectionString,
                     x => 
-                        x.MigrationsAssembly(assemblyName));
+                        x.MigrationsAssembly(assemblyName))
+                .AddInterceptors(new SoftDeleteInterceptor());
         });
 
         services

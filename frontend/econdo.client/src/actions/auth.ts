@@ -193,4 +193,22 @@ cache(async (roleName: string): Promise<Result> => {
     }
 
     throw new Error('Unexpected code flow');
-})
+});
+
+export const deleteUser =
+cache(async (email: string): Promise<Result> => {
+    try {
+        await authInstance.delete('/api/account/delete', {
+            params: {
+                email,
+            },
+        });
+
+        return resultOk();
+    } catch(error) {
+        if(isAxiosError<ApiError>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+});

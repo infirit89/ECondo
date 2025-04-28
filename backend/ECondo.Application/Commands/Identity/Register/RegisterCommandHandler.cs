@@ -1,16 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ECondo.Application.Events.Identity;
 using ECondo.Application.Extensions;
+using ECondo.Application.Repositories;
 using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Commands.Identity.Register;
 
 internal sealed class RegisterCommandHandler(
     UserManager<User> userManager,
     IUserStore<User> userStore,
+    IApplicationDbContext dbContext,
     IdentityErrorDescriber errorDescriber,
     IPublisher publisher) 
     : ICommandHandler<RegisterCommand>
@@ -29,6 +32,20 @@ internal sealed class RegisterCommandHandler(
             }.ToValidationError());
         }
 
+        var user = await dbContext
+            .Users
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(u => u.Email == request.Email, 
+                cancellationToken: cancellationToken);
+
+        if (user is not null)
+        {
+            return Result<EmptySuccess, Error>.Fail(new []
+            {
+                errorDescriber.DuplicateEmail(request.Email)
+            }.ToValidationError());
+        }
+        
         if (string.IsNullOrEmpty(request.Username))
         {
             return Result<EmptySuccess, Error>.Fail(new []
@@ -36,8 +53,8 @@ internal sealed class RegisterCommandHandler(
                 errorDescriber.InvalidUserName(request.Username)
             }.ToValidationError());
         }
-
-        User user = new User();
+        
+        user = new User();
         await userStore.SetUserNameAsync(user,
             request.Username,
             cancellationToken);

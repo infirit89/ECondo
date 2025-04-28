@@ -4,6 +4,7 @@ using ECondo.Application.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using ECondo.Application.Commands.Identity.ConfirmEmail;
+using ECondo.Application.Commands.Identity.Delete;
 using ECondo.Application.Commands.Identity.ForgotPassword;
 using ECondo.Application.Commands.Identity.GenerateAccessToken;
 using ECondo.Application.Commands.Identity.InvalidateRefreshToken;
@@ -115,6 +116,19 @@ public class AccountController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult>
         IsInRole([FromQuery] IsUserInRoleQuery request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
+    }
+    
+    [Authorize]
+    [HttpDelete(nameof(Delete))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult>
+        Delete([FromQuery] DeleteUserCommand request)
     {
         var result = await sender.Send(request);
 
