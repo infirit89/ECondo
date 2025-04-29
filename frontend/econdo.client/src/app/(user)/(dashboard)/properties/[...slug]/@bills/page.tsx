@@ -72,7 +72,7 @@ export default function BillsPage() {
                                     setAmountPaid(value.amountPaid);
                                 }}
                             >
-                                Pay Now
+                                Плати
                             </Button>
                         </Card>
                         ))    

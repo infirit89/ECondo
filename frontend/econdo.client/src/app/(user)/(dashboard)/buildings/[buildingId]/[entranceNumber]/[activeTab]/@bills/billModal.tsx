@@ -1,9 +1,13 @@
+'use client';
+
 import { createBill } from "@/actions/condo";
 import formReducer, { initialFormState } from "@/lib/formState";
+import { queryKeys } from "@/types/queryKeys";
 import { RecurringInterval } from "@/types/recurringInterval";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, Checkbox, Group, LoadingOverlay, Modal, NumberInput, Select, Stack, Text, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
+import { useQueryClient } from "@tanstack/react-query";
 import { useReducer } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -42,6 +46,7 @@ export default function BillModal({ isOpen, onClose, buildingId, entranceNumber 
         resolver: zodResolver(billSchema),
     });
 
+    const queryClient = useQueryClient();
     const [formState, dispatch] = useReducer(formReducer, initialFormState);
     const showRecurringInterval = form.watch('isRecurring');
     const handleSubmit = async(data: BillFormValues) => {
@@ -80,6 +85,9 @@ export default function BillModal({ isOpen, onClose, buildingId, entranceNumber 
         }
 
         dispatch({type: 'SUCCESS'});
+        queryClient.invalidateQueries({
+            queryKey: queryKeys.bills.all,
+        });
     }
 
     const isLoading = formState === 'loading';

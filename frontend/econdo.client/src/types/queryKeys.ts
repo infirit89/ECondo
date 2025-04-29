@@ -107,5 +107,20 @@ export const queryKeys = {
             ...queryKeys.payments.all,
             propertyId,
         ] as const,
+    },
+    bills: {
+        all: ['bills'] as const,
+        pagedForEntrance: (
+            buildingId: string,
+            entranceNumber: string,
+            page: number,
+            pageSize: number,
+        ) => [
+            ...queryKeys.bills.all,
+            buildingId,
+            entranceNumber,
+            page,
+            pageSize,
+        ]
     }
 }

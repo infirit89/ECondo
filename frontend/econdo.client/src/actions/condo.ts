@@ -247,4 +247,35 @@ Promise<Result<StripeResponse>> => {
     }
 
     throw new Error('Unexpected code flow');
-})
+});
+
+export interface BillResult {
+    title: string,
+    description?: string,
+    amount: number,
+}
+
+export const getBillsForEntrance =
+cache(async (buildingId: string, entranceNumber: string, page: number, pageSize: number):
+Promise<Result<PagedList<BillResult>>> => {
+    try {
+        const res = await authInstance.get<PagedList<BillResult>>(
+            '/api/bills/getForEntrance', {
+                params: {
+                    buildingId,
+                    entranceNumber,
+                    page,
+                    pageSize
+                }
+            });
+
+        return resultOk(res.data);
+    } catch(error) {
+        if(isAxiosError(error))
+            console.error(error.response?.data);
+        if(isAxiosError<ApiError>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+});
