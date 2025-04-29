@@ -2,7 +2,7 @@ export interface CreateProfileData {
     firstName: string;
     middleName: string;
     lastName: string;
-    phone: string;
+    phoneNumber: string;
 };
 
 export interface BriefProfileResponse {

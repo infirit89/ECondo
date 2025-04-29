@@ -1,4 +1,6 @@
 ﻿using ECondo.Domain.Abstractions;
+using ECondo.Domain.Buildings;
+using ECondo.Domain.Payments;
 using ECondo.Domain.Profiles;
 using Microsoft.AspNetCore.Identity;
 
@@ -8,15 +10,23 @@ public class User : IdentityUser<Guid>, ISoftDeletable
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
     // ---- navigational properties ----
-    public HashSet<UserRole> UserRoles { get; set; } = new();
-    public HashSet<UserClaim> UserClaims { get; set; } = new();
-    public HashSet<UserLogin> UserLogins { get; set; } = new();
-    public HashSet<UserToken> UserTokens { get; set; } = new();
+    public HashSet<UserRole> UserRoles { get; set; } = [];
+    public HashSet<UserClaim> UserClaims { get; set; } = [];
+    public HashSet<UserLogin> UserLogins { get; set; } = [];
+    public HashSet<UserToken> UserTokens { get; set; } = [];
 
-    public HashSet<ProfileDetails> UserDetails { get; set; } = new();
+    public HashSet<ProfileDetails> UserDetails { get; set; } = [];
+
+    public HashSet<PropertyOccupant> PropertyOccupants { get; set; } = [];
+
+    public HashSet<Entrance> Entrances { get; set; } = [];
+
+    public HashSet<Bill> Bills { get; set; } = [];
+
+    public HashSet<Payment> Payments { get; set; } = [];
     // ---------------------------------
 
-    // ---- soft delete stuffs ----    public bool IsDeleted { private set; get; }
+    // ---- soft delete stuffs ----
     public bool IsDeleted { private set; get; }
     public DateTimeOffset? DeletedAt { private set; get; }
     public void Undo()

@@ -98,3 +98,41 @@ export const eulaSchema = z
 export const descriptionSchema = z
     .string()
     .max(200, "Прекалено дълго описание");
+
+export const propertySchema = z.object({
+    floor: z.string().min(1, "Етаж е задължително поле"),
+    number: z.string().min(1, "Номер е задължително поле"),
+    propertyType: z.string({
+        required_error: 'Видът на имота е задължително поле',
+    }).nonempty('Видът на имота е задължително поле'),
+    builtArea: z
+      .number({
+        required_error: "Застроената площ е задължително поле",
+        invalid_type_error: "Застроената площ трябва да бъде число",
+      })
+      .positive("Застроената площ трябва да бъде положително число"),
+    idealParts: z
+      .number({
+        required_error: "Идеалните части е задължително поле",
+        invalid_type_error: "Идеалните части трябва да бъдат число",
+      })
+      .int("Идеалните части трябва да бъдат цяло число")
+      .positive("Идеалните части трябва да бъдат положително число"),
+  });
+
+export type PropertyFormValues = z.infer<typeof propertySchema>;
+
+export const occupantSchema = z.object({
+    firstName: firstNameSchema,
+    middleName: middleNameSchema,
+    lastName: lastNameSchema,
+    occupantType: z.string({
+        required_error: 'Типът на контакта е задължително поле',
+    }).nonempty('Типът на контакта е задължително поле'),
+    email: z.string()
+    .email('Невалиден ймейл')
+    .optional()
+    .or(z.literal('')),
+});
+
+export type OccupantFormValues = z.infer<typeof occupantSchema>;

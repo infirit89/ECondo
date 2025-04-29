@@ -12,9 +12,12 @@ public abstract record Result<TSuccess, TError>
 
     public static Result<TSuccess, TError> Ok(TSuccess? data = default) => new Success(data);
     public static Result<TSuccess, TError> Fail(TError? data = default) => new Error(data);
+
+    public bool IsOk() => this is Success;
 }
 
 public class EmptySuccess;
+public class EmptyError;
 
 public static class ResultHelper
 {

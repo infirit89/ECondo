@@ -1,10 +1,18 @@
 import { accessTokenCookieKey, refreshTokenCookieKey } from "@/utils/constants";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { generateAccessToken, logout, setAccessTokenCookie } from "./actions/auth";
+import { generateAccessToken, isUserInRole, logout, setAccessTokenCookie } from "./actions/auth";
 import { jwtDecode } from "jwt-decode";
 
-const protectedRoutes = ['/dashboard', '/logout', '/profile'];
+const protectedRoutes = [
+    '/condos/buildings',
+    '/condos/properties',
+    '/profile',
+    '/acceptedInvitation',
+    '/buildings',
+    '/properties'
+];
+
 const publicRoutes = ['/login', '/register', '/'];
 
 export default async function middleware(req: NextRequest) {
@@ -39,7 +47,7 @@ export default async function middleware(req: NextRequest) {
 
         return NextResponse.redirect(req.nextUrl);
     }
-    
+
     if(path.startsWith('/logout')) {
         try {
             await logout();
@@ -50,12 +58,35 @@ export default async function middleware(req: NextRequest) {
         }
     }
 
-    if(protectedRoutes.includes(path) && !accessToken)
-        return NextResponse.redirect(new URL('/login', req.nextUrl));
+    // TODO: move in admin layout
+    const isAdmin = (await isUserInRole('admin')).ok;
+    if(path.startsWith('/admin')) {
+        if(!isAdmin)
+            return NextResponse.redirect(new URL('/', req.nextUrl));
+    }
 
-    if(publicRoutes.includes(path) && accessToken && !path.startsWith('/dashboard')) {
-        return NextResponse.redirect(new URL('/dashboard', req.nextUrl));
+    if(isAdmin && !path.startsWith('/admin'))
+        return NextResponse.redirect(new URL('/admin/buildings', req.nextUrl));
+    
+    if(protectedRoutes.some(route => path.startsWith(route)) && !accessToken)
+        return NextResponse.redirect(new URL('/login', req.nextUrl));
+    
+    if(publicRoutes.includes(path) && accessToken && !path.startsWith('/condos/properties')) {
+        return NextResponse.redirect(new URL('/condos/properties', req.nextUrl));
     }
 
     return NextResponse.next();
+}
+
+export const config = {
+    matcher: [
+        /*
+        * Match all request paths except for the ones starting with:
+        * - api (API routes)
+        * - _next/static (static files)
+        * - _next/image (image optimization files)
+        * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+        */
+        '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|icon.svg).*)',
+    ],
 }

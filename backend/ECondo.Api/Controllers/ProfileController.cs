@@ -1,109 +1,85 @@
-﻿using System.Security.Claims;
-using ECondo.Api.Data.Profile;
-using ECondo.Api.Extensions;
-using ECondo.Application.Commands.Profile;
+﻿using ECondo.Api.Extensions;
+using ECondo.Application.Commands.Profiles.Create;
+using ECondo.Application.Commands.Profiles.Update;
 using ECondo.Application.Data;
-using ECondo.Application.Queries.Profile;
-using ECondo.Domain.Shared;
+using ECondo.Application.Queries.Profiles.GetAll;
+using ECondo.Application.Queries.Profiles.GetBrief;
+using ECondo.Application.Queries.Profiles.GetForUser;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ECondo.Api.Controllers
+namespace ECondo.Api.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class ProfileController(ISender sender) : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ProfileController(ISender sender) : ControllerBase
+    [Authorize]
+    [HttpPost(nameof(Create))]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IResult>
+        Create([FromBody] CreateProfileCommand request)
     {
+        var result = await sender.Send(request);
 
-        [Authorize]
-        [HttpPost(nameof(Create))]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<Results<Ok, ValidationProblem, UnauthorizedHttpResult>>
-            Create([FromBody] CreateProfileRequest request)
-        {
-            Claim? emailClaim = User.GetEmailClaim();
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
+    }
 
-            CreateProfileCommand createProfileCommand =
-                new(emailClaim is null ? "" : emailClaim.Value, request.FirstName, request.MiddleName, request.LastName, request.Phone);
+    [Authorize]
+    [HttpGet(nameof(GetBriefProfile))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BriefProfileResult))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IResult>
+        GetBriefProfile()
+    {
+        var result = await sender.Send(new GetBriefProfileQuery());
 
-            var result = await sender.Send(createProfileCommand);
+        return result.Match(data => TypedResults.Json(data), CustomResults.Problem);
+    }
 
-            return result switch
-            {
-                Result<EmptySuccess, Error>.Success => TypedResults.Ok(),
-                Result<EmptySuccess, Error>.Error e => e.Data.ToValidationProblem(),
-                _ => throw new ArgumentOutOfRangeException(nameof(result))
-            };
-        }
+    [Authorize]
+    [HttpPut(nameof(UpdateProfile))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IResult>
+        UpdateProfile([FromBody] UpdateProfileCommand request)
+    {
+        var result = await sender.Send(request);
 
-        [Authorize]
-        [HttpGet(nameof(GetBriefProfile))]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BriefProfileResult))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<Results<JsonHttpResult<BriefProfileResult>, ValidationProblem, UnauthorizedHttpResult>>
-            GetBriefProfile()
-        {
-            var emailClaim = User.GetEmailClaim();
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
+    }
 
-            GetBriefProfileQuery getBriefProfileQuery = new(emailClaim is null ? "" : emailClaim.Value);
+    [Authorize]
+    [HttpGet(nameof(GetProfile))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IResult>
+        GetProfile()
+    {
+        var result = await sender.Send(new GetProfileQuery());
 
-            var result = await sender.Send(getBriefProfileQuery);
+        return result.Match(data => TypedResults.Json(data), CustomResults.Problem);
+    }
+    
+    [Authorize]
+    [HttpGet(nameof(GetAll))]
+    [ProducesResponseType(StatusCodes.Status200OK,
+        Type = typeof(PagedListResponse<UserProfileResult>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IResult>
+        GetAll([FromQuery] GetAllProfilesQuery request)
+    {
+        var result = await sender.Send(request);
 
-            return result switch
-            {
-                Result<BriefProfileResult, Error>.Success s => TypedResults.Json(s.Data),
-                Result<BriefProfileResult, Error>.Error e => e.Data.ToValidationProblem(),
-                _ => throw new ArgumentOutOfRangeException(nameof(result))
-            };
-        }
-
-        [Authorize]
-        [HttpPut(nameof(UpdateProfile))]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<Results<Ok, ValidationProblem, UnauthorizedHttpResult>>
-            UpdateProfile([FromBody] UpdateProfileRequest updateProfileRequest)
-        {
-            var emailClaim = User.GetEmailClaim();
-            UpdateProfileCommand updateProfileCommand = new(
-                emailClaim is null ? "" : emailClaim.Value,
-                updateProfileRequest.FirstName,
-                updateProfileRequest.MiddleName, updateProfileRequest.LastName);
-
-            var result = await sender.Send(updateProfileCommand);
-
-            return result switch
-            {
-                Result<EmptySuccess, Error>.Success => TypedResults.Ok(),
-                Result<EmptySuccess, Error>.Error e => e.Data.ToValidationProblem(),
-                _ => throw new ArgumentOutOfRangeException(nameof(result))
-            };
-        }
-
-        [Authorize]
-        [HttpGet(nameof(GetProfile))]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<Results<JsonHttpResult<ProfileResult>, ValidationProblem, UnauthorizedHttpResult>>
-            GetProfile()
-        {
-            var emailClaim = User.GetEmailClaim();
-            GetProfileQuery profileQuery = new(emailClaim is null ? "" : emailClaim.Value);
-
-            var result = await sender.Send(profileQuery);
-            return result switch
-            {
-                Result<ProfileResult, Error>.Success s => TypedResults.Json(s.Data),
-                Result<ProfileResult, Error>.Error e => e.Data.ToValidationProblem(),
-                _ => throw new ArgumentOutOfRangeException(nameof(result))
-            };
-        }
+        return result.Match(
+            data => TypedResults.Json(data.ToPagedListResponse()), 
+            CustomResults.Problem);
     }
 }

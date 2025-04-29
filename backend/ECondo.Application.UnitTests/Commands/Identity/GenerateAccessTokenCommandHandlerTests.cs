@@ -1,4 +1,3 @@
-using ECondo.Application.Commands.Identity;
 using ECondo.Application.Services;
 using ECondo.Application.Data;
 using ECondo.Domain.Shared;
@@ -9,6 +8,7 @@ using NSubstitute;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using ECondo.Application.Commands.Identity.GenerateAccessToken;
 
 namespace ECondo.Application.UnitTests.Commands.Identity
 {

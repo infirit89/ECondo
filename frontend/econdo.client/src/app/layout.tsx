@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
-// import { Geist, Geist_Mono } from "next/font/google";
-// import "./globals.css";
+import "./globals.css";
 
 import '@mantine/core/styles.css';
-import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from "@mantine/core";
-import App from "@/components/app";
+import '@mantine/dates/styles.css';
+import { ModalsProvider } from '@mantine/modals';
+import { 
+  ColorSchemeScript,
+  mantineHtmlProps, 
+  MantineProvider 
+} from "@mantine/core";
 
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
+import HealthProvider from "./healthProvider";
+import { Suspense } from "react";
+import Loading from "@/components/loading";
+import QueryProvider from "./queryProvider";
+import { DatesProvider } from '@mantine/dates';
+import 'dayjs/locale/bg';
 
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
 
 export const metadata: Metadata = {
   title: "ECondo",
@@ -34,9 +36,17 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider>
-          <App>
-            {children}
-          </App>
+          <HealthProvider>
+            <QueryProvider>
+              <DatesProvider settings={{ locale: 'bg', timezone: 'UTC' }}>
+                <ModalsProvider>
+                  <Suspense fallback={<Loading height={'100vh'}/>}>
+                    {children}
+                  </Suspense>
+                </ModalsProvider>
+              </DatesProvider>
+            </QueryProvider>
+          </HealthProvider>
         </MantineProvider>
       </body>
     </html>

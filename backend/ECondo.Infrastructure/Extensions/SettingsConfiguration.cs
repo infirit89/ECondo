@@ -14,6 +14,7 @@ internal static class SettingsConfiguration
     {
         services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
         services.Configure<RefreshTokenSettings>(configuration.GetSection(nameof(RefreshTokenSettings)));
+        services.Configure<StripeSettings>(configuration.GetSection(nameof(StripeSettings)));
         return services;
     }
 }

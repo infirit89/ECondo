@@ -1,14 +1,18 @@
 ﻿using MediatR;
 using ECondo.Api.Extensions;
 using ECondo.Application.Data;
-using ECondo.Domain.Shared;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ECondo.Application.Commands.Identity;
-using ECondo.Api.Data.Identity;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
+using ECondo.Application.Commands.Identity.ConfirmEmail;
+using ECondo.Application.Commands.Identity.Delete;
+using ECondo.Application.Commands.Identity.ForgotPassword;
+using ECondo.Application.Commands.Identity.GenerateAccessToken;
+using ECondo.Application.Commands.Identity.InvalidateRefreshToken;
+using ECondo.Application.Commands.Identity.Login;
+using ECondo.Application.Commands.Identity.Register;
+using ECondo.Application.Commands.Identity.ResetPassword;
+using ECondo.Application.Commands.Identity.UpdatePassword;
+using ECondo.Application.Queries.Identity.IsInRole;
 
 namespace ECondo.Api.Controllers;
 
@@ -19,135 +23,115 @@ public class AccountController(ISender sender) : ControllerBase
     [HttpPost(nameof(Login))]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TokenResult))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<Results<JsonHttpResult<TokenResult>, ValidationProblem>>
+    public async Task<IResult>
         Login([FromBody] LoginCommand loginCommand)
     {
         var result = await sender.Send(loginCommand);
 
-        return result switch
-        {
-            Result<TokenResult, Error>.Success s => TypedResults.Json(s.Data),
-            Result<TokenResult, Error>.Error e => e.Data.ToValidationProblem(),
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+        return result.Match(data => TypedResults.Json(data), CustomResults.Problem);
     }
 
     [HttpPost(nameof(Register))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
-    public async Task<Results<Ok, ValidationProblem>>
-        Register([FromBody] RegisterCommand registerCommand)
+    public async Task<IResult>
+        Register([FromBody] RegisterCommand registerRequest)
     {
-        var result = await sender.Send(registerCommand);
-        return result switch
-        {
-            Result<EmptySuccess, IdentityError[]>.Success => TypedResults.Ok(),
-            Result<EmptySuccess, IdentityError[]>.Error e => e.Data.ToValidationProblem(),
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+        var result = await sender.Send(registerRequest);
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
     }
 
     [Authorize]
     [HttpPost(nameof(InvalidateRefreshToken))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
-    public async Task<Results<Ok, ValidationProblem>>
-        InvalidateRefreshToken([FromBody] InvalidateRefreshTokenRequest request)
+    public async Task<IResult>
+        InvalidateRefreshToken([FromBody] InvalidateRefreshTokenCommand request)
     {
-        Claim? emailClaim = User.GetEmailClaim();
-        InvalidateRefreshTokenCommand command = new(emailClaim is null ? "" : emailClaim.Value, request.RefreshToken);
+        var result = await sender.Send(request);
 
-        var result = await sender.Send(command);
-
-        return result switch
-        {
-            Result<EmptySuccess, Error>.Success => TypedResults.Ok(),
-            Result<EmptySuccess, Error>.Error e => e.Data.ToValidationProblem(),
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
     }
 
     [HttpPost(nameof(Refresh))]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TokenResult))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpValidationProblemDetails))]
-    public async Task<Results<JsonHttpResult<TokenResult>, ValidationProblem>>
+    public async Task<IResult>
         Refresh([FromBody] GenerateAccessTokenCommand generateAccessTokenCommand)
     {
         var result = await sender.Send(generateAccessTokenCommand);
 
-        return result switch
-        {
-            Result<TokenResult, Error>.Success s => TypedResults.Json(s.Data),
-            Result<TokenResult, Error>.Error e => e.Data.ToValidationProblem(),
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+        return result.Match(data => TypedResults.Json(data), CustomResults.Problem);
     }
 
     [HttpPost(nameof(ConfirmEmail))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<Results<Ok, ValidationProblem>>
+    public async Task<IResult>
         ConfirmEmail([FromBody] ConfirmEmailCommand confirmEmailCommand)
     {
         var result = await sender.Send(confirmEmailCommand);
 
-        return result switch
-        {
-            Result<EmptySuccess, Error[]>.Success => TypedResults.Ok(),
-            Result<EmptySuccess, Error[]>.Error e => e.Data.ToValidationProblem(),
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
     }
 
     [HttpPost(nameof(ForgotPassword))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<Results<Ok, ValidationProblem>>
+    public async Task<IResult>
         ForgotPassword([FromBody] ForgotPasswordCommand forgotPasswordCommand)
     {
         var result = await sender.Send(forgotPasswordCommand);
 
-        return result switch
-        {
-            Result<EmptySuccess, Error>.Success => TypedResults.Ok(),
-            Result<EmptySuccess, Error>.Error e => e.Data.ToValidationProblem(),
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
     }
 
     [HttpPost(nameof(ResetPassword))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<Results<Ok, ValidationProblem>>
+    public async Task<IResult>
         ResetPassword([FromBody] ResetPasswordCommand resetPasswordCommand)
     {
         var result = await sender.Send(resetPasswordCommand);
 
-        return result switch
-        {
-            Result<EmptySuccess, Error[]>.Success => TypedResults.Ok(),
-            Result<EmptySuccess, Error[]>.Error e => e.Data.ToValidationProblem(),
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
     }
 
     [Authorize]
     [HttpPut(nameof(UpdatePassword))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<Results<Ok, ValidationProblem>>
-        UpdatePassword([FromBody] UpdatePasswordRequest updatePasswordRequest)
+    public async Task<IResult>
+        UpdatePassword([FromBody] UpdatePasswordCommand request)
     {
-        Claim? emailClaim = User.GetEmailClaim();
-        UpdatePasswordCommand updatePasswordCommand = new(emailClaim is null ? "" : emailClaim.Value,
-            updatePasswordRequest.CurrentPassword, updatePasswordRequest.NewPassword);
-        var result = await sender.Send(updatePasswordCommand);
+        var result = await sender.Send(request);
 
-        return result switch
-        {
-            Result<EmptySuccess, Error[]>.Success => TypedResults.Ok(),
-            Result<EmptySuccess, Error[]>.Error e => e.Data.ToValidationProblem(),
-            _ => throw new ArgumentOutOfRangeException(nameof(result))
-        };
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
+    }
+    
+    [Authorize]
+    [HttpGet(nameof(IsInRole))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult>
+        IsInRole([FromQuery] IsUserInRoleQuery request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
+    }
+    
+    [Authorize]
+    [HttpDelete(nameof(Delete))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult>
+        Delete([FromQuery] DeleteUserCommand request)
+    {
+        var result = await sender.Send(request);
+
+        return result.Match(TypedResults.Ok, CustomResults.Problem);
     }
 }

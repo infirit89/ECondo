@@ -1,4 +1,4 @@
-using ECondo.Application.Commands.Identity;
+using ECondo.Application.Commands.Identity.ResetPassword;
 using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
 using FluentAssertions;

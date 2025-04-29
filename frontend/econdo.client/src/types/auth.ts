@@ -19,7 +19,9 @@ export interface AccessTokenResponse {
     accessToken: string;
 }
 
-export type AuthEvent = 'confirmAccount' | 'forgotPassword' | 'resetPassword';
+export type AuthEvent = 'confirmAccount' | 'forgotPassword' | 'resetPassword' | 'accountVerified';
+
+export const accountVerifiedEvent: AuthEvent = 'accountVerified';
 export const confirmAccountEvent: AuthEvent = 'confirmAccount';
 export const forgotPasswordEvent: AuthEvent = 'forgotPassword';
 export const resetPasswordEvent: AuthEvent = 'resetPassword';
