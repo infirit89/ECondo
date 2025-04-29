@@ -10,10 +10,12 @@ const protectedRoutes = [
     '/profile',
     '/acceptedInvitation',
     '/buildings',
-    '/properties'
+    '/properties',
+    '/createBuilding',
+    '/acceptedInvitation',
 ];
 
-const publicRoutes = ['/login', '/register', '/'];
+const publicRoutes = ['/login', '/register', '/', '/confirmAccount', '/forgotPassword', '/resetPassword'];
 
 export default async function middleware(req: NextRequest) {
     const path = req.nextUrl.pathname;
@@ -49,12 +51,16 @@ export default async function middleware(req: NextRequest) {
     }
 
     if(path.startsWith('/logout')) {
-        try {
-            await logout();
-            return NextResponse.redirect(new URL('/', req.nextUrl));
-        }
-        catch(error) {
-            console.error(error);
+        if(accessToken) {
+            try {
+                await logout();
+                return NextResponse.redirect(new URL('/', req.nextUrl));
+            }
+            catch(error) {
+                console.error(error);
+            }
+        } else {
+            return NextResponse.redirect(new URL('/login', req.nextUrl));
         }
     }
 

@@ -6,7 +6,7 @@ import '@mantine/core/styles.css';
 
 import { useEffect } from "react";
 import { Button, ColorSchemeScript, Container, Group, mantineHtmlProps, MantineProvider, Text, Title } from '@mantine/core';
-import classes from './globalError.module.css';
+import classes from './globalerror.module.css';
 
 export default function ErrorPage({
     error,
