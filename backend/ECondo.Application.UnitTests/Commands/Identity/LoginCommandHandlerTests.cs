@@ -1,96 +1,113 @@
-﻿using ECondo.Application.Commands.Identity.Login;
-using ECondo.Application.Data;
+using ECondo.Application.Commands.Identity.Login;
 using ECondo.Application.Services;
+using ECondo.Application.Extensions;
+using ECondo.Application.Data;
 using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
 using FluentAssertions;
+using FluentAssertions.Collections;
 using Microsoft.AspNetCore.Identity;
 using NSubstitute;
+using Xunit;
 
-namespace ECondo.Application.UnitTests.Commands.Identity
+namespace ECondo.Application.UnitTests.Commands.Identity.Login;
+
+public class LoginCommandHandlerTests
 {
-    public class LoginCommandHandlerTests
+    private readonly UserManager<User> _userManager;
+    private readonly IdentityErrorDescriber _errorDescriber;
+    private readonly IAuthTokenService _authTokenService;
+    private readonly LoginCommandHandler _handler;
+
+    public LoginCommandHandlerTests()
     {
-        private readonly UserManager<User> _userManager;
-        private readonly IAuthTokenService _authTokenService;
-        private readonly LoginCommandHandler _handler;
+        _userManager = Substitute.For<UserManager<User>>(
+            Substitute.For<IUserStore<User>>(),
+            null, null, null, null, null, null, null, null);
+        _errorDescriber = new IdentityErrorDescriber();
+        _authTokenService = Substitute.For<IAuthTokenService>();
+        _handler = new LoginCommandHandler(_userManager, _errorDescriber, _authTokenService);
+    }
 
-        public LoginCommandHandlerTests()
-        {
-            _userManager = Substitute.For<UserManager<User>>(
-                Substitute.For<IUserStore<User>>(), null, null, null, null, null, null, null, null);
-            _authTokenService = Substitute.For<IAuthTokenService>();
-            _handler = new LoginCommandHandler(_userManager, new IdentityErrorDescriber(), _authTokenService);
-        }
+    [Fact]
+    public async Task Handle_ShouldReturnInvalidUserError_WhenUserNotFound()
+    {
+        // Arrange
+        var command = new LoginCommand("test@example.com", "password123");
+        _userManager.FindUserByEmailOrNameAsync(command.Email).Returns((User?)null);
 
-        [Fact]
-        public async Task Handle_UserNotFound_ReturnsInvalidUserNameError()
-        {
-            var command = new LoginCommand("test@example.com", "password");
-            _userManager.FindByEmailAsync(command.Email).Returns((User?)null);
-            _userManager.FindByNameAsync(command.Email).Returns((User?)null);
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
 
+        // Assert
+        result.IsOk().Should().BeFalse();
+        result.As<Result<TokenResult, Error>.Error>().Data
+            .Should().BeEquivalentTo(UserErrors.InvalidUser(command.Email));
+    }
 
-            var result = await _handler.Handle(command, CancellationToken.None);
+    [Fact]
+    public async Task Handle_ShouldReturnPasswordMismatchError_WhenPasswordIsIncorrect()
+    {
+        // Arrange
+        var user = new User { Email = "test@example.com" };
+        var command = new LoginCommand(user.Email, "wrongpassword");
+        _userManager.FindUserByEmailOrNameAsync(command.Email).Returns(user);
+        _userManager.CheckPasswordAsync(user, command.Password).Returns(false);
 
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-            result.Should().BeOfType<Result<TokenResult, Error>.Error>();
-            result.ToError().Data?.Code.Should().Be("Users.NotFound");
-        }
+        // Assert
+        result.IsOk().Should().BeFalse();
+        result.ToError().Data.Should().BeOfType<ValidationError>();
+        var validationError = (ValidationError)result.ToError().Data!;
+        validationError.Errors.Should().ContainSingle(e => e.Code == "PasswordMismatch");
+    }
 
-        [Fact]
-        public async Task Handle_PasswordMismatch_ReturnsPasswordMismatchError()
-        {
-            var user = new User { Email = "test@example.com" };
-            var command = new LoginCommand("test@example.com", "password");
-            _userManager.FindByEmailAsync(command.Email).Returns(user);
-            _userManager.CheckPasswordAsync(user, command.Password).Returns(false);
+    [Fact]
+    public async Task Handle_ShouldReturnEmailNotConfirmedError_WhenEmailIsNotConfirmed()
+    {
+        // Arrange
+        var user = new User { Email = "test@example.com" };
+        var command = new LoginCommand(user.Email, "password123");
+        _userManager.FindUserByEmailOrNameAsync(command.Email).Returns(user);
+        _userManager.CheckPasswordAsync(user, command.Password).Returns(true);
+        _userManager.IsEmailConfirmedAsync(user).Returns(false);
 
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-            var result = await _handler.Handle(command, CancellationToken.None);
+        // Assert
+        result.IsOk().Should().BeFalse();
+        result.As<Result<TokenResult, Error>.Error>().Data
+            .Should().BeEquivalentTo(UserErrors.EmailNotConfirmed());
+    }
 
+    [Fact]
+    public async Task Handle_ShouldReturnTokenResult_WhenLoginIsSuccessful()
+    {
+        // Arrange
+        var user = new User { Email = "test@example.com" };
+        var command = new LoginCommand(user.Email, "password123");
+        var accessToken = new AccessToken { Value = "access-token", MinutesExpiry = 60 };
+        var refreshToken = new RefreshToken { Value = "refresh-token", Expires = DateTime.UtcNow.AddDays(7) };
 
-            result.Should().BeOfType<Result<TokenResult, Error>.Error>();
-            result.ToError().Data?.Code.Should().Be("PasswordMismatch");
-        }
+        _userManager.FindUserByEmailOrNameAsync(command.Email).Returns(user);
+        _userManager.CheckPasswordAsync(user, command.Password).Returns(true);
+        _userManager.IsEmailConfirmedAsync(user).Returns(true);
+        _authTokenService.GenerateAccessTokenAsync(user).Returns(accessToken);
+        _authTokenService.GenerateRefreshTokenAsync(user).Returns(refreshToken);
 
-        [Fact]
-        public async Task Handle_EmailNotConfirmed_ReturnsEmailNotConfirmedError()
-        {
-            var user = new User { Email = "test@example.com" };
-            var command = new LoginCommand("test@example.com", "password");
-            _userManager.FindByEmailAsync(command.Email).Returns(user);
-            _userManager.CheckPasswordAsync(user, command.Password).Returns(true);
-            _userManager.IsEmailConfirmedAsync(user).Returns(false);
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-            var result = await _handler.Handle(command, CancellationToken.None);
-
-            result.Should().BeOfType<Result<TokenResult, Error>.Error>();
-            result.ToError().Data?.Code.Should().Be("Users.NotConfirmed");
-        }
-
-        [Fact]
-        public async Task Handle_ValidCredentials_ReturnsTokenResult()
-        {
-            var user = new User { Email = "test@example.com" };
-            var command = new LoginCommand("test@example.com", "password");
-            var accessToken = new AccessToken { Value = "access_token", MinutesExpiry = 60 };
-            var refreshToken = new RefreshToken { Value = "refresh_token" };
-
-            _userManager.FindByEmailAsync(command.Email).Returns(user);
-            _userManager.CheckPasswordAsync(user, command.Password).Returns(true);
-            _userManager.IsEmailConfirmedAsync(user).Returns(true);
-            _authTokenService.GenerateAccessTokenAsync(user).Returns(accessToken);
-            _authTokenService.GenerateRefreshTokenAsync(user).Returns(refreshToken);
-
-            var result = await _handler.Handle(command, CancellationToken.None);
-
-            await _authTokenService.Received(1).StoreRefreshTokenAsync(refreshToken);
-            result.Should().BeOfType<Result<TokenResult, Error>.Success>();
-            result.ToSuccess().Data?.AccessToken.Should().Be("access_token");
-            result.ToSuccess().Data?.RefreshToken.Should().Be("refresh_token");
-            result.ToSuccess().Data?.ExpiresIn.Should().Be(60);
-        }
-
+        // Assert
+        result.IsOk().Should().BeTrue();
+        result.As<Result<TokenResult, Error>.Success>().Data
+            .Should().BeEquivalentTo(new TokenResult(
+                accessToken.Value,
+                accessToken.MinutesExpiry,
+                refreshToken.Value));
+        await _authTokenService.Received(1).StoreRefreshTokenAsync(refreshToken);
     }
 }

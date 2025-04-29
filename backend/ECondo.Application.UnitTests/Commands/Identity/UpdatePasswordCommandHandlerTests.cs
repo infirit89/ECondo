@@ -1,75 +1,170 @@
-//using ECondo.Application.Commands.Identity.UpdatePassword;
-//using ECondo.Domain.Shared;
-//using ECondo.Domain.Users;
-//using FluentAssertions;
-//using Microsoft.AspNetCore.Identity;
-//using NSubstitute;
-//using System.Threading;
-//using System.Threading.Tasks;
-//using Xunit;
+using ECondo.Application.Commands.Identity.UpdatePassword;
+using ECondo.Application.Extensions;
+using ECondo.Application.Services;
+using ECondo.Domain.Shared;
+using ECondo.Domain.Users;
+using FluentAssertions;
+using Microsoft.AspNetCore.Identity;
+using NSubstitute;
+using Xunit;
 
-//namespace ECondo.Application.UnitTests.Commands.Identity
-//{
-//    public class UpdatePasswordCommandHandlerTests
-//    {
-//        private readonly UserManager<User> _userManager;
-//        private readonly UpdatePasswordCommandHandler _handler;
+namespace ECondo.Application.UnitTests.Commands.Identity
+{
+    public class UpdatePasswordCommandHandlerTests
+    {
+        private readonly UserManager<User> _userManager;
+        private readonly IUserContext _userContext;
+        private readonly UpdatePasswordCommandHandler _handler;
+        private readonly Guid _userId = Guid.NewGuid();
 
-//        public UpdatePasswordCommandHandlerTests()
-//        {
-//            _userManager = Substitute.For<UserManager<User>>(
-//                Substitute.For<IUserStore<User>>(), null, null, null, null, null, null, null, null);
-//            _handler = new UpdatePasswordCommandHandler(_userManager);
-//        }
+        public UpdatePasswordCommandHandlerTests()
+        {
+            _userManager = Substitute.For<UserManager<User>>(
+                Substitute.For<IUserStore<User>>(), null, null, null, null, null, null, null, null);
+            _userContext = Substitute.For<IUserContext>();
+            _userContext.UserId.Returns(_userId);
+            _handler = new UpdatePasswordCommandHandler(_userManager, _userContext);
+        }
 
-//        [Fact]
-//        public async Task Handle_UserNotFound_ReturnsInvalidUserError()
-//        {
-//            var command = new UpdatePasswordCommand("test@example.com", "oldPassword", "newPassword");
-//            _userManager.FindByEmailAsync(command.Email).Returns((User)null);
+        [Fact]
+        public async Task Handle_UserNotFound_ReturnsInvalidUserError()
+        {
+            // Arrange
+            var command = new UpdatePasswordCommand("currentPassword", "newPassword");
+            _userManager.FindByIdAsync(_userId.ToString()).Returns((User)null);
 
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
 
-//            var result = await _handler.Handle(command, CancellationToken.None);
+            // Assert
+            result.Should().BeOfType<Result<EmptySuccess, Error>.Error>();
+            result.ToError().Data.Should().BeEquivalentTo(UserErrors.InvalidUser());
+        }
 
+        [Fact]
+        public async Task Handle_ChangePasswordFails_ReturnsValidationError()
+        {
+            // Arrange
+            var user = new User { Id = _userId, Email = "test@example.com" };
+            var command = new UpdatePasswordCommand("currentPassword", "newPassword");
+            var identityErrors = new IdentityError[]
+            {
+                new() { Code = "PasswordMismatch", Description = "Incorrect password." },
+                new() { Code = "PasswordRequiresNonAlphanumeric", Description = "Passwords must have at least one non alphanumeric character." }
+            };
+            var identityResult = IdentityResult.Failed(identityErrors);
 
-//            result.Should().BeOfType<Result<EmptySuccess, Error[]>.Error>();
-//            result.As<Result<EmptySuccess, Error[]>.Error>().Data.Should().ContainSingle(e => e.Code == "Users.NotFound");
-//        }
+            _userManager.FindByIdAsync(_userId.ToString()).Returns(user);
+            _userManager.ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword).Returns(identityResult);
 
-//        [Fact]
-//        public async Task Handle_PasswordChangeFails_ReturnsErrors()
-//        {
-//            var user = new User { Email = "test@example.com" };
-//            var command = new UpdatePasswordCommand("test@example.com", "oldPassword", "newPassword");
-//            var identityErrors = new IdentityError[] { new IdentityError { Code = "PasswordMismatch", Description = "Password mismatch" } };
-//            var identityResult = IdentityResult.Failed(identityErrors);
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
 
-//            _userManager.FindByEmailAsync(command.Email).Returns(user);
-//            _userManager.ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword).Returns(identityResult);
+            // Assert
+            result.Should().BeOfType<Result<EmptySuccess, Error>.Error>();
+            var error = result.ToError().Data;
+            error.Should().BeOfType<ValidationError>();
+            var validationError = (ValidationError)error;
+            validationError.Errors.Should().HaveCount(2);
+            validationError.Errors.Should().Contain(e => e.Code == "PasswordMismatch");
+            validationError.Errors.Should().Contain(e => e.Code == "PasswordRequiresNonAlphanumeric");
+        }
 
+        [Fact]
+        public async Task Handle_ChangePasswordSucceeds_ReturnsSuccess()
+        {
+            // Arrange
+            var user = new User { Id = _userId, Email = "test@example.com" };
+            var command = new UpdatePasswordCommand("currentPassword", "newPassword");
+            var identityResult = IdentityResult.Success;
 
-//            var result = await _handler.Handle(command, CancellationToken.None);
+            _userManager.FindByIdAsync(_userId.ToString()).Returns(user);
+            _userManager.ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword).Returns(identityResult);
 
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
 
-//            result.Should().BeOfType<Result<EmptySuccess, Error[]>.Error>();
-//            result.As<Result<EmptySuccess, Error[]>.Error>().Data.Should().ContainSingle(e => e.Code == "PasswordMismatch");
-//        }
+            // Assert
+            result.Should().BeOfType<Result<EmptySuccess, Error>.Success>();
+            await _userManager.Received(1).ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword);
+        }
 
-//        [Fact]
-//        public async Task Handle_PasswordChangeSucceeds_ReturnsSuccess()
-//        {
-//            var user = new User { Email = "test@example.com" };
-//            var command = new UpdatePasswordCommand("test@example.com", "oldPassword", "newPassword");
-//            var identityResult = IdentityResult.Success;
+        [Fact]
+        public async Task Handle_WithEmptyCurrentPassword_ShouldFail()
+        {
+            // Arrange
+            var user = new User { Id = _userId, Email = "test@example.com" };
+            var command = new UpdatePasswordCommand("", "newPassword");
+            var identityErrors = new IdentityError[]
+            {
+                new() { Code = "PasswordMismatch", Description = "Incorrect password." }
+            };
+            var identityResult = IdentityResult.Failed(identityErrors);
 
-//            _userManager.FindByEmailAsync(command.Email).Returns(user);
-//            _userManager.ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword).Returns(identityResult);
+            _userManager.FindByIdAsync(_userId.ToString()).Returns(user);
+            _userManager.ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword).Returns(identityResult);
 
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
 
-//            var result = await _handler.Handle(command, CancellationToken.None);
+            // Assert
+            result.Should().BeOfType<Result<EmptySuccess, Error>.Error>();
+            var error = result.ToError().Data;
+            error.Should().BeOfType<ValidationError>();
+        }
 
+        [Fact]
+        public async Task Handle_WithEmptyNewPassword_ShouldFail()
+        {
+            // Arrange
+            var user = new User { Id = _userId, Email = "test@example.com" };
+            var command = new UpdatePasswordCommand("currentPassword", "");
+            var identityErrors = new IdentityError[]
+            {
+                new() { Code = "PasswordTooShort", Description = "Passwords must be at least 6 characters." }
+            };
+            var identityResult = IdentityResult.Failed(identityErrors);
 
-//            result.Should().BeOfType<Result<EmptySuccess, Error[]>.Success>();
-//        }
-//    }
-//}
+            _userManager.FindByIdAsync(_userId.ToString()).Returns(user);
+            _userManager.ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword).Returns(identityResult);
+
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            result.Should().BeOfType<Result<EmptySuccess, Error>.Error>();
+            var error = result.ToError().Data;
+            error.Should().BeOfType<ValidationError>();
+            var validationError = (ValidationError)error;
+            validationError.Errors.Should().HaveCount(1);
+            validationError.Errors.Should().Contain(e => e.Code == "PasswordTooShort");
+        }
+
+        [Fact]
+        public async Task Handle_SameOldAndNewPassword_ShouldFail()
+        {
+            // Arrange
+            var user = new User { Id = _userId, Email = "test@example.com" };
+            var command = new UpdatePasswordCommand("samePassword", "samePassword");
+            var identityErrors = new IdentityError[]
+            {
+                new() { Code = "PasswordRequiresUniqueChars", Description = "The new password must be different from the current password." }
+            };
+            var identityResult = IdentityResult.Failed(identityErrors);
+
+            _userManager.FindByIdAsync(_userId.ToString()).Returns(user);
+            _userManager.ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword).Returns(identityResult);
+
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            result.Should().BeOfType<Result<EmptySuccess, Error>.Error>();
+            var error = result.ToError().Data;
+            error.Should().BeOfType<ValidationError>();
+            var validationError = (ValidationError)error;
+            validationError.Errors.Should().HaveCount(1);
+            validationError.Errors.Should().Contain(e => e.Code == "PasswordRequiresUniqueChars");
+        }
+    }
+}

@@ -10,6 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Commands\Building\**" />
+    <EmbeddedResource Remove="Commands\Building\**" />
+    <None Remove="Commands\Building\**" />
+  </ItemGroup>
+
+  <ItemGroup>
 	<PackageReference Include="NSubstitute" Version="5.1.0" />
 	<PackageReference Include="FluentAssertions" Version="6.12.1" />
 	<PackageReference Include="coverlet.collector" Version="6.0.0" />
@@ -27,6 +33,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Commands\Building\" />
+	  <Folder Include="Commands\" />
 	</ItemGroup>
 </Project>

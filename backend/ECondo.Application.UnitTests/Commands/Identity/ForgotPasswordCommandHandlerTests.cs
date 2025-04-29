@@ -4,61 +4,87 @@ using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using NSubstitute;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
 
-namespace ECondo.Application.UnitTests.Commands.Identity
+namespace ECondo.Application.UnitTests.Commands.Identity.ForgotPassword;
+
+public class ForgotPasswordCommandHandlerTests
 {
-    public class ForgotPasswordCommandHandlerTests
+    private readonly UserManager<User> _userManager;
+    private readonly IEmailService _emailService;
+    private readonly ForgotPasswordCommandHandler _handler;
+
+    public ForgotPasswordCommandHandlerTests()
     {
-        private readonly UserManager<User> _userManager;
-        private readonly IEmailService _emailService;
-        private readonly ForgotPasswordCommandHandler _handler;
+        _userManager = Substitute.For<UserManager<User>>(
+            Substitute.For<IUserStore<User>>(),
+            null, null, null, null, null, null, null, null);
+        _emailService = Substitute.For<IEmailService>();
+        _handler = new ForgotPasswordCommandHandler(_userManager, _emailService);
+    }
 
-        public ForgotPasswordCommandHandlerTests()
-        {
-            _userManager = Substitute.For<UserManager<User>>(
-                Substitute.For<IUserStore<User>>(), null, null, null, null, null, null, null, null);
-            _emailService = Substitute.For<IEmailService>();
-            _handler = new ForgotPasswordCommandHandler(_userManager, _emailService);
-        }
+    [Fact]
+    public async Task Handle_ShouldReturnInvalidUserError_WhenUserNotFound()
+    {
+        // Arrange
+        var command = new ForgotPasswordCommand("nonexistent@example.com", "https://example.com/reset");
+        _userManager.FindByEmailAsync(command.Username).Returns((User?)null);
 
-        [Fact]  
-        public async Task Handle_UserNotFound_ReturnsInvalidUserError()
-        {
-            // Arrange
-            var command = new ForgotPasswordCommand("test@example.com", "http://example.com/reset-password");
-            _userManager.FindByEmailAsync(command.Username).Returns((User)null);
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Act
-            var result = await _handler.Handle(command, CancellationToken.None);
+        // Assert
+        result.IsOk().Should().BeFalse();
+        result.ToError().Data.Should().BeOfType<Error>();
+        result.ToError().Data!.Code.Should().Be("Users.NotFound");
+    }
 
-            // Assert
-            result.Should().BeOfType<Result<EmptySuccess, Error>.Error>();
-            result.As<Result<EmptySuccess, Error>.Error>().Data.Code.Should().Be("Users.NotFound");
-        }
+    [Fact]
+    public async Task Handle_ShouldSendPasswordResetEmail_WhenUserExists()
+    {
+        // Arrange
+        var command = new ForgotPasswordCommand("test@example.com", "https://example.com/reset");
+        var user = new User { Email = command.Username };
+        var token = "reset-token";
 
-        [Fact]
-        public async Task Handle_ValidUser_SendsPasswordResetEmail()
-        {
-            // Arrange
-            var user = new User { Email = "test@example.com" };
-            var command = new ForgotPasswordCommand("test@example.com", "http://example.com/reset-password");
-            var token = "reset_token";
+        _userManager.FindByEmailAsync(command.Username).Returns(user);
+        _userManager.GeneratePasswordResetTokenAsync(user).Returns(token);
 
-            _userManager.FindByEmailAsync(command.Username).Returns(user);
-            _userManager.GeneratePasswordResetTokenAsync(user).Returns(token);
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Act
-            var result = await _handler.Handle(command, CancellationToken.None);
+        // Assert
+        result.IsOk().Should().BeTrue();
+        await _emailService.Received(1).SendPasswordResetMail(
+            user.Email!,
+            Arg.Is<string>(url => url.Contains("token=reset-token") && url.Contains("email=test@example.com")));
+    }
 
-            // Assert
-            await _emailService.Received(1).SendPasswordResetMail(user.Email, Arg.Is<string>(url =>
-                url.Contains("token=reset_token") && url.Contains("email=test@example.com")));
-            result.Should().BeOfType<Result<EmptySuccess, Error>.Success>();
-        }
+    [Fact]
+    public async Task Handle_ShouldGenerateCorrectQueryString_WhenSendingEmail()
+    {
+        // Arrange
+        var command = new ForgotPasswordCommand("test@example.com", "https://example.com/reset");
+        var user = new User { Email = command.Username };
+        var token = "reset-token";
+
+        _userManager.FindByEmailAsync(command.Username).Returns(user);
+        _userManager.GeneratePasswordResetTokenAsync(user).Returns(token);
+
+        // Act
+        await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        await _emailService.Received(1).SendPasswordResetMail(
+            user.Email!,
+            Arg.Is<string>(url =>
+                url == QueryHelpers.AddQueryString(command.ReturnUri, new Dictionary<string, string?>
+                {
+                    { "token", token },
+                    { "email", command.Username }
+                })));
     }
 }
+
