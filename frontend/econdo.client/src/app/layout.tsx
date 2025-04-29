@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import { ModalsProvider } from '@mantine/modals';
 import { 
   ColorSchemeScript,
@@ -13,6 +14,9 @@ import HealthProvider from "./healthProvider";
 import { Suspense } from "react";
 import Loading from "@/components/loading";
 import QueryProvider from "./queryProvider";
+import { DatesProvider } from '@mantine/dates';
+import 'dayjs/locale/bg';
+
 
 export const metadata: Metadata = {
   title: "ECondo",
@@ -34,11 +38,13 @@ export default function RootLayout({
         <MantineProvider>
           <HealthProvider>
             <QueryProvider>
-              <ModalsProvider>
-                <Suspense fallback={<Loading height={'100vh'}/>}>
-                  {children}
-                </Suspense>
-              </ModalsProvider>
+              <DatesProvider settings={{ locale: 'bg', timezone: 'UTC' }}>
+                <ModalsProvider>
+                  <Suspense fallback={<Loading height={'100vh'}/>}>
+                    {children}
+                  </Suspense>
+                </ModalsProvider>
+              </DatesProvider>
             </QueryProvider>
           </HealthProvider>
         </MantineProvider>

@@ -198,3 +198,57 @@ Promise<Result<PagedList<PropertyResult>>> => {
 
     throw new Error('Unexpected code flow');
 })
+
+// Guid Id, decimal AmountPaid, string BillTitle, string Status
+export interface PaymentResult {
+    id: string,
+    amountPaid: number,
+    billTitle: string,
+    status: string,
+}
+
+export const getPaymentsForProperty =
+cache(async (propertyId: string, page: number, pageSize: number) => {
+    try {
+        const res = await authInstance.get<PagedList<PaymentResult>>(
+            '/api/payment/getForProperty', {
+            params: {
+                propertyId,
+                page,
+                pageSize,
+            }
+        });
+
+        return resultOk(res.data);
+    } catch(error) {
+        console.error(error);
+        if(isAxiosError<ApiError, Record<string, string[]>>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+});
+
+interface StripeSecretResult {
+    clientSecret: string,
+}
+
+export const createIntent =
+cache(async (paymentId: string):
+Promise<Result<StripeSecretResult>> => {
+    try {
+        const res = await authInstance.post<StripeSecretResult>(
+            '/api/payment/createIntent', {
+                paymentId
+            });
+
+        return resultOk(res.data);
+    } catch(error) {
+        if(isAxiosError(error))
+            console.error(error.response);
+        if(isAxiosError<ApiError, Record<string, string[]>>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+});

@@ -1,5 +1,6 @@
 ﻿using ECondo.Domain.Abstractions;
 using ECondo.Domain.Buildings;
+using ECondo.Domain.Payments;
 using ECondo.Domain.Profiles;
 using Microsoft.AspNetCore.Identity;
 
@@ -19,6 +20,10 @@ public class User : IdentityUser<Guid>, ISoftDeletable
     public HashSet<PropertyOccupant> PropertyOccupants { get; set; } = [];
 
     public HashSet<Entrance> Entrances { get; set; } = [];
+
+    public HashSet<Bill> Bills { get; set; } = [];
+
+    public HashSet<Payment> Payments { get; set; } = [];
     // ---------------------------------
 
     // ---- soft delete stuffs ----

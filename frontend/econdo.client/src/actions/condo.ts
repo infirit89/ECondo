@@ -2,6 +2,7 @@
 
 import normalInstance, { authInstance } from "@/lib/axiosInstance";
 import { ApiError, PagedList } from "@/types/apiResponses";
+import { RecurringInterval } from "@/types/recurringInterval";
 import { Result, resultFail, resultOk } from "@/types/result";
 import { isAxiosError } from "axios";
 import { unstable_cache } from "next/cache";
@@ -130,3 +131,120 @@ cache(async (buildingId: string, entranceNumber: string) => {
 
     throw new Error('Unexpected code flow');
 });
+
+
+export const createBill =
+cache(async (
+    buildingId: string, 
+    entranceNumber: string, 
+    title: string, 
+    amount: number,
+    isRecurring: boolean,
+    startDate: string,
+    description?: string,
+    recurringInterval?: RecurringInterval,
+    endDate?: string,
+): Promise<Result> => {
+    try {
+        await authInstance.post(
+            '/api/bills/create', {
+                buildingId,
+                entranceNumber,
+                title,
+                amount,
+                isRecurring,
+                startDate,
+                description,
+                recurringInterval,
+                endDate,
+            });
+
+        return resultOk();
+    } catch(error) {
+        if(isAxiosError(error))
+            console.error(error.response?.data);
+        if(isAxiosError<ApiError>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+});
+
+interface StripeResponse {
+    url: string,
+}
+
+interface StripeStatus {
+    chargesEnabled: boolean,
+    detailsSubmitted: boolean,
+}
+
+const baseUrl = process.env.NEXT_PRIVATE_BASE_URL;
+
+export const connectToStripe =
+cache(async (buildingId: string, entranceNumber: string):
+Promise<Result<StripeResponse>> => {
+    try {
+        const res = await authInstance.post<StripeResponse>(
+            '/api/stripe/connect', {
+                buildingId,
+                entranceNumber,
+                returnUri: `${baseUrl}`,
+            });
+
+        return resultOk(res.data);
+    } catch(error) {
+        if(isAxiosError(error))
+            console.error(error.response?.data);
+        if(isAxiosError<ApiError>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+});
+
+export const checkStripeStatus =
+cache(async (buildingId: string, entranceNumber: string):
+Promise<Result<StripeStatus>> => {
+    try {
+        const res = await authInstance.get<StripeStatus>(
+            '/api/stripe/checkEntranceStatus', {
+                params: {
+                    buildingId,
+                    entranceNumber,
+                }
+            });
+
+        return resultOk(res.data);
+    } catch(error) {
+        if(isAxiosError(error))
+            console.error(error.response?.data);
+        if(isAxiosError<ApiError>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+});
+
+export const getStripeLoginLink =
+cache(async (buildingId: string, entranceNumber: string):
+Promise<Result<StripeResponse>> => {
+    try {
+        const res = await authInstance.get<StripeResponse>(
+            '/api/stripe/getLoginLink', {
+                params: {
+                    buildingId,
+                    entranceNumber,
+                }
+            });
+
+        return resultOk(res.data);
+    } catch(error) {
+        if(isAxiosError(error))
+            console.error(error.response?.data);
+        if(isAxiosError<ApiError>(error))
+            return resultFail(error.response?.data!);
+    }
+
+    throw new Error('Unexpected code flow');
+})

@@ -95,6 +95,9 @@ namespace ECondo.Infrastructure.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
+                    b.Property<string>("StripeAccountId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BuildingId");
@@ -230,6 +233,94 @@ namespace ECondo.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PropertyTypes");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Payments.Bill", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset?>("EndDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("EntranceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsRecurring")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("RecurringInterval")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("StartDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("EntranceId");
+
+                    b.ToTable("Bills");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Payments.Payment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("AmountPaid")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("BillId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("PaidByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("PaymentDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BillId");
+
+                    b.HasIndex("PaidByUserId");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("ECondo.Domain.Profiles.ProfileDetails", b =>
@@ -568,6 +659,51 @@ namespace ECondo.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ECondo.Domain.Payments.Bill", b =>
+                {
+                    b.HasOne("ECondo.Domain.Users.User", "CreatedByUser")
+                        .WithMany("Bills")
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ECondo.Domain.Buildings.Entrance", "Entrance")
+                        .WithMany("Bills")
+                        .HasForeignKey("EntranceId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("Entrance");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Payments.Payment", b =>
+                {
+                    b.HasOne("ECondo.Domain.Payments.Bill", "Bill")
+                        .WithMany("Payments")
+                        .HasForeignKey("BillId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ECondo.Domain.Users.User", "PaidByUser")
+                        .WithMany("Payments")
+                        .HasForeignKey("PaidByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ECondo.Domain.Buildings.Property", "Property")
+                        .WithMany("Payments")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Bill");
+
+                    b.Navigation("PaidByUser");
+
+                    b.Navigation("Property");
+                });
+
             modelBuilder.Entity("ECondo.Domain.Profiles.ProfileDetails", b =>
                 {
                     b.HasOne("ECondo.Domain.Users.User", "User")
@@ -649,6 +785,8 @@ namespace ECondo.Infrastructure.Migrations
 
             modelBuilder.Entity("ECondo.Domain.Buildings.Entrance", b =>
                 {
+                    b.Navigation("Bills");
+
                     b.Navigation("Properties");
                 });
 
@@ -659,12 +797,19 @@ namespace ECondo.Infrastructure.Migrations
 
             modelBuilder.Entity("ECondo.Domain.Buildings.Property", b =>
                 {
+                    b.Navigation("Payments");
+
                     b.Navigation("PropertyOccupants");
                 });
 
             modelBuilder.Entity("ECondo.Domain.Buildings.PropertyType", b =>
                 {
                     b.Navigation("Properties");
+                });
+
+            modelBuilder.Entity("ECondo.Domain.Payments.Bill", b =>
+                {
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("ECondo.Domain.Provinces.Province", b =>
@@ -681,7 +826,11 @@ namespace ECondo.Infrastructure.Migrations
 
             modelBuilder.Entity("ECondo.Domain.Users.User", b =>
                 {
+                    b.Navigation("Bills");
+
                     b.Navigation("Entrances");
+
+                    b.Navigation("Payments");
 
                     b.Navigation("PropertyOccupants");
 

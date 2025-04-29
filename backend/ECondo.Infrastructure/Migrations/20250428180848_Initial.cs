@@ -249,7 +249,8 @@ namespace ECondo.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BuildingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ManagerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Number = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false)
+                    Number = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    StripeAccountId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -266,6 +267,38 @@ namespace ECondo.Infrastructure.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Bills",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    EntranceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsRecurring = table.Column<bool>(type: "bit", nullable: false),
+                    RecurringInterval = table.Column<int>(type: "int", nullable: true),
+                    StartDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    EndDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bills", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bills_Entrances_EntranceId",
+                        column: x => x.EntranceId,
+                        principalTable: "Entrances",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Bills_Users_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -295,6 +328,38 @@ namespace ECondo.Infrastructure.Migrations
                         principalTable: "PropertyTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Payments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BillId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PaidByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AmountPaid = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PaymentDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    PaymentMethod = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Payments_Bills_BillId",
+                        column: x => x.BillId,
+                        principalTable: "Bills",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Payments_Properties_PropertyId",
+                        column: x => x.PropertyId,
+                        principalTable: "Properties",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Payments_Users_PaidByUserId",
+                        column: x => x.PaidByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -335,6 +400,16 @@ namespace ECondo.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bills_CreatedByUserId",
+                table: "Bills",
+                column: "CreatedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bills_EntranceId",
+                table: "Bills",
+                column: "EntranceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Buildings_ProvinceId",
                 table: "Buildings",
                 column: "ProvinceId");
@@ -353,6 +428,21 @@ namespace ECondo.Infrastructure.Migrations
                 name: "IX_Entrances_Number",
                 table: "Entrances",
                 column: "Number");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_BillId",
+                table: "Payments",
+                column: "BillId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_PaidByUserId",
+                table: "Payments",
+                column: "PaidByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_PropertyId",
+                table: "Payments",
+                column: "PropertyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Properties_EntranceId",
@@ -444,6 +534,9 @@ namespace ECondo.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Payments");
+
+            migrationBuilder.DropTable(
                 name: "PropertyOccupants");
 
             migrationBuilder.DropTable(
@@ -463,6 +556,9 @@ namespace ECondo.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Bills");
 
             migrationBuilder.DropTable(
                 name: "OccupantTypes");

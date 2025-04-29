@@ -43,7 +43,7 @@ public class PropertyController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IResult> Create(
+    public async Task<IResult> Create( 
         [FromBody] CreatePropertyCommand request)
     {
         var result = await sender.Send(request);

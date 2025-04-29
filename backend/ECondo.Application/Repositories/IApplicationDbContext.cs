@@ -1,4 +1,5 @@
 ﻿using ECondo.Domain.Buildings;
+using ECondo.Domain.Payments;
 using ECondo.Domain.Profiles;
 using ECondo.Domain.Provinces;
 using ECondo.Domain.Users;
@@ -36,5 +37,12 @@ public interface IApplicationDbContext
     DbSet<PropertyOccupant> PropertyOccupants { get; }
     #endregion
 
+    #region Payment
+
+    DbSet<Bill> Bills { get; }
+    DbSet<Payment> Payments { get; }
+
+    #endregion
+    
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

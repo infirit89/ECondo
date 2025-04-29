@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using ECondo.Application.Repositories;
+using ECondo.Domain.Payments;
 
 namespace ECondo.Infrastructure.Contexts;
 
@@ -44,6 +45,9 @@ internal class ECondoDbContext(
     public virtual DbSet<PropertyOccupant> PropertyOccupants { get; set; } = null!;
 
 
+    public DbSet<Bill> Bills { get; set; } = null!;
+    public DbSet<Payment> Payments { get; set; } = null!;
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         Assembly current = Assembly.GetExecutingAssembly();

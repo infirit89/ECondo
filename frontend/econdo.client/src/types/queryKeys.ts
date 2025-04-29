@@ -80,4 +80,32 @@ export const queryKeys = {
             pageSize,
         ] as const,
     },
+    stripe: {
+        checkStatus: (
+            buildingId: string,
+            entranceNumber: string,
+        ) => [
+            buildingId,
+            entranceNumber,
+        ] as const,
+    },
+    payments: {
+        all: ['payments'] as const,
+        pagedForProperty: (
+            propertyId: string,
+            page: number,
+            pageSize: number,
+        ) => [
+            ...queryKeys.payments.all,
+            propertyId,
+            page,
+            pageSize,
+        ] as const,
+        createIntent: (
+            propertyId: string,
+        ) => [
+            ...queryKeys.payments.all,
+            propertyId,
+        ] as const,
+    }
 }

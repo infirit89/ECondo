@@ -1,4 +1,6 @@
-﻿namespace ECondo.Domain.Buildings;
+﻿using ECondo.Domain.Payments;
+
+namespace ECondo.Domain.Buildings;
 
 public sealed class Property
 {
@@ -18,4 +20,5 @@ public sealed class Property
 
     // People that occupy the property but may not be users
     public HashSet<PropertyOccupant> PropertyOccupants { get; set; } = [];
+    public HashSet<Payment> Payments { get; set; } = [];
 }

@@ -1,15 +1,14 @@
 'use client';
 
-import { deleteProperty, getPropertiesInEntrance } from "@/actions/property";
+import { getPropertiesInEntrance } from "@/actions/property";
 import Loading from "@/components/loading";
-import { Center, Title, Pagination, Alert, SimpleGrid, Flex, Text } from "@mantine/core";
+import { Center, Title, Pagination, Alert, SimpleGrid, Flex } from "@mantine/core";
 import { IconExclamationCircle, IconMoodPuzzled } from "@tabler/icons-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import PropertyCard from "@/components/propertyCard";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/types/queryKeys";
-import { useModals } from "@mantine/modals";
 
 // hard coded for now
 const pageSize = 9;
