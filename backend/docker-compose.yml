@@ -5,9 +5,6 @@ services:
     build:
       context: .
       dockerfile: ECondo.Api/Dockerfile
-    ports:
-        - "5000:8080"
-        - "5001:8081"
     depends_on:
         - econdo.mssqldb
         - econdo.redis
