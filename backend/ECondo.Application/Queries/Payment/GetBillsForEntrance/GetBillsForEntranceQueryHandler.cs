@@ -15,7 +15,7 @@ internal sealed class GetBillsForEntranceQueryHandler
             .Bills
             .AsNoTracking()
             .Where(b => b.Entrance.BuildingId == request.BuildingId && b.Entrance.Number == request.EntranceNumber)
-            .Select(e => new BillResult(e.Title, e.Description, e.Amount))
+            .Select(e => new BillResult(e.Title, e.Description, e.Amount, e.RecurringInterval, e.StartDate, e.EndDate))
             .ToPagedListAsync(request.Page, request.PageSize, cancellationToken: cancellationToken);
         
         return Result<PagedList<BillResult>, Error>.Ok(bills);

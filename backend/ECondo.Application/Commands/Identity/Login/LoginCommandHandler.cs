@@ -9,7 +9,7 @@ namespace ECondo.Application.Commands.Identity.Login;
 internal class LoginCommandHandler(
     UserManager<User> userManager,
     IdentityErrorDescriber errorDescriber,
-    IAuthTokenService authTokenService) 
+    IAuthTokenService authTokenService)
     : ICommandHandler<LoginCommand, TokenResult>
 {
     public async Task<Result<TokenResult, Error>> Handle(
@@ -26,7 +26,7 @@ internal class LoginCommandHandler(
         if (!await userManager
                 .CheckPasswordAsync(user, request.Password))
         {
-            var passwordMismatchError = 
+            var passwordMismatchError =
                 errorDescriber.PasswordMismatch();
             return Result<TokenResult, Error>.Fail(new[]
             {
@@ -34,13 +34,13 @@ internal class LoginCommandHandler(
             }.ToValidationError());
         }
 
-        if(!await userManager.IsEmailConfirmedAsync(user))
+        if (!await userManager.IsEmailConfirmedAsync(user))
             return Result<TokenResult, Error>
                 .Fail(UserErrors.EmailNotConfirmed());
 
-        AccessToken accessToken = 
+        AccessToken accessToken =
             authTokenService.GenerateAccessTokenAsync(user);
-        RefreshToken refreshToken = 
+        RefreshToken refreshToken =
             authTokenService.GenerateRefreshTokenAsync(user);
 
         await authTokenService.StoreRefreshTokenAsync(refreshToken);

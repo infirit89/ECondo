@@ -31,7 +31,7 @@ interface BillModalProps {
     entranceNumber: string,
 }
 
-export default function BillModal({ isOpen, onClose, buildingId, entranceNumber } : 
+export default function BillModal({ isOpen, onClose, buildingId, entranceNumber }:
     BillModalProps) {
     const form = useForm<BillFormValues>({
         defaultValues: {
@@ -49,42 +49,45 @@ export default function BillModal({ isOpen, onClose, buildingId, entranceNumber 
     const queryClient = useQueryClient();
     const [formState, dispatch] = useReducer(formReducer, initialFormState);
     const showRecurringInterval = form.watch('isRecurring');
-    const handleSubmit = async(data: BillFormValues) => {
-        dispatch({type: 'SUBMIT'});
+    const handleSubmit = async (data: BillFormValues) => {
+        dispatch({ type: 'SUBMIT' });
         let recurringInterval: RecurringInterval | undefined = undefined;
         const endDate: Date | undefined = !data.endDate ? undefined : data.endDate;
         const description: string | undefined = !data.description ? undefined : data.description;
 
-        switch(data.recurringInterval) {
-            case 'Месечно':
+        switch (data.recurringInterval?.trim()) {
+            case 'Monthly':
                 recurringInterval = RecurringInterval.Monthly;
-            case 'Годишно':
+                break;
+            case 'Yearly':
                 recurringInterval = RecurringInterval.Yearly;
+                break;
             default:
                 recurringInterval = undefined;
+                break;
         }
 
         const res = await createBill(
-            buildingId, 
-            entranceNumber, 
-            data.title, 
-            data.amount, 
-            data.isRecurring, 
+            buildingId,
+            entranceNumber,
+            data.title,
+            data.amount,
+            data.isRecurring,
             data.startDate.toISOString(),
-            description, 
-            recurringInterval, 
+            description,
+            recurringInterval,
             endDate?.toISOString());
 
-        if(!res.ok) {
-            if(res.error.errors && res.error.errors['LessThanValidator'] !== undefined) {
+        if (!res.ok) {
+            if (res.error.errors && res.error.errors['LessThanValidator'] !== undefined) {
                 form.setError('endDate', {
                     message: 'Крайната дата трябва да е след началната дата',
                 });
             }
-            dispatch({type: 'ERROR'});
+            dispatch({ type: 'ERROR' });
         }
 
-        dispatch({type: 'SUCCESS'});
+        dispatch({ type: 'SUCCESS' });
         queryClient.invalidateQueries({
             queryKey: queryKeys.bills.all,
         });
@@ -93,81 +96,82 @@ export default function BillModal({ isOpen, onClose, buildingId, entranceNumber 
     const isLoading = formState === 'loading';
     return (
         <Modal
-        opened={isOpen}
-        onClose={onClose}
-        title={<Text>Нов Разход</Text>} size="md" centered>
+            opened={isOpen}
+            onClose={onClose}
+            title={<Text>Нов Разход</Text>} size="md" centered>
             <form onSubmit={form.handleSubmit(handleSubmit)}>
                 <Box pos={'relative'}>
                     <Stack gap="md">
-                    
-                    <LoadingOverlay visible={isLoading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-                    <TextInput label="Име" 
-                    {...form.register("title")} 
-                    withAsterisk
-                    error={form.formState.errors.title?.message}/>
-                    <TextInput 
-                    label="Описание" 
-                    {...form.register("description")} 
-                    error={form.formState.errors.description?.message}/>
 
-                    <Controller
-                        name='amount'
-                        control={form.control}
-                        render={({ field }) => (
-                        <NumberInput
-                        label="Количество" 
-                        withAsterisk
-                        {...field}
-                        min={0}
-                        decimalScale={2}
-                        error={form.formState.errors.amount?.message}/>
-                        )}
-                    />
+                        <LoadingOverlay visible={isLoading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+                        <TextInput label="Име"
+                            {...form.register("title")}
+                            withAsterisk
+                            error={form.formState.errors.title?.message} />
+                        <TextInput
+                            label="Описание"
+                            {...form.register("description")}
+                            error={form.formState.errors.description?.message} />
 
-                    <Checkbox
-                    label="Повтаряща се?"
-                    {...form.register('isRecurring')}
-                    />
-
-                    {showRecurringInterval && (
                         <Controller
-                            name='recurringInterval'
+                            name='amount'
                             control={form.control}
                             render={({ field }) => (
-                            <Select
-                                label="Интервал на повтаряне"
-                                error={form.formState.errors.recurringInterval?.message}
-                                withAsterisk
-                                {...field}
-                                data={['Месечно', 'Годишно']}
-                                searchable
-                            />
+                                <NumberInput
+                                    label="Количество"
+                                    withAsterisk
+                                    {...field}
+                                    min={0}
+                                    fixedDecimalScale
+                                    decimalScale={2}
+                                    error={form.formState.errors.amount?.message} />
                             )}
                         />
-                    )}
 
-                    <Controller
-                        name="startDate"
-                        control={form.control}
-                        render={({ field }) => (
-                            <DatePickerInput
-                            label="Начална дата"
-                            withAsterisk
-                            {...field}
-                            error={form.formState.errors.startDate?.message}/>
-                        )}
-                    />
+                        <Checkbox
+                            label="Повтаряща се?"
+                            {...form.register('isRecurring')}
+                        />
 
-                    <Controller
-                        name="endDate"
-                        control={form.control}
-                        render={({ field }) => (
-                            <DatePickerInput
-                            label="Крайна дата"
-                            {...field}
-                            error={form.formState.errors.endDate?.message}/>
+                        {showRecurringInterval && (
+                            <Controller
+                                name='recurringInterval'
+                                control={form.control}
+                                render={({ field }) => (
+                                    <Select
+                                        label="Интервал на повтаряне"
+                                        error={form.formState.errors.recurringInterval?.message}
+                                        withAsterisk
+                                        {...field}
+                                        data={[{ value: 'Monthly', label: 'Месечно' }, { value: 'Yearly', label: 'Годишно' }]}
+                                        searchable
+                                    />
+                                )}
+                            />
                         )}
-                    />
+
+                        <Controller
+                            name="startDate"
+                            control={form.control}
+                            render={({ field }) => (
+                                <DatePickerInput
+                                    label="Начална дата"
+                                    withAsterisk
+                                    {...field}
+                                    error={form.formState.errors.startDate?.message} />
+                            )}
+                        />
+
+                        <Controller
+                            name="endDate"
+                            control={form.control}
+                            render={({ field }) => (
+                                <DatePickerInput
+                                    label="Крайна дата"
+                                    {...field}
+                                    error={form.formState.errors.endDate?.message} />
+                            )}
+                        />
                     </Stack>
                 </Box>
 

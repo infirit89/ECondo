@@ -22,27 +22,27 @@ export interface BuildingResult {
     entranceNumber: string,
 }
 
-export const getBuildingsForUser = 
-cache(async (page: number, pageSize: number, buildingName?: string): 
-Promise<Result<PagedList<BuildingResult>>> => {
-    try {
-        const buildings = await authInstance.get<PagedList<BuildingResult>>(
-            '/api/building/getBuildingsForUser', {
+export const getBuildingsForUser =
+    cache(async (page: number, pageSize: number, buildingName?: string):
+        Promise<Result<PagedList<BuildingResult>>> => {
+        try {
+            const buildings = await authInstance.get<PagedList<BuildingResult>>(
+                '/api/building/getBuildingsForUser', {
                 params: {
                     page,
                     pageSize,
                     buildingName: buildingName,
                 }
             });
-        return resultOk(buildings.data);
-    }
-    catch(error) {
-        if(isAxiosError<ApiError>(error))
-            return resultFail(error.response?.data!);
-    }
+            return resultOk(buildings.data);
+        }
+        catch (error) {
+            if (isAxiosError<ApiError>(error))
+                return resultFail(error.response?.data!);
+        }
 
-    throw new Error('Unexpected code flow');
-});
+        throw new Error('Unexpected code flow');
+    });
 
 export const isUserInBuilding = cache(async (buildingId: string, entranceNumber: string): Promise<Result> => {
     try {
@@ -50,8 +50,8 @@ export const isUserInBuilding = cache(async (buildingId: string, entranceNumber:
             .get(`/api/building/isEntranceManager?buildingId=${buildingId}&entranceNumber=${entranceNumber}`);
         return resultOk();
     }
-    catch(error) {
-        if(isAxiosError<ApiError>(error))
+    catch (error) {
+        if (isAxiosError<ApiError>(error))
             return resultFail(error.response?.data!);
     }
 
@@ -75,8 +75,8 @@ export async function registerBuildingEntrance(building: RegisterBuilding): Prom
     try {
         await authInstance.post('/api/building/registerBuildingEntrance', building);
         return resultOk();
-    } catch(error) {
-        if(isAxiosError<ApiError>(error))
+    } catch (error) {
+        if (isAxiosError<ApiError>(error))
             return resultFail(error.response?.data!);
     }
 
@@ -88,66 +88,66 @@ export interface ProvinceNameResult {
 }
 
 export const getProvinces = unstable_cache(async (): Promise<ProvinceNameResult> => {
-    return  (await normalInstance
+    return (await normalInstance
         .get<ProvinceNameResult>('/api/province/getProvinces')).data;
 });
 
 export const getAllBuildings =
-cache(async (page: number, pageSize: number):
-Promise<Result<PagedList<BuildingResult>>> => {
-    try {
-        const res = await authInstance.get<PagedList<BuildingResult>>(
-            '/api/building/getAll', {
-            params: {
-                page,
-                pageSize,
-            }
-        });
-        return resultOk(res.data);
-    } catch(error) {
-        if(isAxiosError<ApiError>(error))
-            return resultFail(error.response?.data!);
-    }
+    cache(async (page: number, pageSize: number):
+        Promise<Result<PagedList<BuildingResult>>> => {
+        try {
+            const res = await authInstance.get<PagedList<BuildingResult>>(
+                '/api/building/getAll', {
+                params: {
+                    page,
+                    pageSize,
+                }
+            });
+            return resultOk(res.data);
+        } catch (error) {
+            if (isAxiosError<ApiError>(error))
+                return resultFail(error.response?.data!);
+        }
 
-    throw new Error('Unexpected code flow');
-});
+        throw new Error('Unexpected code flow');
+    });
 
 export const deleteEntrance =
-cache(async (buildingId: string, entranceNumber: string) => {
-    try {
-        await authInstance.delete(
-            '/api/building/delete', {
-            params: {
-                buildingId,
-                entranceNumber,
-            },
-        });
+    cache(async (buildingId: string, entranceNumber: string) => {
+        try {
+            await authInstance.delete(
+                '/api/building/delete', {
+                params: {
+                    buildingId,
+                    entranceNumber,
+                },
+            });
 
-        return resultOk();
-    } catch(error) {
-        if(isAxiosError<ApiError>(error))
-            return resultFail(error.response?.data!);
-    }
+            return resultOk();
+        } catch (error) {
+            if (isAxiosError<ApiError>(error))
+                return resultFail(error.response?.data!);
+        }
 
-    throw new Error('Unexpected code flow');
-});
+        throw new Error('Unexpected code flow');
+    });
 
 
 export const createBill =
-cache(async (
-    buildingId: string, 
-    entranceNumber: string, 
-    title: string, 
-    amount: number,
-    isRecurring: boolean,
-    startDate: string,
-    description?: string,
-    recurringInterval?: RecurringInterval,
-    endDate?: string,
-): Promise<Result> => {
-    try {
-        await authInstance.post(
-            '/api/bills/create', {
+    cache(async (
+        buildingId: string,
+        entranceNumber: string,
+        title: string,
+        amount: number,
+        isRecurring: boolean,
+        startDate: string,
+        description?: string,
+        recurringInterval?: RecurringInterval,
+        endDate?: string,
+    ): Promise<Result> => {
+        try {
+            await authInstance.post(
+                '/api/bills/create', {
                 buildingId,
                 entranceNumber,
                 title,
@@ -159,16 +159,16 @@ cache(async (
                 endDate,
             });
 
-        return resultOk();
-    } catch(error) {
-        if(isAxiosError(error))
-            console.error(error.response?.data);
-        if(isAxiosError<ApiError>(error))
-            return resultFail(error.response?.data!);
-    }
+            return resultOk();
+        } catch (error) {
+            if (isAxiosError(error))
+                console.error(error.response?.data);
+            if (isAxiosError<ApiError>(error))
+                return resultFail(error.response?.data!);
+        }
 
-    throw new Error('Unexpected code flow');
-});
+        throw new Error('Unexpected code flow');
+    });
 
 interface StripeResponse {
     url: string,
@@ -182,85 +182,88 @@ interface StripeStatus {
 const baseUrl = process.env.NEXT_PRIVATE_BASE_URL;
 
 export const connectToStripe =
-cache(async (buildingId: string, entranceNumber: string):
-Promise<Result<StripeResponse>> => {
-    try {
-        const res = await authInstance.post<StripeResponse>(
-            '/api/stripe/connect', {
+    cache(async (buildingId: string, entranceNumber: string):
+        Promise<Result<StripeResponse>> => {
+        try {
+            const res = await authInstance.post<StripeResponse>(
+                '/api/stripe/connect', {
                 buildingId,
                 entranceNumber,
                 returnUri: `${baseUrl}`,
             });
 
-        return resultOk(res.data);
-    } catch(error) {
-        if(isAxiosError(error))
-            console.error(error.response?.data);
-        if(isAxiosError<ApiError>(error))
-            return resultFail(error.response?.data!);
-    }
+            return resultOk(res.data);
+        } catch (error) {
+            if (isAxiosError(error))
+                console.error(error.response?.data);
+            if (isAxiosError<ApiError>(error))
+                return resultFail(error.response?.data!);
+        }
 
-    throw new Error('Unexpected code flow');
-});
+        throw new Error('Unexpected code flow');
+    });
 
 export const checkStripeStatus =
-cache(async (buildingId: string, entranceNumber: string):
-Promise<Result<StripeStatus>> => {
-    try {
-        const res = await authInstance.get<StripeStatus>(
-            '/api/stripe/checkEntranceStatus', {
+    cache(async (buildingId: string, entranceNumber: string):
+        Promise<Result<StripeStatus>> => {
+        try {
+            const res = await authInstance.get<StripeStatus>(
+                '/api/stripe/checkEntranceStatus', {
                 params: {
                     buildingId,
                     entranceNumber,
                 }
             });
 
-        return resultOk(res.data);
-    } catch(error) {
-        if(isAxiosError(error))
-            console.error(error.response?.data);
-        if(isAxiosError<ApiError>(error))
-            return resultFail(error.response?.data!);
-    }
+            return resultOk(res.data);
+        } catch (error) {
+            if (isAxiosError(error))
+                console.error(error.response?.data);
+            if (isAxiosError<ApiError>(error))
+                return resultFail(error.response?.data!);
+        }
 
-    throw new Error('Unexpected code flow');
-});
+        throw new Error('Unexpected code flow');
+    });
 
 export const getStripeLoginLink =
-cache(async (buildingId: string, entranceNumber: string):
-Promise<Result<StripeResponse>> => {
-    try {
-        const res = await authInstance.get<StripeResponse>(
-            '/api/stripe/getLoginLink', {
+    cache(async (buildingId: string, entranceNumber: string):
+        Promise<Result<StripeResponse>> => {
+        try {
+            const res = await authInstance.get<StripeResponse>(
+                '/api/stripe/getLoginLink', {
                 params: {
                     buildingId,
                     entranceNumber,
                 }
             });
 
-        return resultOk(res.data);
-    } catch(error) {
-        if(isAxiosError(error))
-            console.error(error.response?.data);
-        if(isAxiosError<ApiError>(error))
-            return resultFail(error.response?.data!);
-    }
+            return resultOk(res.data);
+        } catch (error) {
+            if (isAxiosError(error))
+                console.error(error.response?.data);
+            if (isAxiosError<ApiError>(error))
+                return resultFail(error.response?.data!);
+        }
 
-    throw new Error('Unexpected code flow');
-});
+        throw new Error('Unexpected code flow');
+    });
 
 export interface BillResult {
-    title: string,
-    description?: string,
-    amount: number,
+    title: string
+    description?: string
+    amount: number
+    interval?: RecurringInterval
+    startDate: string
+    endDate?: string
 }
 
 export const getBillsForEntrance =
-cache(async (buildingId: string, entranceNumber: string, page: number, pageSize: number):
-Promise<Result<PagedList<BillResult>>> => {
-    try {
-        const res = await authInstance.get<PagedList<BillResult>>(
-            '/api/bills/getForEntrance', {
+    cache(async (buildingId: string, entranceNumber: string, page: number, pageSize: number):
+        Promise<Result<PagedList<BillResult>>> => {
+        try {
+            const res = await authInstance.get<PagedList<BillResult>>(
+                '/api/bills/getForEntrance', {
                 params: {
                     buildingId,
                     entranceNumber,
@@ -269,13 +272,14 @@ Promise<Result<PagedList<BillResult>>> => {
                 }
             });
 
-        return resultOk(res.data);
-    } catch(error) {
-        if(isAxiosError(error))
-            console.error(error.response?.data);
-        if(isAxiosError<ApiError>(error))
-            return resultFail(error.response?.data!);
-    }
+            return resultOk(res.data);
+        } catch (error) {
+            if (isAxiosError(error))
+                console.error(error.response?.data);
+            if (isAxiosError<ApiError>(error))
+                return resultFail(error.response?.data!);
+        }
 
-    throw new Error('Unexpected code flow');
-});
+        throw new Error('Unexpected code flow');
+    });
+
