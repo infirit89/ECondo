@@ -1,4 +1,5 @@
 ﻿using ECondo.Application.Data;
+using ECondo.Application.Data.Property;
 using ECondo.Application.Policies;
 using ECondo.Domain.Shared;
 

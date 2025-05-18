@@ -3,7 +3,7 @@ using ECondo.Application.Commands.PropertyOccupants.AcceptInvitation;
 using ECondo.Application.Commands.PropertyOccupants.AddToProperty;
 using ECondo.Application.Commands.PropertyOccupants.Delete;
 using ECondo.Application.Commands.PropertyOccupants.Update;
-using ECondo.Application.Data.PropertyOccupant;
+using ECondo.Application.Data.Occupant;
 using ECondo.Application.Queries.PropertyOccupants.GetInProperty;
 using ECondo.Application.Queries.PropertyOccupants.GetTenantsInProperty;
 using ECondo.Application.Queries.PropertyOccupants.IsUser;

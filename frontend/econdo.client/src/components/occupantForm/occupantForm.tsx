@@ -22,43 +22,43 @@ export default function OccupantForm({
     onCancel,
     onSucess,
     propertyId,
-    occupantTypes } : OccupantFormProps) {
+    occupantTypes }: OccupantFormProps) {
 
     const isEditing = !!occupant;
     const {
-    control,
-    handleSubmit,
-    setError,
-    formState: { errors },
-    reset,
+        control,
+        handleSubmit,
+        setError,
+        formState: { errors },
+        reset,
     } = useForm<OccupantFormValues>({
         resolver: zodResolver(occupantSchema),
-        defaultValues: occupant ? 
-        {
-            firstName: occupant.firstName,
-            middleName: occupant.middleName,
-            lastName: occupant.lastName,
-            email: occupant.email === null || occupant.email === undefined ? '' : occupant.email,
-            occupantType: occupant.type,
-        }
-        :
-        {
-            firstName: '',
-            middleName: '',
-            lastName: '',
-            email: '',
-        },
+        defaultValues: occupant ?
+            {
+                firstName: occupant.firstName,
+                middleName: occupant.middleName,
+                lastName: occupant.lastName,
+                email: occupant.email === null || occupant.email === undefined ? '' : occupant.email,
+                occupantType: occupant.type,
+            }
+            :
+            {
+                firstName: '',
+                middleName: '',
+                lastName: '',
+                email: '',
+            },
     });
-       
+
     const [formState, dispatch] = useReducer(formReducer, initialFormState);
     const queryClient = useQueryClient();
 
-    const handleUpdate = async(data: OccupantFormValues) => {
+    const handleUpdate = async (data: OccupantFormValues) => {
         dispatch({ type: 'SUBMIT' });
         const email: string | null = !data.email ? null : data.email;
-        
-        if(!isEditing) {
-            dispatch({type: 'ERROR'});
+
+        if (!isEditing) {
+            dispatch({ type: 'ERROR' });
             return;
         }
 
@@ -71,27 +71,33 @@ export default function OccupantForm({
             type: data.occupantType,
         });
 
-        if(!res.ok) {
-            dispatch({type: 'ERROR'});
+        if (!res.ok) {
+            dispatch({ type: 'ERROR' });
             return;
         }
 
-        dispatch({type: 'SUCCESS'});
+        dispatch({ type: 'SUCCESS' });
 
         queryClient.invalidateQueries({
             queryKey: queryKeys
-            .occupants
-            .inProperty(propertyId),
+                .occupants
+                .inProperty(propertyId),
+        });
+
+        queryClient.invalidateQueries({
+            queryKey: queryKeys
+                .properties
+                .all,
         });
 
         onSucess && onSucess();
     }
 
-    const handleCreate = async(data: OccupantFormValues) => {
+    const handleCreate = async (data: OccupantFormValues) => {
         dispatch({ type: 'SUBMIT' });
-        
+
         const email: string | null = !data.email ? null : data.email;
-        
+
         const res = await addOccupantToProperty({
             firstName: data.firstName,
             middleName: data.middleName,
@@ -101,17 +107,23 @@ export default function OccupantForm({
             occupantType: data.occupantType,
         });
 
-        if(!res.ok) {
-            dispatch({type: 'ERROR'});
+        if (!res.ok) {
+            dispatch({ type: 'ERROR' });
             return;
         }
 
-        dispatch({type: 'SUCCESS'});
+        dispatch({ type: 'SUCCESS' });
 
         queryClient.invalidateQueries({
             queryKey: queryKeys
-            .occupants
-            .inProperty(propertyId),
+                .occupants
+                .inProperty(propertyId),
+        });
+
+        queryClient.invalidateQueries({
+            queryKey: queryKeys
+                .properties
+                .all,
         });
 
         onSucess && onSucess();
@@ -123,13 +135,13 @@ export default function OccupantForm({
         <form onSubmit={handleSubmit(!isEditing ? handleCreate : handleUpdate)}>
             <Stack gap="md">
                 <LoadingOverlay
-                visible={isLoading}
-                zIndex={1000}
-                overlayProps={{ radius: "sm", blur: 2 }} />
+                    visible={isLoading}
+                    zIndex={1000}
+                    overlayProps={{ radius: "sm", blur: 2 }} />
                 <Controller
                     name="firstName"
                     control={control}
-                    render={({field}) => (
+                    render={({ field }) => (
                         <TextInput
                             label="Първо име"
                             error={errors.firstName?.message}
@@ -142,7 +154,7 @@ export default function OccupantForm({
                 <Controller
                     name="middleName"
                     control={control}
-                    render={({field}) => (
+                    render={({ field }) => (
                         <TextInput
                             label="Презиме"
                             error={errors.middleName?.message}
@@ -151,11 +163,11 @@ export default function OccupantForm({
                         />
                     )}
                 />
-                
+
                 <Controller
                     name="lastName"
                     control={control}
-                    render={({field}) => (
+                    render={({ field }) => (
                         <TextInput
                             label="Фамилно име"
                             error={errors.lastName?.message}
@@ -164,26 +176,26 @@ export default function OccupantForm({
                         />
                     )}
                 />
-                
+
                 <Controller
                     name='occupantType'
                     control={control}
                     render={({ field }) => (
-                    <Select
-                        label="Тип"
-                        error={errors.occupantType?.message}
-                        withAsterisk
-                        {...field}
-                        data={occupantTypes.occupantTypes}
-                        searchable
-                    />
+                        <Select
+                            label="Тип"
+                            error={errors.occupantType?.message}
+                            withAsterisk
+                            {...field}
+                            data={occupantTypes.occupantTypes}
+                            searchable
+                        />
                     )}
                 />
 
                 <Controller
                     name="email"
                     control={control}
-                    render={({field}) => (
+                    render={({ field }) => (
                         <TextInput
                             label="Имейл"
                             error={errors.email?.message}
@@ -191,29 +203,29 @@ export default function OccupantForm({
                         />
                     )}
                 />
-                
-                { hasError ? 
-                <Text 
-                c={'red'} 
-                pt={10} 
-                fw={500} 
-                size={'sm'}>
-                    Грешка при { isEditing ? 'промяната' : 'добавянето' } на контакт! Моля пробвайте отново!
-                </Text> :
-                <></> }
+
+                {hasError ?
+                    <Text
+                        c={'red'}
+                        pt={10}
+                        fw={500}
+                        size={'sm'}>
+                        Грешка при {isEditing ? 'промяната' : 'добавянето'} на контакт! Моля пробвайте отново!
+                    </Text> :
+                    <></>}
 
                 <Group justify='end' mt="md">
                     {
                         onCancel && (
-                        <Button
-                        variant="outline"
-                        onClick={onCancel}>
-                        Затвори
-                        </Button>
+                            <Button
+                                variant="outline"
+                                onClick={onCancel}>
+                                Затвори
+                            </Button>
                         )
                     }
                     <Button type="submit" disabled={isLoading}>
-                        { isEditing ? 'Промени' : 'Добави' }
+                        {isEditing ? 'Промени' : 'Добави'}
                     </Button>
                 </Group>
             </Stack>

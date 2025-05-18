@@ -1,4 +1,4 @@
-﻿using ECondo.Application.Data.PropertyOccupant;
+﻿using ECondo.Application.Data.Occupant;
 using ECondo.Application.Policies;
 
 namespace ECondo.Application.Queries.PropertyOccupants.GetInProperty;

@@ -15,50 +15,61 @@ export interface PropertyResult {
     idealParts: number,
 }
 
-export const getPropertiesInEntrance = 
-    cache(async (buildingId: string, entranceNumber: string, page: number, pageSize: number): 
-        Promise<Result<PagedList<PropertyResult>>> => {
-    try {
-        const properties = await authInstance
-        .get<PagedList<PropertyResult>>('/api/property/getPropertiesInBuilding', { 
-            params: {
-                buildingId,
-                entranceNumber,
-                page,
-                pageSize
-            },
-        });
+export interface BriefOccupantResult {
+    firstName: string,
+    lastName: string,
+}
 
-        return resultOk(properties.data);
-    }
-    catch(error) {
-        if(isAxiosError<ApiError, Record<string, string[]>>(error))
-            return resultFail(error.response?.data!);
-    }
+export interface PropertyOccupantResult {
+    property: PropertyResult,
+    occupants: BriefOccupantResult[],
+    remainingOccupants: number,
+}
 
-    throw new Error('Unexpected code flow');
-});
+export const getPropertiesInEntrance =
+    cache(async (buildingId: string, entranceNumber: string, page: number, pageSize: number):
+        Promise<Result<PagedList<PropertyOccupantResult>>> => {
+        try {
+            const properties = await authInstance
+                .get<PagedList<PropertyOccupantResult>>('/api/property/getPropertiesInBuilding', {
+                    params: {
+                        buildingId,
+                        entranceNumber,
+                        page,
+                        pageSize
+                    },
+                });
+
+            return resultOk(properties.data);
+        }
+        catch (error) {
+            if (isAxiosError<ApiError, Record<string, string[]>>(error))
+                return resultFail(error.response?.data!);
+        }
+
+        throw new Error('Unexpected code flow');
+    });
 
 export const getPropertiesForUser =
-cache(async(page: number, pageSize: number): Promise<Result<PagedList<PropertyResult>>> => {
-    try {
-        const properties = await authInstance
-        .get<PagedList<PropertyResult>>('/api/property/getForUser', { 
-            params: {
-                page,
-                pageSize
-            },
-        });
+    cache(async (page: number, pageSize: number): Promise<Result<PagedList<PropertyOccupantResult>>> => {
+        try {
+            const properties = await authInstance
+                .get<PagedList<PropertyOccupantResult>>('/api/property/getForUser', {
+                    params: {
+                        page,
+                        pageSize
+                    },
+                });
 
-        return resultOk(properties.data);
-    }
-    catch(error) {
-        if(isAxiosError<ApiError, Record<string, string[]>>(error))
-            return resultFail(error.response?.data!);
-    }
+            return resultOk(properties.data);
+        }
+        catch (error) {
+            if (isAxiosError<ApiError, Record<string, string[]>>(error))
+                return resultFail(error.response?.data!);
+        }
 
-    throw new Error('Unexpected code flow');
-})
+        throw new Error('Unexpected code flow');
+    })
 
 export interface CreatePropertyData {
     buildingId: string,
@@ -72,13 +83,13 @@ export interface CreatePropertyData {
 
 export const createProperty =
     cache(async (data: CreatePropertyData):
-    Promise<Result> => {
+        Promise<Result> => {
         try {
             await authInstance.post('/api/property/create', data);
             return resultOk();
         }
-        catch(error) {
-            if(isAxiosError<ApiError, Record<string, string[]>>(error))
+        catch (error) {
+            if (isAxiosError<ApiError, Record<string, string[]>>(error))
                 return resultFail(error.response?.data!);
         }
 
@@ -89,16 +100,16 @@ export interface PropertyTypeNameResult {
     propertyTypes: string[],
 }
 
-export const getAllPropertyTypes = 
+export const getAllPropertyTypes =
     cache(async ():
-    Promise<Result<PropertyTypeNameResult>> => {
+        Promise<Result<PropertyTypeNameResult>> => {
         try {
             const result = await authInstance
                 .get<PropertyTypeNameResult>('/api/propertyType/getAll');
 
             return resultOk(result.data);
-        } catch(error) {
-            if(isAxiosError<ApiError, Record<string, string[]>>(error))
+        } catch (error) {
+            if (isAxiosError<ApiError, Record<string, string[]>>(error))
                 return resultFail(error.response?.data!);
         }
 
@@ -107,7 +118,7 @@ export const getAllPropertyTypes =
 
 export const deleteProperty =
     cache(async (propertyId: string):
-    Promise<Result> => {
+        Promise<Result> => {
         try {
             await authInstance.delete('/api/property/delete', {
                 params: {
@@ -116,8 +127,8 @@ export const deleteProperty =
             });
 
             return resultOk();
-        } catch(error) {
-            if(isAxiosError<ApiError, Record<string, string[]>>(error))
+        } catch (error) {
+            if (isAxiosError<ApiError, Record<string, string[]>>(error))
                 return resultFail(error.response?.data!);
         }
 
@@ -134,70 +145,70 @@ export interface Property {
 }
 
 export const getPropertyById =
-cache(async (propertyId: string):
-Promise<Result<Property>> => {
-    try {
-        const res = await authInstance.get<Property>('/api/property/getById', {
-            params: {
-                propertyId,
-            }
-        });
+    cache(async (propertyId: string):
+        Promise<Result<Property>> => {
+        try {
+            const res = await authInstance.get<Property>('/api/property/getById', {
+                params: {
+                    propertyId,
+                }
+            });
 
-        return resultOk(res.data);
-    } catch(error) {
-        if(isAxiosError<ApiError, Record<string, string[]>>(error))
-            return resultFail(error.response?.data!);
-    }
+            return resultOk(res.data);
+        } catch (error) {
+            if (isAxiosError<ApiError, Record<string, string[]>>(error))
+                return resultFail(error.response?.data!);
+        }
 
-    throw new Error('Unexpected code flow');
-});
+        throw new Error('Unexpected code flow');
+    });
 
 export const updateProperty =
-cache(async (data: Property):
-Promise<Result> => {
-    try {
-        await authInstance.put('/api/property/update', {
-            propertyId: data.id,
-            floor: data.floor,
-            number: data.number,
-            propertyType: data.propertyType,
-            builtArea: data.builtArea,
-            idealParts: data.idealParts,
-        });
-        return resultOk();
-    } catch(error) {
-        if(isAxiosError<ApiError, Record<string, string[]>>(error))
-            return resultFail(error.response?.data!);
-    }
+    cache(async (data: Property):
+        Promise<Result> => {
+        try {
+            await authInstance.put('/api/property/update', {
+                propertyId: data.id,
+                floor: data.floor,
+                number: data.number,
+                propertyType: data.propertyType,
+                builtArea: data.builtArea,
+                idealParts: data.idealParts,
+            });
+            return resultOk();
+        } catch (error) {
+            if (isAxiosError<ApiError, Record<string, string[]>>(error))
+                return resultFail(error.response?.data!);
+        }
 
-    throw new Error('Unexpected code flow');
-});
+        throw new Error('Unexpected code flow');
+    });
 
 export const getAllProperties =
-cache(async (
-    page: number, 
-    pageSize: number, 
-    entranceFilter : { buildingId: string, entranceNumber: string } | undefined):
-Promise<Result<PagedList<PropertyResult>>> => {
-    try {
-        const res = await authInstance.get<PagedList<PropertyResult>>(
-            '/api/property/getAll', {
-            params: {
-                page,
-                pageSize,
-                'entranceFilter.buildingId': entranceFilter?.buildingId,
-                'entranceFilter.entranceNumber': entranceFilter?.entranceNumber,
-            }
-        });
+    cache(async (
+        page: number,
+        pageSize: number,
+        entranceFilter: { buildingId: string, entranceNumber: string } | undefined):
+        Promise<Result<PagedList<PropertyOccupantResult>>> => {
+        try {
+            const res = await authInstance.get<PagedList<PropertyOccupantResult>>(
+                '/api/property/getAll', {
+                params: {
+                    page,
+                    pageSize,
+                    'entranceFilter.buildingId': entranceFilter?.buildingId,
+                    'entranceFilter.entranceNumber': entranceFilter?.entranceNumber,
+                }
+            });
 
-        return resultOk(res.data);
-    } catch(error) {
-        if(isAxiosError<ApiError, Record<string, string[]>>(error))
-            return resultFail(error.response?.data!);
-    }
+            return resultOk(res.data);
+        } catch (error) {
+            if (isAxiosError<ApiError, Record<string, string[]>>(error))
+                return resultFail(error.response?.data!);
+        }
 
-    throw new Error('Unexpected code flow');
-})
+        throw new Error('Unexpected code flow');
+    })
 
 // Guid Id, decimal AmountPaid, string BillTitle, string Status
 export interface PaymentResult {
@@ -208,47 +219,47 @@ export interface PaymentResult {
 }
 
 export const getPaymentsForProperty =
-cache(async (propertyId: string, page: number, pageSize: number) => {
-    try {
-        const res = await authInstance.get<PagedList<PaymentResult>>(
-            '/api/payment/getForProperty', {
-            params: {
-                propertyId,
-                page,
-                pageSize,
-            }
-        });
+    cache(async (propertyId: string, page: number, pageSize: number) => {
+        try {
+            const res = await authInstance.get<PagedList<PaymentResult>>(
+                '/api/payment/getForProperty', {
+                params: {
+                    propertyId,
+                    page,
+                    pageSize,
+                }
+            });
 
-        return resultOk(res.data);
-    } catch(error) {
-        console.error(error);
-        if(isAxiosError<ApiError, Record<string, string[]>>(error))
-            return resultFail(error.response?.data!);
-    }
+            return resultOk(res.data);
+        } catch (error) {
+            console.error(error);
+            if (isAxiosError<ApiError, Record<string, string[]>>(error))
+                return resultFail(error.response?.data!);
+        }
 
-    throw new Error('Unexpected code flow');
-});
+        throw new Error('Unexpected code flow');
+    });
 
 interface StripeSecretResult {
     clientSecret: string,
 }
 
 export const createIntent =
-cache(async (paymentId: string):
-Promise<Result<StripeSecretResult>> => {
-    try {
-        const res = await authInstance.post<StripeSecretResult>(
-            '/api/payment/createIntent', {
+    cache(async (paymentId: string):
+        Promise<Result<StripeSecretResult>> => {
+        try {
+            const res = await authInstance.post<StripeSecretResult>(
+                '/api/payment/createIntent', {
                 paymentId
             });
 
-        return resultOk(res.data);
-    } catch(error) {
-        if(isAxiosError(error))
-            console.error(error.response);
-        if(isAxiosError<ApiError, Record<string, string[]>>(error))
-            return resultFail(error.response?.data!);
-    }
+            return resultOk(res.data);
+        } catch (error) {
+            if (isAxiosError(error))
+                console.error(error.response);
+            if (isAxiosError<ApiError, Record<string, string[]>>(error))
+                return resultFail(error.response?.data!);
+        }
 
-    throw new Error('Unexpected code flow');
-});
+        throw new Error('Unexpected code flow');
+    });

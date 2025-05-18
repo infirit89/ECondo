@@ -1,15 +1,16 @@
-import { deleteProperty, PropertyResult } from "@/actions/property";
-import { 
+import { deleteProperty, PropertyOccupantResult, PropertyResult } from "@/actions/property";
+import {
     Card,
     Text,
-    Group, 
+    Group,
     ActionIcon,
     Avatar,
     Badge,
     Stack,
     Divider,
+    AvatarGroup,
 } from "@mantine/core";
-import { 
+import {
     IconBuildingCottage,
     IconBuildingFactory,
     IconBuildingSkyscraper,
@@ -22,7 +23,8 @@ import {
     IconRuler,
     IconStairs,
     IconTrash,
-    IconUsers } from "@tabler/icons-react";
+    IconUsers
+} from "@tabler/icons-react";
 import { useState } from "react";
 import PropertyEditModal from "@/components/propertyEditModal";
 import { queryKeys } from "@/types/queryKeys";
@@ -53,19 +55,19 @@ const getPropertyTypeInfo = (propertyType: string) => {
 }
 
 interface ProperyCardProps {
-    property: PropertyResult,
+    property: PropertyOccupantResult,
     canDelete: boolean,
     canEdit: boolean,
     onDeleteError?: () => void
 }
 
-export function PropertyCard({ 
-    property, 
+export function PropertyCard({
+    property,
     canDelete,
-    canEdit, 
-    onDeleteError } : ProperyCardProps) {
+    canEdit,
+    onDeleteError }: ProperyCardProps) {
 
-    const propertyInfo = getPropertyTypeInfo(property.propertyType.toLowerCase());
+    const propertyInfo = getPropertyTypeInfo(property.property.propertyType.toLowerCase());
     const [isDeleting, setIsDeleting] = useState(false);
 
     const [editModalOpened, setEditModalOpen] = useState(false);
@@ -76,12 +78,12 @@ export function PropertyCard({
         return useMutation({
             mutationFn: (propertyId: string) => deleteProperty(propertyId),
             onSuccess: (data) => {
-                if(!data.ok) {
+                if (!data.ok) {
                     onDeleteError && onDeleteError();
                     setIsDeleting(false);
                     return;
                 }
-                
+
                 queryClient.invalidateQueries({
                     queryKey: queryKeys.properties.all,
                 });
@@ -114,122 +116,126 @@ export function PropertyCard({
             {
                 canEdit && (
                     <PropertyEditModal
-                    opened={editModalOpened}
-                    onClose={() => setEditModalOpen(false)}
-                    propertyId={property.id}
+                        opened={editModalOpened}
+                        onClose={() => setEditModalOpen(false)}
+                        propertyId={property.property.id}
                     />
                 )
             }
             <Card
-            shadow="sm" 
-            padding="xl"
-            radius="lg"
-            withBorder
-            style={{ transition: "transform 0.2s ease, box-shadow 0.2s ease" }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-4px)")}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}>
-            <Card.Section 
-            p="md" 
-            style={{
-                background: `var(--mantine-color-${propertyInfo.color}-0)`,
-                borderBottom: `1px solid var(--mantine-color-${propertyInfo.color}-2)`,
-                borderRadius: "var(--mantine-radius-lg) var(--mantine-radius-lg) 0 0",
-            }}>
-              <Group justify='space-between'>
-                <Group>
-                  <Avatar size="md" radius="xl" color={propertyInfo.color}>
-                    {propertyInfo.icon}
-                  </Avatar>
-                  <div>
-                    <Group gap="xs">
-                      <Text fw={700} size="xl">
-                        {property.number}
-                      </Text>
-                      <Badge color={propertyInfo.color} size="sm">
-                        {propertyInfo.label.charAt(0).toUpperCase() + propertyInfo.label.slice(1)}
-                      </Badge>
-                    </Group>
-                    <Text size="sm" c="dimmed">
-                      Етаж {property.floor}
-                    </Text>
-                  </div>
-                </Group>
-                {
-                    canEdit && canDelete && (
-                        <Group gap={8}>
-                            <ActionIcon
-                            variant='subtle'
-                            color="blue"
-                            disabled={isDeleting}
-                            onClick={() => setEditModalOpen(true)}>
-                                <IconEdit size={18} />
-                            </ActionIcon>
-                            <ActionIcon 
-                            variant='subtle'
-                            color="red"
-                            disabled={isDeleting}
-                            onClick={() => handleDeleteProperty(property.id)}>
-                                <IconTrash size={18} />
-                            </ActionIcon>
+                shadow="sm"
+                padding="xl"
+                radius="lg"
+                withBorder
+                style={{ transition: "transform 0.2s ease, box-shadow 0.2s ease" }}
+                onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-4px)")}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}>
+                <Card.Section
+                    p="md"
+                    style={{
+                        background: `var(--mantine-color-${propertyInfo.color}-0)`,
+                        borderBottom: `1px solid var(--mantine-color-${propertyInfo.color}-2)`,
+                        borderRadius: "var(--mantine-radius-lg) var(--mantine-radius-lg) 0 0",
+                    }}>
+                    <Group justify='space-between'>
+                        <Group>
+                            <Avatar size="md" radius="xl" color={propertyInfo.color}>
+                                {propertyInfo.icon}
+                            </Avatar>
+                            <div>
+                                <Group gap="xs">
+                                    <Text fw={700} size="xl">
+                                        {property.property.number}
+                                    </Text>
+                                    <Badge color={propertyInfo.color} size="sm">
+                                        {propertyInfo.label.charAt(0).toUpperCase() + propertyInfo.label.slice(1)}
+                                    </Badge>
+                                </Group>
+                                <Text size="sm" c="dimmed">
+                                    Етаж {property.property.number}
+                                </Text>
+                            </div>
                         </Group>
-                    )
-                }
-              </Group>
-            </Card.Section>
+                        {
+                            canEdit && canDelete && (
+                                <Group gap={8}>
+                                    <ActionIcon
+                                        variant='subtle'
+                                        color="blue"
+                                        disabled={isDeleting}
+                                        onClick={() => setEditModalOpen(true)}>
+                                        <IconEdit size={18} />
+                                    </ActionIcon>
+                                    <ActionIcon
+                                        variant='subtle'
+                                        color="red"
+                                        disabled={isDeleting}
+                                        onClick={() => handleDeleteProperty(property.property.id)}>
+                                        <IconTrash size={18} />
+                                    </ActionIcon>
+                                </Group>
+                            )
+                        }
+                    </Group>
+                </Card.Section>
 
-            <Stack gap="xs" mt="md">
-              <Group gap="xs">
-                <IconRuler size={16} color="gray" />
-                <Text size="sm">
-                  <Text span fw={500}>
-                    Застроена площ:
-                  </Text>{" "}
-                  {property.builtArea} m²
-                </Text>
-              </Group>
+                <Stack gap="xs" mt="md">
+                    <Group gap="xs">
+                        <IconRuler size={16} color="gray" />
+                        <Text size="sm">
+                            <Text span fw={500}>
+                                Застроена площ:
+                            </Text>{" "}
+                            {property.property.builtArea} m²
+                        </Text>
+                    </Group>
 
-              <Group gap="xs">
-                <IconChartPie size={16} color="gray" />
-                <Text size="sm">
-                  <Text span fw={500}>
-                    Идеални части:
-                  </Text>{" "}
-                  {property.idealParts}
-                </Text>
-              </Group>
+                    <Group gap="xs">
+                        <IconChartPie size={16} color="gray" />
+                        <Text size="sm">
+                            <Text span fw={500}>
+                                Идеални части:
+                            </Text>{" "}
+                            {property.property.idealParts}
+                        </Text>
+                    </Group>
 
-              <Divider
-                my="xs"
-                label={
-                  <Group gap="xs">
-                    <IconUsers size={16} />
-                    <Text size="sm">Контакти</Text>
-                  </Group>
-                }
-                labelPosition="left"
-              />
+                    <Divider
+                        my="xs"
+                        label={
+                            <Group gap="xs">
+                                <IconUsers size={16} />
+                                <Text size="sm">Контакти</Text>
+                            </Group>
+                        }
+                        labelPosition="left"
+                    />
 
-              {/* {property.occupants.length > 0 ? (
-                <Group spacing="xs">
-                  {property.occupants.map((occupant) => (
-                    <Avatar
-                      key={occupant.id}
-                      size="sm"
-                      radius="xl"
-                      color={stringToColor(occupant.name)}
-                      title={occupant.name}
-                    >
-                      {getInitials(occupant.name)}
-                    </Avatar>
-                  ))}
-                </Group>
-              ) : ( */}
-                <Text size="sm" c="dimmed" fs={'italic'}>
-                    Няма назначени контакти
-                </Text>
-              {/* )} */}
-            </Stack>
-          </Card>
+                    {property.occupants.length > 0 ? (
+                        <AvatarGroup spacing={'6'}>
+                            {property.occupants.map((occupant, index) => (
+                                <Avatar
+                                    key={index}
+                                    size="sm"
+                                    radius="xl"
+                                    color={'initials'}
+                                    name={`${occupant.firstName} ${occupant.lastName}`}
+                                >
+                                </Avatar>
+                            ))}
+                            {
+                                property.remainingOccupants > 0 && (
+                                    <Avatar size={'sm'} radius={'xl'}>+{property.remainingOccupants}</Avatar>
+                                )
+                            }
+                        </AvatarGroup>
+                    ) : (
+                        <Text size="sm" c="dimmed" fs={'italic'}>
+                            Няма назначени контакти
+                        </Text>
+                    )}
+                </Stack>
+            </Card>
         </>
     );
 }

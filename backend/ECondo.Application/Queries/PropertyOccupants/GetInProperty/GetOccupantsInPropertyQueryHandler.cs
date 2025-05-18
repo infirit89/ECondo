@@ -1,4 +1,4 @@
-﻿using ECondo.Application.Data.PropertyOccupant;
+﻿using ECondo.Application.Data.Occupant;
 using ECondo.Application.Repositories;
 using ECondo.Domain.Shared;
 using Microsoft.EntityFrameworkCore;

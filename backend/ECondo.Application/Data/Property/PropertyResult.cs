@@ -1,4 +1,4 @@
-﻿namespace ECondo.Application.Data;
+﻿namespace ECondo.Application.Data.Property;
 
 public sealed record PropertyResult(
     Guid Id,

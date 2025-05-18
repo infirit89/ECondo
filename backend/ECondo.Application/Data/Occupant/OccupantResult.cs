@@ -1,6 +1,6 @@
 ﻿using ECondo.Domain.Buildings;
 
-namespace ECondo.Application.Data.PropertyOccupant;
+namespace ECondo.Application.Data.Occupant;
 
 public sealed record OccupantResult(
     Guid Id,

@@ -3,6 +3,7 @@ using ECondo.Application.Commands.Properties.Create;
 using ECondo.Application.Commands.Properties.Delete;
 using ECondo.Application.Commands.Properties.Update;
 using ECondo.Application.Data;
+using ECondo.Application.Data.Property;
 using ECondo.Application.Queries.Properties.GetAll;
 using ECondo.Application.Queries.Properties.GetById;
 using ECondo.Application.Queries.Properties.GetForUser;

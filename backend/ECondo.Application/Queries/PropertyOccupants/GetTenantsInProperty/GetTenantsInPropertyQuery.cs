@@ -1,4 +1,4 @@
-﻿using ECondo.Application.Data.PropertyOccupant;
+﻿using ECondo.Application.Data.Occupant;
 using ECondo.Domain.Shared;
 
 namespace ECondo.Application.Queries.PropertyOccupants.GetTenantsInProperty;
