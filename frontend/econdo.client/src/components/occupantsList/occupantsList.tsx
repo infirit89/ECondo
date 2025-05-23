@@ -55,7 +55,7 @@ export default function OccupantsList({
 
   const handleAddOccupant = () => {
     const modalId = modals.openModal({
-      title: "Add New Occupant",
+      title: "Добавяне на контакт",
       children: (
         <OccupantForm
           propertyId={propertyId}
@@ -69,7 +69,7 @@ export default function OccupantsList({
 
   const handleEditOccupant = (occupant: Occupant) => {
     const modalId = modals.openModal({
-      title: "Edit Occupant",
+      title: "Редактиране на контакт",
       children: (
         <OccupantForm
           occupant={occupant}

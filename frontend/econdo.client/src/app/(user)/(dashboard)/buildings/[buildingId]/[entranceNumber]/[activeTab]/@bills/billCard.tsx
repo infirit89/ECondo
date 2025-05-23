@@ -45,7 +45,7 @@ export default function BillCard({
                         </Text>
                     ) : (
                         <Text size="sm" c="dimmed" fs="italic">
-                            No description
+                            Няма описание
                         </Text>
                     )}
                 </Group>

@@ -16,31 +16,31 @@ const usePaymentIntentQuery = (paymentId: string) => {
 }
 
 export default function CheckoutModal(
-    { opened, onClose, id, amountPaid }: 
-    { opened: boolean, onClose: () => void, id: string, amountPaid: number }) {
+    { opened, onClose, id, amountPaid }:
+        { opened: boolean, onClose: () => void, id: string, amountPaid: number }) {
 
     return (
         <Modal opened={opened} onClose={onClose}>
             {
                 opened && (
-                    <CheckoutData id={id} amountPaid={amountPaid}/>
+                    <CheckoutData id={id} amountPaid={amountPaid} />
                 )
             }
         </Modal>
     )
 }
 
-function CheckoutData({ id, amountPaid }: {id: string, amountPaid: number }) {
-    const {data: clientSecretRes, isLoading} = usePaymentIntentQuery(id);
-        
-    if(isLoading || !clientSecretRes?.ok)
-        return <Loading/>;
+function CheckoutData({ id, amountPaid }: { id: string, amountPaid: number }) {
+    const { data: clientSecretRes, isLoading } = usePaymentIntentQuery(id);
+
+    if (isLoading || !clientSecretRes?.ok)
+        return <Loading />;
 
     const clientSecret = clientSecretRes.value!.clientSecret;
 
     return (
-        <Elements stripe={stripePromise} options={{clientSecret}}>
-            <CheckoutForm amount={amountPaid} clientSecret={clientSecret}/>
+        <Elements stripe={stripePromise} options={{ clientSecret }}>
+            <CheckoutForm amount={amountPaid} clientSecret={clientSecret} />
         </Elements>
     );
 }
@@ -51,9 +51,9 @@ function CheckoutForm({ amount, clientSecret }: { amount: number, clientSecret: 
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-    
+
         if (!stripe || !elements) return;
-    
+
         const result = await stripe.confirmCardPayment(clientSecret, {
             payment_method: {
                 card: elements.getElement(CardElement)!,
@@ -65,26 +65,26 @@ function CheckoutForm({ amount, clientSecret }: { amount: number, clientSecret: 
                 }
             },
         });
-    
+
         if (result.error) {
-          console.error(result.error.message);
-          alert(result.error.message);
+            console.error(result.error.message);
+            alert(result.error.message);
         } else {
-          if (result.paymentIntent?.status === "succeeded") {
-            alert("Payment successful!");
-          }
+            if (result.paymentIntent?.status === "succeeded") {
+                alert("Успешно плащане");
+            }
         }
     };
 
     return (
-    <form onSubmit={handleSubmit}>
-        <Stack>
-        <Text>Amount: ${amount.toFixed(2)}</Text>
-        <CardElement options={{ hidePostalCode: true }} />
-        <Button type="submit" mt="md" disabled={!stripe}>
-            Pay Now
-        </Button>
-        </Stack>
-    </form>
+        <form onSubmit={handleSubmit}>
+            <Stack>
+                <Text>Сума: {amount.toFixed(2)} лв.</Text>
+                <CardElement options={{ hidePostalCode: true }} />
+                <Button type="submit" mt="md" disabled={!stripe}>
+                    Плати
+                </Button>
+            </Stack>
+        </form>
     );
 }

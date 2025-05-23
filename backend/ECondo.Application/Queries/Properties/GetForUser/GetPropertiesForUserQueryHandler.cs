@@ -31,7 +31,7 @@ internal sealed class GetPropertiesForUserQueryHandler
                     p.BuiltArea,
                     p.IdealParts),
                     p.PropertyOccupants.Take(5).Select(po => new BriefOccupantResult(po.FirstName, po.LastName)),
-                    1))
+                    Math.Max(p.PropertyOccupants.Count - 5, 0)))
             .ToPagedListAsync(
                 request.Page, 
                 request.PageSize, 
