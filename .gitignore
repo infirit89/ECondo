@@ -406,3 +406,6 @@ node_modules
 
 # Docker
 .containers/
+
+# Appsetings
+appsettings.json
