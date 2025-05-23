@@ -409,3 +409,6 @@ node_modules
 
 # Appsetings
 appsettings.json
+
+# MacOs
+.DS_Store
