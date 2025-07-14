@@ -1,4 +1,5 @@
-﻿using ECondo.Application.Policies;
+﻿using ECondo.Application.Policies.Bill;
+using ECondo.Application.Policies.EntranceManager;
 using ECondo.Domain.Payments;
 
 namespace ECondo.Application.Commands.Payment.CreateBill;
@@ -13,4 +14,5 @@ public sealed record CreateBillCommand(
     RecurringInterval? RecurringInterval,
     DateTimeOffset StartDate,
     DateTimeOffset? EndDate)
-    : ICommand<Guid>, IRequireEntranceManager;
+    : ICommand<Guid>, ICanAddBill;
+    

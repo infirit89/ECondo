@@ -1,4 +1,6 @@
 ﻿using ECondo.Application.Policies;
+using ECondo.Application.Policies.EntranceManager;
+using ECondo.Application.Policies.Property;
 
 namespace ECondo.Application.Commands.Properties.Create;
 
@@ -9,4 +11,4 @@ public sealed record CreatePropertyCommand(
     string Floor,
     string Number,
     int BuiltArea,
-    int IdealParts) : ICommand, IRequireEntranceManager;
+    int IdealParts) : ICommand, ICanAddProperty;

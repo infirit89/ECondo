@@ -1,4 +1,5 @@
 ﻿using ECondo.Application.Policies;
+using ECondo.Application.Policies.EntranceManager;
 using ECondo.Application.Repositories;
 using ECondo.Application.Services;
 using ECondo.Application.Shared;
@@ -13,7 +14,7 @@ internal sealed class EntranceManagerAuthorizationPipelineBehaviour
     <TRequest, TResponse>
     (IUserContext userContext, IApplicationDbContext dbContext)
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequireEntranceManager
+    where TRequest : IIsEntranceManager
 
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)

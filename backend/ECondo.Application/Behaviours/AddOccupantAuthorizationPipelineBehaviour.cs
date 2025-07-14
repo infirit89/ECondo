@@ -1,4 +1,5 @@
 ﻿using ECondo.Application.Policies;
+using ECondo.Application.Policies.Occupant;
 using ECondo.Application.Repositories;
 using ECondo.Application.Services;
 using ECondo.Application.Shared;

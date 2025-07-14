@@ -1,5 +1,6 @@
 ﻿using ECondo.Application.Data.Occupant;
 using ECondo.Application.Policies;
+using ECondo.Application.Policies.Property;
 
 namespace ECondo.Application.Queries.PropertyOccupants.GetInProperty;
 

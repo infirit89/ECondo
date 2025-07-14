@@ -1,4 +1,4 @@
-﻿namespace ECondo.Application.Policies;
+﻿namespace ECondo.Application.Policies.Building;
 
 public interface ICanEditEntrance
 {
