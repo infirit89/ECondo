@@ -1,4 +1,5 @@
-﻿using ECondo.Domain.Shared;
+﻿using ECondo.Application.Shared;
+using ECondo.Domain.Shared;
 using FluentValidation.Results;
 using FluentValidation;
 using MediatR;
@@ -18,26 +19,10 @@ internal sealed class ValidationPipelineBehavior<TRequest, TResponse>(
         ValidationFailure[] validationFailures = await ValidateAsync(request);
 
         if (validationFailures.Length == 0)
-        {
             return await next();
-        }
 
-        if (typeof(TResponse).IsGenericType &&
-            typeof(TResponse).GetGenericTypeDefinition() == typeof(Result<,>))
-        {
-            Type resultType = typeof(TResponse).GetGenericArguments()[0];
-            var failMethodInfo = typeof(Result<,>)
-                .MakeGenericType(resultType, typeof(Error))
-                .GetMethod(nameof(Result<object, Error>.Fail));
-
-            object? res = failMethodInfo?.Invoke(
-                null,
-                [CreateValidationError(validationFailures)]);
-
-            if(res is not null)
-                return (TResponse)res;
-
-        }
+        if (typeof(TResponse).IsResultType())
+            return Utils.InvokeResultFail<TResponse>([CreateValidationError(validationFailures)]);
 
         throw new ValidationException(validationFailures);
     }

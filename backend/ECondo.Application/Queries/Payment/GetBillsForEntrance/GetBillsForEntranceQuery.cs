@@ -1,5 +1,4 @@
-﻿using ECondo.Application.Policies;
-using ECondo.Application.Policies.EntranceManager;
+﻿using ECondo.Application.Authorization.Policies.EntranceManager;
 using ECondo.Domain.Payments;
 using ECondo.Domain.Shared;
 
@@ -15,4 +14,4 @@ public sealed record BillResult(
 
 public sealed record GetBillsForEntranceQuery(Guid BuildingId, string EntranceNumber, int Page, int PageSize) : 
     IQuery<PagedList<BillResult>>, 
-    IIsEntranceManager;
+    ICanSeeEntrance;

@@ -1,7 +1,13 @@
-﻿using ECondo.Application.Policies;
-using ECondo.Application.Policies.Occupant;
+﻿using ECondo.Application.Authorization.Policies.Occupant;
+using ECondo.Application.Policies;
+using ECondo.Domain.Authorization;
+using ECondo.Domain.Buildings;
 
 namespace ECondo.Application.Commands.PropertyOccupants.Delete;
 
 public sealed record DeletePropertyOccupantCommand(
-    Guid OccupantId) : ICommand, ICanDeleteOccupant;
+    Guid OccupantId,
+    Guid PropertyId) : ICommand, ICanDelete<PropertyOccupant>
+{
+    Guid? IResourcePolicy.ResourceId => PropertyId;
+}

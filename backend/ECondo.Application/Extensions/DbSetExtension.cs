@@ -9,6 +9,7 @@ public static class DbSetExtension
     {
         return userRoles
             .Where(ur => ur.UserId == userId && ur.Role.Name == "admin")
+            .AsNoTracking()
             .AnyAsync(cancellationToken: cancellationToken);
     }
 }

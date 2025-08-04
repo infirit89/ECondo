@@ -1,6 +1,5 @@
-﻿using ECondo.Application.Data.Occupant;
-using ECondo.Application.Policies;
-using ECondo.Application.Policies.Property;
+﻿using ECondo.Application.Authorization.Policies.Property;
+using ECondo.Application.Data.Occupant;
 
 namespace ECondo.Application.Queries.PropertyOccupants.GetInProperty;
 

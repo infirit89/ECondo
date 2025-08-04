@@ -1,14 +1,15 @@
-﻿using ECondo.Application.Policies;
-using ECondo.Application.Policies.EntranceManager;
-using ECondo.Application.Policies.Property;
+﻿using ECondo.Domain.Authorization;
+using ECondo.Domain.Buildings;
 
 namespace ECondo.Application.Commands.Properties.Create;
 
 public sealed record CreatePropertyCommand(
-    Guid BuildingId,
-    string EntranceNumber,
+    Guid EntranceId,
     string PropertyType,
     string Floor,
     string Number,
     int BuiltArea,
-    int IdealParts) : ICommand, ICanAddProperty;
+    int IdealParts) : ICommand, ICanUpdate<Entrance>
+{
+    Guid? IResourcePolicy.ResourceId => EntranceId;
+}

@@ -1,5 +1,5 @@
-﻿using ECondo.Application.Policies;
-using ECondo.Application.Policies.Property;
+﻿using ECondo.Domain.Authorization;
+using ECondo.Domain.Buildings;
 
 namespace ECondo.Application.Commands.Properties.Update;
 
@@ -9,4 +9,7 @@ public sealed record UpdatePropertyCommand(
     string Number,
     string PropertyType,
     int BuiltArea,
-    int IdealParts) : ICommand, ICanEditProperty;
+    int IdealParts) : ICommand, ICanUpdate<Property>
+{
+    Guid? IResourcePolicy.ResourceId => PropertyId;
+}

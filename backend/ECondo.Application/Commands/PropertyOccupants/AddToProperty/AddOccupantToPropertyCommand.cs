@@ -1,5 +1,5 @@
-﻿using ECondo.Application.Policies;
-using ECondo.Application.Policies.Occupant;
+﻿using ECondo.Domain.Authorization;
+using ECondo.Domain.Buildings;
 
 namespace ECondo.Application.Commands.PropertyOccupants.AddToProperty;
 
@@ -11,4 +11,7 @@ public sealed record AddOccupantToPropertyCommand(
     string OccupantType,
     string? Email,
     string ReturnUri)
-    : ICommand, ICanAddOccupant;
+    : ICommand, ICanCreate<Property>
+{
+    Guid? IResourcePolicy.ResourceId => PropertyId;
+}

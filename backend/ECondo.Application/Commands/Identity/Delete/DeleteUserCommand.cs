@@ -1,6 +1,9 @@
-﻿using ECondo.Application.Policies;
-using ECondo.Application.Policies.Admin;
+﻿using ECondo.Domain.Authorization;
+using ECondo.Domain.Users;
 
 namespace ECondo.Application.Commands.Identity.Delete;
 
-public record DeleteUserCommand(string Email) : ICommand, IIsAdmin;
+public record DeleteUserCommand(Guid UserId) : ICommand, ICanDelete<User>
+{
+    Guid? IResourcePolicy.ResourceId => UserId;
+}

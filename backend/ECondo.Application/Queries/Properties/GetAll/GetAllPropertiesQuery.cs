@@ -1,7 +1,4 @@
-﻿using ECondo.Application.Data;
-using ECondo.Application.Data.Property;
-using ECondo.Application.Policies;
-using ECondo.Application.Policies.Admin;
+﻿using ECondo.Application.Data.Property;
 using ECondo.Domain.Shared;
 
 namespace ECondo.Application.Queries.Properties.GetAll;
