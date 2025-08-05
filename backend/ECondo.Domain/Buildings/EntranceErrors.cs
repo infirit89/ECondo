@@ -8,9 +8,9 @@ public static class EntranceErrors
         Error.Conflict("Entrance.AlreadyExists",
             $"The entrance {entranceNumber} for building {buildingId} already exists");
 
-    public static Error InvalidEntrance(Guid buildingId, string entranceNumber) =>
+    public static Error InvalidEntrance(Guid entranceId) =>
         Error.NotFound("Entrance.Invalid",
-            $"The entrance {entranceNumber} for building {buildingId} is invalid");
+            $"The entrance with id = {entranceId} is invalid");
     
     public static Error Forbidden(Guid buildingId, string entranceNumber) =>
         Error.Forbidden("Entrance.Forbidden",

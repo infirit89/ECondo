@@ -15,8 +15,7 @@ internal sealed class CreateBillCommandHandler
         var entrance = await dbContext
             .Entrances
             .FirstAsync(e => 
-                e.BuildingId == request.BuildingId && 
-                e.Number == request.EntranceNumber, 
+                e.Id == request.EntranceId,
                 cancellationToken: cancellationToken);
 
         var bill = new Bill

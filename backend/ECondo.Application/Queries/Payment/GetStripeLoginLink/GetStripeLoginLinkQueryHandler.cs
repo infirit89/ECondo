@@ -15,8 +15,7 @@ internal sealed class GetStripeLoginLinkQueryHandler
         var entrance = await dbContext
             .Entrances
             .FirstAsync(e => 
-                    e.BuildingId == request.BuildingId && 
-                    e.Number == request.EntranceNumber, 
+                    e.Id == request.EntranceId, 
                 cancellationToken: cancellationToken);
         
         if(entrance.StripeAccountId is null)

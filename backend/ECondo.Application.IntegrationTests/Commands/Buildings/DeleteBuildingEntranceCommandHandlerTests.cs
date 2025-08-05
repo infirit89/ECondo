@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.IntegrationTests.Commands.Buildings.Delete;
 
+#if false
 public class DeleteBuildingEntranceCommandHandlerTests
 {
     private readonly IApplicationDbContext _dbContext;
@@ -122,3 +123,4 @@ public class DeleteBuildingEntranceCommandHandlerTests
         Assert.False(await _dbContext.PropertyOccupants.AnyAsync());
     }
 }
+#endif

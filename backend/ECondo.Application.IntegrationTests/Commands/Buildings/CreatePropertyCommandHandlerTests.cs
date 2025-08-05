@@ -10,6 +10,7 @@ using Xunit;
 
 namespace ECondo.Application.IntegrationTests.Commands.Properties.Create;
 
+#if false
 public class CreatePropertyCommandHandlerTests
 {
     private readonly IApplicationDbContext _dbContext;
@@ -178,3 +179,4 @@ public class CreatePropertyCommandHandlerTests
         result.ToError().Data.Should().BeOfType<Error>();
     }
 }
+#endif

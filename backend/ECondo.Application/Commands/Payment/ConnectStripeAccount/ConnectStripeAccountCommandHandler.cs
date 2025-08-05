@@ -16,8 +16,7 @@ internal sealed class ConnectStripeAccountCommandHandler
         var entrance = await dbContext
             .Entrances
             .FirstAsync(e => 
-                e.BuildingId == request.BuildingId && 
-                e.Number == request.EntranceNumber, 
+                e.Id == request.EntranceId,
                 cancellationToken: cancellationToken);
 
         string accountId = await stripeService.CreateExpressAccount();
