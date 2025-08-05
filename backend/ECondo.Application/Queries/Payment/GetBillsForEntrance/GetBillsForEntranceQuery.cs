@@ -1,4 +1,5 @@
-﻿using ECondo.Application.Authorization.Policies.EntranceManager;
+﻿using ECondo.Domain.Authorization;
+using ECondo.Domain.Buildings;
 using ECondo.Domain.Payments;
 using ECondo.Domain.Shared;
 
@@ -12,6 +13,9 @@ public sealed record BillResult(
     DateTimeOffset StartDate,
     DateTimeOffset? EndDate);
 
-public sealed record GetBillsForEntranceQuery(Guid BuildingId, string EntranceNumber, int Page, int PageSize) : 
-    IQuery<PagedList<BillResult>>, 
-    ICanSeeEntrance;
+public sealed record GetBillsForEntranceQuery(
+    Guid EntranceId, int Page, int PageSize) :
+    IQuery<PagedList<BillResult>>, ICanRead<Entrance>
+{
+    Guid? IResourcePolicy.ResourceId => EntranceId;
+}

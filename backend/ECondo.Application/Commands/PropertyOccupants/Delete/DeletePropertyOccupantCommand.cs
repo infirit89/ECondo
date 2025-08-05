@@ -1,6 +1,4 @@
-﻿using ECondo.Application.Authorization.Policies.Occupant;
-using ECondo.Application.Policies;
-using ECondo.Domain.Authorization;
+﻿using ECondo.Domain.Authorization;
 using ECondo.Domain.Buildings;
 
 namespace ECondo.Application.Commands.PropertyOccupants.Delete;
