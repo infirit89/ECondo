@@ -20,35 +20,30 @@ public sealed class OccupantAuthorizationHandler
         if (!resourceId.HasValue)
             return AccessLevel.None;
 
-        var occupant = await dbContext
-            .PropertyOccupants
-            .Select(po => new
+        var authData = await dbContext
+            .Properties
+            .AsNoTracking()
+            .Where(p => p.Id == resourceId)
+            .Select(p => new
             {
-                UserId = po.UserId,
-                PropertyEntranceManagerId = po.Property.Entrance.ManagerId,
-                PropertyId = po.PropertyId,
+                IsManager = p.Entrance.ManagerId == userId,
+                IsOwner = p.PropertyOccupants.Any(po =>
+                    po.UserId == userId && po.OccupantType.Name == OccupantType.OwnerType),
+                IsOccupant = p.PropertyOccupants.Any(po =>
+                    po.UserId == userId)
             })
-            .FirstOrDefaultAsync
-                (po => 
-                        po.PropertyId == resourceId,
-                    cancellationToken: cancellationToken);
-
-        if (occupant is null)
+            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        
+        if (authData is null)
             return AccessLevel.None;
 
-        if (occupant.PropertyEntranceManagerId == userId)
+        if (authData.IsManager)
+            return AccessLevel.All;
+        
+        if (authData.IsOwner)
             return AccessLevel.All;
 
-        var isPropertyOwner = await dbContext.PropertyOccupants
-            .Where(po => po.UserId == userId &&
-                         po.PropertyId == occupant.PropertyId &&
-                         po.OccupantType.Name == OccupantType.OwnerType)
-            .AnyAsync(cancellationToken);
-
-        if (isPropertyOwner)
-            return AccessLevel.All;
-
-        return occupant.UserId == userId ? AccessLevel.Read : AccessLevel.None;
+        return authData.IsOccupant ? AccessLevel.Read : AccessLevel.None;
     }
 
     public async Task<IQueryable<PropertyOccupant>> ApplyDataFilterAsync(IQueryable<PropertyOccupant> query, Guid userId, CancellationToken cancellationToken = default)

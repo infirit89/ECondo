@@ -20,25 +20,24 @@ public sealed class BillAuthorizationHandler
         if (!resourceId.HasValue)
             return AccessLevel.None;
 
-        var isManager = await dbContext
+        var authData = await dbContext
             .Bills
             .AsNoTracking()
-            .Where(e =>
-                    e.Id == resourceId &&
-                    e.Entrance.ManagerId == userId)
-            .AnyAsync(cancellationToken: cancellationToken);
+            .Where(e => e.Id == resourceId)
+            .Select(b => new
+            {
+                IsManager = b.Entrance.ManagerId == userId,
+                IsOccupant = b.Entrance.Properties.Any(p => p.PropertyOccupants.Any(po => po.UserId == userId))
+            })
+            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
-        if (isManager)
+        if (authData is null)
+            return AccessLevel.None;
+        
+        if (authData.IsManager)
             return AccessLevel.All;
 
-        var hasPropertyInEntrance = await dbContext
-            .PropertyOccupants
-            .AsNoTracking()
-            .Where(po =>
-                    po.UserId == userId && po.Property.Entrance.Bills.Any(b => b.Id == resourceId))
-            .AnyAsync(cancellationToken: cancellationToken);
-
-        return hasPropertyInEntrance ? AccessLevel.Read : AccessLevel.None;
+        return authData.IsOccupant ? AccessLevel.Read : AccessLevel.None;
     }
 
     public async Task<IQueryable<Bill>> ApplyDataFilterAsync(IQueryable<Bill> query, Guid userId, CancellationToken cancellationToken = default)

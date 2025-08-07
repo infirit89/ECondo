@@ -19,25 +19,25 @@ public sealed class PropertyAuthorizationHandler
 
         if (!resourceId.HasValue)
             return AccessLevel.Read;
-        
-        var isManager = await dbContext
+
+        var authData = await dbContext
             .Properties
+            .Where(p => p.Id == resourceId)
+            .Select(p => new
+            {
+                IsManager = p.Entrance.ManagerId == userId,
+                IsOccupant = p.PropertyOccupants.Any(po => po.UserId == userId)
+            })
             .AsNoTracking()
-            .AnyAsync(e =>
-                    e.Id == resourceId &&
-                    e.Entrance.ManagerId == userId,
-                cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
-        if (isManager)
+        if (authData is null)
+            return AccessLevel.None;
+        
+        if (authData.IsManager)
             return AccessLevel.All;
-
-        var isOccupant = await dbContext
-            .PropertyOccupants
-            .AsNoTracking()
-            .Where(po => po.UserId == userId && po.PropertyId == resourceId)
-            .AnyAsync(cancellationToken);
-
-        return isOccupant ? AccessLevel.Read : AccessLevel.None;
+        
+        return authData.IsOccupant ? AccessLevel.Read : AccessLevel.None;
     }
 
     public async Task<IQueryable<Property>> ApplyDataFilterAsync(IQueryable<Property> query, Guid userId, CancellationToken cancellationToken = default)
