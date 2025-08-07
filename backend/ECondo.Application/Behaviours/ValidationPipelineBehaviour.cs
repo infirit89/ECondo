@@ -1,5 +1,4 @@
-﻿using ECondo.Application.Shared;
-using ECondo.Domain.Shared;
+﻿using ECondo.SharedKernel.Extensions;
 using ECondo.SharedKernel.Result;
 using FluentValidation.Results;
 using FluentValidation;
@@ -23,7 +22,7 @@ internal sealed class ValidationPipelineBehavior<TRequest, TResponse>(
             return await next();
 
         if (typeof(TResponse).IsResultType())
-            return Utils.InvokeResultFail<TResponse>([CreateValidationError(validationFailures)]);
+            return ResultHelper.InvokeResultFail<TResponse>([CreateValidationError(validationFailures)]);
 
         throw new ValidationException(validationFailures);
     }

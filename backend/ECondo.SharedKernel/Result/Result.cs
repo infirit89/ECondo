@@ -26,4 +26,21 @@ public static class ResultHelper
 
     public static Result<TSuccess, TError>.Error ToError<TSuccess, TError>(this Result<TSuccess, TError> result)
         => (Result<TSuccess, TError>.Error)result;
+    
+    public static T InvokeResultFail<T>(object?[]? parameters)
+    {
+        Type resultType = typeof(T).GetGenericArguments()[0];
+        var failMethodInfo = typeof(Result<,>)
+            .MakeGenericType(resultType, typeof(Error))
+            .GetMethod(nameof(Result<object, Error>.Fail));
+
+        object? res = failMethodInfo?.Invoke(
+            null,
+            parameters);
+
+        if (res is not null)
+            return (T)res;
+
+        return default!;
+    }
 }

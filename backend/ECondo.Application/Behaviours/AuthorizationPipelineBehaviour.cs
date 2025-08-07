@@ -1,9 +1,8 @@
 using System.Reflection;
 using ECondo.Application.Services;
-using ECondo.Application.Shared;
 using ECondo.Domain.Authorization;
 using ECondo.Domain.Exceptions;
-using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Extensions;
 using ECondo.SharedKernel.Result;
 using MediatR;
 
@@ -27,7 +26,7 @@ internal sealed class AuthorizationPipelineBehaviour
             return await next();
 
         if(typeof(TResponse).IsResultType())
-            return Utils.InvokeResultFail<TResponse>([CreateForbiddenError()]);
+            return ResultHelper.InvokeResultFail<TResponse>([CreateForbiddenError()]);
 
         throw new ForbiddenException();
     }
