@@ -5,6 +5,7 @@ using ECondo.Domain.Profiles;
 using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
 using ECondo.Infrastructure.Contexts;
+using ECondo.SharedKernel.Result;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;

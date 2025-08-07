@@ -5,6 +5,7 @@ using ECondo.Domain;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Shared;
 using ECondo.Infrastructure.Contexts;
+using ECondo.SharedKernel.Result;
 using FluentAssertions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

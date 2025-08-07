@@ -1,4 +1,4 @@
-﻿namespace ECondo.Domain.Shared;
+﻿namespace ECondo.SharedKernel.Result;
 
 public sealed record ValidationError(Error[] Errors) 
     : Error("Validation.General",

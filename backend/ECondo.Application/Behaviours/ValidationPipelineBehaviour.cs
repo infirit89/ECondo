@@ -1,5 +1,6 @@
 ﻿using ECondo.Application.Shared;
 using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Result;
 using FluentValidation.Results;
 using FluentValidation;
 using MediatR;

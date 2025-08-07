@@ -42,7 +42,7 @@ public sealed class OccupantAuthorizationHandler
         var isPropertyOwner = await dbContext.PropertyOccupants
             .Where(po => po.UserId == userId &&
                          po.PropertyId == occupant.PropertyId &&
-                         po.OccupantType.Name == "Наемател")
+                         po.OccupantType.Name == OccupantType.OwnerType)
             .AnyAsync(cancellationToken);
 
         if (isPropertyOwner)
@@ -60,7 +60,8 @@ public sealed class OccupantAuthorizationHandler
 
         return query.Where(po =>
             po.Property.Entrance.ManagerId == userId || // User manages the entrance
-            po.Property.PropertyOccupants.Any(po2 => po2.UserId == userId && po2.OccupantType.Name == "Наемател") || // User owns the property
+            po.Property.PropertyOccupants.Any(po2 => 
+                po2.UserId == userId && po2.OccupantType.Name == OccupantType.OwnerType) || // User owns the property
             po.UserId == userId // User's own occupancy record
         );
     }

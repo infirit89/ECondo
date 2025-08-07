@@ -3,6 +3,7 @@ using ECondo.Application.Services;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Provinces;
 using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Commands.Buildings.RegisterEntrance;

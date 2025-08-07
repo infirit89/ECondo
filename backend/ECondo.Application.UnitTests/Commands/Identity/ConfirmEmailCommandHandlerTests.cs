@@ -1,6 +1,7 @@
 using ECondo.Application.Commands.Identity.ConfirmEmail;
 using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
+using ECondo.SharedKernel.Result;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using NSubstitute;

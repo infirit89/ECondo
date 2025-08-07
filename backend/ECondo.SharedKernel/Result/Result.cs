@@ -1,4 +1,4 @@
-﻿namespace ECondo.Domain.Shared;
+﻿namespace ECondo.SharedKernel.Result;
 
 public abstract record Result<TSuccess, TError>
 {

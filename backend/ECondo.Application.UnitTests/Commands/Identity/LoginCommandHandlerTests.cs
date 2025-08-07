@@ -4,6 +4,7 @@ using ECondo.Application.Extensions;
 using ECondo.Application.Data;
 using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
+using ECondo.SharedKernel.Result;
 using FluentAssertions;
 using FluentAssertions.Collections;
 using Microsoft.AspNetCore.Identity;

@@ -1,4 +1,5 @@
 ﻿using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Result;
 
 namespace ECondo.Domain.Users;
 public static class UserErrors

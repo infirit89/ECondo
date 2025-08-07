@@ -2,6 +2,7 @@
 using ECondo.Application.Services;
 using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
+using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Queries.Identity.IsInRole;

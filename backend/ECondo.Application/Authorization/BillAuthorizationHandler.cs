@@ -19,7 +19,7 @@ public sealed class BillAuthorizationHandler
 
         if (!resourceId.HasValue)
             return AccessLevel.None;
-        
+
         var isManager = await dbContext
             .Bills
             .AsNoTracking()

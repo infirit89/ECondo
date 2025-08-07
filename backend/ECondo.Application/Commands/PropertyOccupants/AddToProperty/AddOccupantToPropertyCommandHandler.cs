@@ -2,6 +2,7 @@
 using ECondo.Application.Repositories;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Result;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

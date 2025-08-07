@@ -1,6 +1,7 @@
 ﻿using ECondo.Domain.Authorization;
 using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
+using ECondo.SharedKernel.Collections;
 
 namespace ECondo.Application.Queries.Profiles.GetAll;
 

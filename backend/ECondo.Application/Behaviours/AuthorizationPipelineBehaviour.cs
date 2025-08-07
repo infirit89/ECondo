@@ -4,6 +4,7 @@ using ECondo.Application.Shared;
 using ECondo.Domain.Authorization;
 using ECondo.Domain.Exceptions;
 using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Result;
 using MediatR;
 
 namespace ECondo.Application.Behaviours;

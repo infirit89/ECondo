@@ -1,5 +1,6 @@
 ﻿using ECondo.Application.Repositories;
 using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Commands.Buildings.Delete;
@@ -17,7 +18,7 @@ internal sealed class DeleteBuildingEntranceCommandHandler
             .Include(e => e.Properties)
             .ThenInclude(e => e.PropertyOccupants)
             .FirstAsync(e => 
-                e.BuildingId == request.BuildingId && e.Number == request.EntranceNumber, 
+                e.Id == request.EntranceId, 
                 cancellationToken: cancellationToken);
 
         foreach (var property in entrance.Properties)

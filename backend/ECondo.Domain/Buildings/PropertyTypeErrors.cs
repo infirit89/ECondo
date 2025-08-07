@@ -1,6 +1,6 @@
-﻿using ECondo.Domain.Shared;
+﻿using ECondo.SharedKernel.Result;
 
-namespace ECondo.Domain;
+namespace ECondo.Domain.Buildings;
 
 public static class PropertyTypeErrors
 {

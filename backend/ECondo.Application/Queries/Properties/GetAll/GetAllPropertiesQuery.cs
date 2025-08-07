@@ -2,6 +2,7 @@
 using ECondo.Domain.Authorization;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Collections;
 
 namespace ECondo.Application.Queries.Properties.GetAll;
 

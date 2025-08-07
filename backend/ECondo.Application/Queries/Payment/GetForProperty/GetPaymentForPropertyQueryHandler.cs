@@ -3,6 +3,8 @@ using ECondo.Application.Queries.Payment.GetById;
 using ECondo.Application.Repositories;
 using ECondo.Application.Services;
 using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Collections;
+using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Queries.Payment.GetForProperty;

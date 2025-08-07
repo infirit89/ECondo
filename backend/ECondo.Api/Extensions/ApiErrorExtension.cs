@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using System.Diagnostics;
 using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Result;
 
 namespace ECondo.Api.Extensions;
 public static class ApiErrorExtension

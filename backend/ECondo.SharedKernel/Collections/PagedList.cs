@@ -1,4 +1,4 @@
-﻿namespace ECondo.Domain.Shared;
+﻿namespace ECondo.SharedKernel.Collections;
 
 public class PagedList<T>(IEnumerable<T> items, int totalItemCount, int pageNumber, int pageSize)
     : List<T>(items)
