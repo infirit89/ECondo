@@ -13,10 +13,15 @@ public class TestAsyncQueryProvider<TEntity> : IAsyncQueryProvider
     }
 
     public IQueryable CreateQuery(Expression expression)
-        => new TestQueryable<TEntity>(_inner.CreateQuery(expression).Cast<TEntity>());
+    {
+        var createQueryMethod = _inner.GetType().GetMethod("CreateQuery", new[] { typeof(Expression) });
+        return (IQueryable)createQueryMethod!.Invoke(_inner, new object[] { expression })!;
+    }
 
     public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
-        => new TestQueryable<TElement>(_inner.CreateQuery<TElement>(expression));
+    {
+        return new TestAsyncEnumerable<TElement>(_inner.CreateQuery<TElement>(expression));
+    }
 
     public object? Execute(Expression expression)
         => _inner.Execute(expression);
@@ -48,5 +53,42 @@ public class TestAsyncQueryProvider<TEntity> : IAsyncQueryProvider
         }
 
         return (TResult)_inner.Execute(expression)!;
+    }
+}
+
+public class TestAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
+{
+    public TestAsyncEnumerable(IEnumerable<T> enumerable) : base(enumerable) { }
+
+    public TestAsyncEnumerable(Expression expression) : base(expression) { }
+
+    public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+    {
+        return new TestAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
+    }
+
+    IQueryProvider IQueryable.Provider => new TestAsyncQueryProvider<T>(this);
+}
+
+public class TestAsyncEnumerator<T> : IAsyncEnumerator<T>
+{
+    private readonly IEnumerator<T> _inner;
+
+    public TestAsyncEnumerator(IEnumerator<T> inner)
+    {
+        _inner = inner;
+    }
+
+    public T Current => _inner.Current;
+
+    public ValueTask<bool> MoveNextAsync()
+    {
+        return ValueTask.FromResult(_inner.MoveNext());
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        _inner.Dispose();
+        return ValueTask.CompletedTask;
     }
 }
