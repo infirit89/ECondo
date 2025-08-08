@@ -27,10 +27,12 @@ public sealed class OccupantAuthorizationHandler
             .Select(p => new
             {
                 IsManager = p.Entrance.ManagerId == userId,
-                IsOwner = p.PropertyOccupants.Any(po =>
-                    po.UserId == userId && po.OccupantType.Name == OccupantType.OwnerType),
-                IsOccupant = p.PropertyOccupants.Any(po =>
-                    po.UserId == userId)
+                OccupantData = p.PropertyOccupants
+                    .Select(po => new
+                    {
+                        TypeName = po.OccupantType.Name,
+                    })
+                    .FirstOrDefault()
             })
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
         
@@ -39,11 +41,14 @@ public sealed class OccupantAuthorizationHandler
 
         if (authData.IsManager)
             return AccessLevel.All;
+
+        if (authData.OccupantData is null)
+            return AccessLevel.None;
         
-        if (authData.IsOwner)
+        if (authData.OccupantData.TypeName == OccupantType.OwnerType)
             return AccessLevel.All;
 
-        return authData.IsOccupant ? AccessLevel.Read : AccessLevel.None;
+        return AccessLevel.Read;
     }
 
     public async Task<IQueryable<PropertyOccupant>> ApplyDataFilterAsync(IQueryable<PropertyOccupant> query, Guid userId, CancellationToken cancellationToken = default)

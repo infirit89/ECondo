@@ -14,7 +14,9 @@ internal sealed class AuthorizationPipelineBehaviour
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IResourcePolicy
 {
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, 
+        RequestHandlerDelegate<TResponse> next, 
+        CancellationToken cancellationToken)
     {
         var canPerformActionMethod = GetCanPerformActionMethod(request);
         var canPerformAction = (Task<bool>)canPerformActionMethod
@@ -26,13 +28,15 @@ internal sealed class AuthorizationPipelineBehaviour
             return await next();
 
         if(typeof(TResponse).IsResultType())
-            return ResultHelper.InvokeResultFail<TResponse>([CreateForbiddenError()]);
+            return ResultHelper.InvokeResultFail<TResponse>(
+                [CreateForbiddenError()]);
 
         throw new ForbiddenException();
     }
 
     private static Error CreateForbiddenError() =>
-        Error.Forbidden("Resource.Forbidden", "The user does not have the needed permission");
+        Error.Forbidden("Resource.Forbidden", 
+            "The user does not have the needed permission");
 
     private static MethodInfo GetCanPerformActionMethod(TRequest request) =>
         typeof(IAuthorizationService)

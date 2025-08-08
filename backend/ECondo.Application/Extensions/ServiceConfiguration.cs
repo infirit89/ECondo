@@ -19,7 +19,7 @@ public static class ServiceConfiguration
         });
 
         services.AddValidatorsFromAssembly(currentAssembly, includeInternalTypes: true);
-
+        services.AddAuthorizersFromAssembly(currentAssembly);
         return services;
     }
 }

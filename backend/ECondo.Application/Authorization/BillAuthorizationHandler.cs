@@ -52,4 +52,3 @@ public sealed class BillAuthorizationHandler
                 b.Entrance.Properties.Any(p => p.PropertyOccupants.Any(po => po.UserId == userId)));
     }
 }
-

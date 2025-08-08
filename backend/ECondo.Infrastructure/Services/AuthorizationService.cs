@@ -26,8 +26,15 @@ public sealed class AuthorizationService
         CancellationToken cancellationToken = default) 
         where T : class
     {
-        var handler = GetHandler<T>();
-        return handler.GetAccessLevelAsync(userId, resourceId, cancellationToken);
+        try
+        {
+            var handler = GetHandler<T>();
+            return handler.GetAccessLevelAsync(userId, resourceId, cancellationToken);
+        }
+        catch (InvalidOperationException)
+        {
+            return Task.FromResult(AccessLevel.None);
+        }
     }
 
     public Task<IQueryable<T>> ApplyDataFilterAsync<T>(

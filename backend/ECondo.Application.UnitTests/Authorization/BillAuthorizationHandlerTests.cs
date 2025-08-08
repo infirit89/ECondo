@@ -101,26 +101,31 @@ public class BillAuthorizationHandlerTests
         var billId = Guid.NewGuid();
         var managerId = Guid.NewGuid();
         
+        
         var userRoles = new List<UserRole>().AsQueryable();
-        var bills = new List<Bill>
-        {
-            new() 
-            { 
-                Id = billId, 
-                Entrance = new Entrance { ManagerId = managerId }
-            }
-        }.AsQueryable();
         var propertyOccupants = new List<PropertyOccupant>
         {
             new() 
             { 
                 UserId = userId,
-                Property = new Property
+            }
+        }.AsQueryable();
+        
+        var bills = new List<Bill>
+        {
+            new() 
+            { 
+                Id = billId, 
+                Entrance = new Entrance
                 {
-                    Entrance = new Entrance
-                    {
-                        Bills = new HashSet<Bill> { new() { Id = billId } }
-                    }
+                    ManagerId = managerId,
+                    Properties =
+                    [
+                        new()
+                        {
+                            PropertyOccupants = propertyOccupants.ToHashSet()
+                        }
+                    ]
                 }
             }
         }.AsQueryable();

@@ -4,20 +4,19 @@ using ECondo.Application.UnitTests.Helper;
 using ECondo.Domain.Authorization;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Users;
-using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 
 namespace ECondo.Application.UnitTests.Authorization;
 
-public class PropertyAuthorizationHandlerTests
+public class OccupantAuthorizationHandlerUnitTests
 {
     private readonly IApplicationDbContext _mockDbContext;
-    private readonly PropertyAuthorizationHandler _handler;
+    private readonly OccupantAuthorizationHandler _handler;
 
-    public PropertyAuthorizationHandlerTests()
+    public OccupantAuthorizationHandlerUnitTests()
     {
         _mockDbContext = Substitute.For<IApplicationDbContext>();
-        _handler = new PropertyAuthorizationHandler(_mockDbContext);
+        _handler = new OccupantAuthorizationHandler(_mockDbContext);
     }
 
     [Fact]
@@ -42,9 +41,9 @@ public class PropertyAuthorizationHandlerTests
         // Assert
         Assert.Equal(AccessLevel.All, result);
     }
-
+    
     [Fact]
-    public async Task GetAccessLevelAsync_NoResourceId_ReturnsReadAccess()
+    public async Task GetAccessLevelAsync_NoResourceId_ReturnsNoneAccess()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -58,9 +57,9 @@ public class PropertyAuthorizationHandlerTests
         var result = await _handler.GetAccessLevelAsync(userId, null);
 
         // Assert
-        Assert.Equal(AccessLevel.Read, result);
+        Assert.Equal(AccessLevel.None, result);
     }
-
+    
     [Fact]
     public async Task GetAccessLevelAsync_EntranceManager_ReturnsAllAccess()
     {
@@ -93,7 +92,7 @@ public class PropertyAuthorizationHandlerTests
         // Assert
         Assert.Equal(AccessLevel.All, result);
     }
-
+    
     [Fact]
     public async Task GetAccessLevelAsync_PropertyOccupant_ReturnsReadAccess()
     {
@@ -105,7 +104,12 @@ public class PropertyAuthorizationHandlerTests
         var userRoles = new List<UserRole>().AsQueryable();
         var propertyOccupants = new List<PropertyOccupant>
         {
-            new() { UserId = userId, PropertyId = propertyId }
+            new()
+            {
+                UserId = userId, 
+                PropertyId = propertyId,
+                OccupantType = new OccupantType()
+            }
         }.AsQueryable();
         var properties = new List<Property>
         {
@@ -131,7 +135,53 @@ public class PropertyAuthorizationHandlerTests
         // Assert
         Assert.Equal(AccessLevel.Read, result);
     }
+    
+    [Fact]
+    public async Task GetAccessLevelAsync_PropertyOwner_ReturnsAllAccess()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var propertyId = Guid.NewGuid();
+        var managerId = Guid.NewGuid();
 
+        var userRoles = new List<UserRole>().AsQueryable();
+        var propertyOccupants = new List<PropertyOccupant>
+        {
+            new()
+            {
+                UserId = userId, 
+                PropertyId = propertyId,
+                OccupantType = new OccupantType
+                {
+                    Name = OccupantType.OwnerType
+                }
+            }
+        }.AsQueryable();
+        var properties = new List<Property>
+        {
+            new() 
+            { 
+                Id = propertyId, 
+                Entrance = new Entrance { ManagerId = managerId },
+                PropertyOccupants = propertyOccupants.ToHashSet(),
+            }
+        }.AsQueryable();
+
+        var mockUserRoleSet = DbSetMockHelper.CreateMockDbSet(userRoles);
+        var mockPropertySet = DbSetMockHelper.CreateMockDbSet(properties);
+        var mockPropertyOccupantSet = DbSetMockHelper.CreateMockDbSet(propertyOccupants);
+        
+        _mockDbContext.UserRoles.Returns(mockUserRoleSet);
+        _mockDbContext.Properties.Returns(mockPropertySet);
+        _mockDbContext.PropertyOccupants.Returns(mockPropertyOccupantSet);
+
+        // Act
+        var result = await _handler.GetAccessLevelAsync(userId, propertyId);
+
+        // Assert
+        Assert.Equal(AccessLevel.All, result);
+    }
+    
     [Fact]
     public async Task GetAccessLevelAsync_NotManagerNotOccupant_ReturnsNoAccess()
     {
