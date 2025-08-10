@@ -1,13 +1,10 @@
 using ECondo.Application.Commands.Identity.Delete;
 using ECondo.Application.Repositories;
 using ECondo.Application.UnitTests.Helper;
-using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
 using ECondo.SharedKernel.Result;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using Xunit;
 
 namespace ECondo.Application.UnitTests.Commands.Identity.Delete;
 

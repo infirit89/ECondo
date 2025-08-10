@@ -4,7 +4,7 @@ using ECondo.Application.UnitTests.Helper;
 using ECondo.Domain.Authorization;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Users;
-using Microsoft.EntityFrameworkCore;
+using FluentAssertions;
 using NSubstitute;
 
 namespace ECondo.Application.UnitTests.Authorization;
@@ -40,7 +40,7 @@ public class PropertyAuthorizationHandlerTests
         var result = await _handler.GetAccessLevelAsync(userId, propertyId);
 
         // Assert
-        Assert.Equal(AccessLevel.All, result);
+        result.Should().Be(AccessLevel.All);
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public class PropertyAuthorizationHandlerTests
         var result = await _handler.GetAccessLevelAsync(userId, null);
 
         // Assert
-        Assert.Equal(AccessLevel.Read, result);
+        result.Should().Be(AccessLevel.Read);
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class PropertyAuthorizationHandlerTests
         var result = await _handler.GetAccessLevelAsync(userId, propertyId);
 
         // Assert
-        Assert.Equal(AccessLevel.All, result);
+        result.Should().Be(AccessLevel.All);
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public class PropertyAuthorizationHandlerTests
         var result = await _handler.GetAccessLevelAsync(userId, propertyId);
 
         // Assert
-        Assert.Equal(AccessLevel.Read, result);
+        result.Should().Be(AccessLevel.Read);
     }
 
     [Fact]
@@ -163,6 +163,6 @@ public class PropertyAuthorizationHandlerTests
         var result = await _handler.GetAccessLevelAsync(userId, propertyId);
 
         // Assert
-        Assert.Equal(AccessLevel.None, result);
+        result.Should().Be(AccessLevel.None);
     }
 }

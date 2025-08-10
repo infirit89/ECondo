@@ -1,7 +1,7 @@
 using ECondo.Application.Repositories;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Provinces;
-using ECondo.Infrastructure.Shared;
+using ECondo.Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

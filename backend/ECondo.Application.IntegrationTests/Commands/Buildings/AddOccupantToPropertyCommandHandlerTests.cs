@@ -1,23 +1,18 @@
 using ECondo.Application.Commands.PropertyOccupants.AddToProperty;
-using ECondo.Application.Events.PropertyOccupant;
 using ECondo.Application.Repositories;
-using ECondo.Domain;
 using ECondo.Domain.Buildings;
-using ECondo.Domain.Shared;
 using ECondo.Infrastructure.Contexts;
 using ECondo.SharedKernel.Result;
 using FluentAssertions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using Xunit;
 
 namespace ECondo.Application.IntegrationTests.Commands.PropertyOccupants.AddToProperty;
 
 public class AddOccupantToPropertyCommandHandlerTests
 {
     private readonly IApplicationDbContext _dbContext;
-    private readonly IPublisher _publisher;
     private readonly AddOccupantToPropertyCommandHandler _handler;
 
     public AddOccupantToPropertyCommandHandlerTests()
@@ -27,8 +22,8 @@ public class AddOccupantToPropertyCommandHandlerTests
             .Options;
 
         _dbContext = new ECondoDbContext(options);
-        _publisher = Substitute.For<IPublisher>();
-        _handler = new AddOccupantToPropertyCommandHandler(_dbContext, _publisher);
+        var publisher = Substitute.For<IPublisher>();
+        _handler = new AddOccupantToPropertyCommandHandler(_dbContext, publisher);
     }
 
     [Fact]

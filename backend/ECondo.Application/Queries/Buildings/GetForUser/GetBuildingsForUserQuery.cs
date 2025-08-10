@@ -1,5 +1,4 @@
 ﻿using ECondo.Application.Data;
-using ECondo.Domain.Shared;
 using ECondo.SharedKernel.Collections;
 
 namespace ECondo.Application.Queries.Buildings.GetForUser;

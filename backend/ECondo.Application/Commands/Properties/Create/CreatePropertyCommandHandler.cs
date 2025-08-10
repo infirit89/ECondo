@@ -1,7 +1,5 @@
 ﻿using ECondo.Application.Repositories;
-using ECondo.Domain;
 using ECondo.Domain.Buildings;
-using ECondo.Domain.Shared;
 using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 

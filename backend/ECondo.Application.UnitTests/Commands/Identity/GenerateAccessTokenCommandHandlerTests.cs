@@ -6,7 +6,6 @@ using ECondo.SharedKernel.Result;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using NSubstitute;
-using Xunit;
 
 namespace ECondo.Application.UnitTests.Commands.Identity.GenerateAccessToken;
 

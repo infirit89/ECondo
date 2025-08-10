@@ -49,7 +49,6 @@ internal static class UserSeederConfiguration
                         if (!userRoleRes.Succeeded)
                         {
                             logger.LogIdentityErrors(userRoleRes.Errors);
-                            continue;
                         }
                         
                     }

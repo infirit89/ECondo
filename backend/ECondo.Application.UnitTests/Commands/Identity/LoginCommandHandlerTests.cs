@@ -6,17 +6,14 @@ using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
 using ECondo.SharedKernel.Result;
 using FluentAssertions;
-using FluentAssertions.Collections;
 using Microsoft.AspNetCore.Identity;
 using NSubstitute;
-using Xunit;
 
 namespace ECondo.Application.UnitTests.Commands.Identity.Login;
 
 public class LoginCommandHandlerTests
 {
     private readonly UserManager<User> _userManager;
-    private readonly IdentityErrorDescriber _errorDescriber;
     private readonly IAuthTokenService _authTokenService;
     private readonly LoginCommandHandler _handler;
 
@@ -25,9 +22,9 @@ public class LoginCommandHandlerTests
         _userManager = Substitute.For<UserManager<User>>(
             Substitute.For<IUserStore<User>>(),
             null, null, null, null, null, null, null, null);
-        _errorDescriber = new IdentityErrorDescriber();
+        var errorDescriber = new IdentityErrorDescriber();
         _authTokenService = Substitute.For<IAuthTokenService>();
-        _handler = new LoginCommandHandler(_userManager, _errorDescriber, _authTokenService);
+        _handler = new LoginCommandHandler(_userManager, errorDescriber, _authTokenService);
     }
 
     [Fact]

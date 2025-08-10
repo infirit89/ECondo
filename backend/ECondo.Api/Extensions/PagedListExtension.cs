@@ -1,5 +1,4 @@
-﻿using ECondo.Domain.Shared;
-using ECondo.SharedKernel.Collections;
+﻿using ECondo.SharedKernel.Collections;
 
 namespace ECondo.Api.Extensions;
 

@@ -1,5 +1,4 @@
-﻿using ECondo.Domain.Shared;
-using ECondo.SharedKernel.Result;
+﻿using ECondo.SharedKernel.Result;
 using Microsoft.AspNetCore.Identity;
 
 namespace ECondo.Application.Extensions;

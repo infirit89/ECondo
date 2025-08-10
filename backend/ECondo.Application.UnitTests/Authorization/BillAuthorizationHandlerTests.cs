@@ -5,7 +5,7 @@ using ECondo.Domain.Authorization;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Payments;
 using ECondo.Domain.Users;
-using Microsoft.EntityFrameworkCore;
+using FluentAssertions;
 using NSubstitute;
 
 namespace ECondo.Application.UnitTests.Authorization;
@@ -40,7 +40,9 @@ public class BillAuthorizationHandlerTests
         var result = await _handler.GetAccessLevelAsync(userId, billId);
 
         // Assert
-        Assert.Equal(AccessLevel.All, result);
+        result
+            .Should()
+            .Be(AccessLevel.All);
     }
 
     [Fact]
@@ -57,7 +59,9 @@ public class BillAuthorizationHandlerTests
         var result = await _handler.GetAccessLevelAsync(userId, null);
 
         // Assert
-        Assert.Equal(AccessLevel.None, result);
+        result
+            .Should()
+            .Be(AccessLevel.None);
     }
 
     [Fact]
@@ -73,7 +77,11 @@ public class BillAuthorizationHandlerTests
             new() 
             { 
                 Id = billId, 
-                Entrance = new Entrance { ManagerId = userId }
+                Entrance = new Entrance
+                {
+                    ManagerId = userId,
+                    Number = "1",
+                }
             }
         }.AsQueryable();
         var propertyOccupants = new List<PropertyOccupant>().AsQueryable();
@@ -90,7 +98,9 @@ public class BillAuthorizationHandlerTests
         var result = await _handler.GetAccessLevelAsync(userId, billId);
 
         // Assert
-        Assert.Equal(AccessLevel.All, result);
+        result
+            .Should()
+            .Be(AccessLevel.All);
     }
 
     [Fact]
@@ -142,7 +152,9 @@ public class BillAuthorizationHandlerTests
         var result = await _handler.GetAccessLevelAsync(userId, billId);
 
         // Assert
-        Assert.Equal(AccessLevel.Read, result);
+        result
+            .Should()
+            .Be(AccessLevel.Read);
     }
 
     [Fact]
@@ -176,7 +188,9 @@ public class BillAuthorizationHandlerTests
         var result = await _handler.GetAccessLevelAsync(userId, billId);
 
         // Assert
-        Assert.Equal(AccessLevel.None, result);
+        result
+            .Should()
+            .Be(AccessLevel.None);
     }
 
     [Fact]
@@ -202,7 +216,10 @@ public class BillAuthorizationHandlerTests
         var result = await _handler.ApplyDataFilterAsync(bills, userId);
 
         // Assert
-        Assert.Equal(2, result.Count());
+        result
+            .Count()
+            .Should()
+            .Be(2);
     }
 
     [Fact]
@@ -227,10 +244,17 @@ public class BillAuthorizationHandlerTests
                 Entrance = new Entrance 
                 { 
                     ManagerId = Guid.NewGuid(),
-                    Properties = new HashSet<Property>
-                    {
-                        new() { PropertyOccupants = new HashSet<PropertyOccupant> { new() { UserId = userId } } }
-                    }
+                    Properties = [
+                        new Property
+                        {
+                            PropertyOccupants = [
+                                new PropertyOccupant
+                                {
+                                    UserId = userId
+                                }
+                            ]
+                        }
+                    ]
                 }
             },
             new() 
@@ -253,6 +277,9 @@ public class BillAuthorizationHandlerTests
         var result = await _handler.ApplyDataFilterAsync(bills, userId);
 
         // Assert
-        Assert.Equal(2, result.Count());
+        result
+            .Count()
+            .Should()
+            .Be(2);
     }
 }

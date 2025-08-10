@@ -1,9 +1,7 @@
 using System.Linq.Expressions;
 using ECondo.Application.Commands.Identity.Register;
 using ECondo.Application.Events.Identity;
-using ECondo.Application.Extensions;
 using ECondo.Application.Repositories;
-using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
 using ECondo.SharedKernel.Result;
 using FluentAssertions;
@@ -11,31 +9,26 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using Xunit;
 
 namespace ECondo.Application.UnitTests.Commands.Identity.Register;
 
 public class RegisterCommandHandlerTests
 {
     private readonly UserManager<User> _userManager;
-    private readonly IUserStore<User> _userStore;
     private readonly IApplicationDbContext _dbContext;
-    private readonly IdentityErrorDescriber _errorDescriber;
     private readonly IPublisher _publisher;
     private readonly RegisterCommandHandler _handler;
-    private readonly IUserEmailStore<User> _emailStore;
 
     public RegisterCommandHandlerTests()
     {
         _userManager = Substitute.For<UserManager<User>>(
             Substitute.For<IUserStore<User>>(),
             null, null, null, null, null, null, null, null);
-        _userStore = Substitute.For<IUserStore<User>, IUserEmailStore<User>>();
-        _emailStore = (IUserEmailStore<User>)_userStore;
+        var userStore = Substitute.For<IUserStore<User>, IUserEmailStore<User>>();
         _dbContext = Substitute.For<IApplicationDbContext>();
-        _errorDescriber = new IdentityErrorDescriber();
+        var errorDescriber = new IdentityErrorDescriber();
         _publisher = Substitute.For<IPublisher>();
-        _handler = new RegisterCommandHandler(_userManager, _userStore, _dbContext, _errorDescriber, _publisher);
+        _handler = new RegisterCommandHandler(_userManager, userStore, _dbContext, errorDescriber, _publisher);
     }
 
     [Fact]

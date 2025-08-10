@@ -1,15 +1,12 @@
 using ECondo.Application.Commands.Payment.CreateIntent;
 using ECondo.Application.Repositories;
 using ECondo.Application.Services;
-using ECondo.Domain;
 using ECondo.Domain.Buildings;
-using ECondo.Domain.Shared;
 using ECondo.Infrastructure.Contexts;
 using ECondo.SharedKernel.Result;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using Xunit;
 
 namespace ECondo.Application.IntegrationTests.Commands.Payment.CreateIntent;
 

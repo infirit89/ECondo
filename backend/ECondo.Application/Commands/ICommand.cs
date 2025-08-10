@@ -1,5 +1,4 @@
-﻿using ECondo.Domain.Shared;
-using ECondo.SharedKernel.Result;
+﻿using ECondo.SharedKernel.Result;
 using MediatR;
 
 namespace ECondo.Application.Commands;

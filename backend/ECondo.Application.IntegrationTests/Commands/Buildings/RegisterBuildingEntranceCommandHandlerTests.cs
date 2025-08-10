@@ -3,20 +3,17 @@ using ECondo.Application.Repositories;
 using ECondo.Application.Services;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Provinces;
-using ECondo.Domain.Shared;
 using ECondo.Infrastructure.Contexts;
 using ECondo.SharedKernel.Result;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using Xunit;
 
 namespace ECondo.Application.IntegrationTests.Commands.Buildings.RegisterEntrance;
 
 public class RegisterBuildingEntranceCommandHandlerTests
 {
     private readonly IApplicationDbContext _dbContext;
-    private readonly IUserContext _userContext;
     private readonly RegisterBuildingEntranceCommandHandler _handler;
 
     public RegisterBuildingEntranceCommandHandlerTests()
@@ -26,9 +23,9 @@ public class RegisterBuildingEntranceCommandHandlerTests
             .Options;
 
         _dbContext = new ECondoDbContext(options);
-        _userContext = Substitute.For<IUserContext>();
-        _userContext.UserId.Returns(Guid.NewGuid());
-        _handler = new RegisterBuildingEntranceCommandHandler(_dbContext, _userContext);
+        var userContext = Substitute.For<IUserContext>();
+        userContext.UserId.Returns(Guid.NewGuid());
+        _handler = new RegisterBuildingEntranceCommandHandler(_dbContext, userContext);
     }
 
     [Fact]

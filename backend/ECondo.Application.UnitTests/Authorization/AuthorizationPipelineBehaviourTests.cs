@@ -2,8 +2,8 @@ using ECondo.Application.Behaviours;
 using ECondo.Application.Services;
 using ECondo.Domain.Authorization;
 using ECondo.Domain.Exceptions;
-using ECondo.Domain.Shared;
 using ECondo.SharedKernel.Result;
+using FluentAssertions;
 using MediatR;
 using NSubstitute;
 
@@ -42,7 +42,7 @@ public class AuthorizationPipelineBehaviourTests
         var result = await _behaviour.Handle(request, _mockNext, CancellationToken.None);
 
         // Assert
-        Assert.Equal(expectedResult, result);
+        result.Should().Be(expectedResult);
         await _mockNext.Received(1)();
     }
 
@@ -62,8 +62,18 @@ public class AuthorizationPipelineBehaviourTests
         var result = await _behaviour.Handle(request, _mockNext, CancellationToken.None);
 
         // Assert
-        Assert.True(!result.IsOk());
-        Assert.Equal("Resource.Forbidden", result.ToError().Data.Code);
+        result
+            .IsOk()
+            .Should()
+            .BeFalse();
+
+        result
+            .ToError()
+            .Data!
+            .Code
+            .Should()
+            .Be("Resource.Forbidden");
+        
         await _mockNext.DidNotReceive()();
     }
 
@@ -82,15 +92,15 @@ public class AuthorizationPipelineBehaviourTests
             .Returns(false);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ForbiddenException>(() => 
-            nonResultBehaviour.Handle(request, mockNextString, CancellationToken.None));
+        var act = async () => await nonResultBehaviour.Handle(request, mockNextString, CancellationToken.None);
 
+        await act.Should().ThrowAsync<ForbiddenException>();
         await mockNextString.DidNotReceive()();
     }
 
     private class TestCommand : IResourcePolicy<TestEntity>
     {
-        public Guid? ResourceId { get; set; }
+        public Guid? ResourceId { get; init; }
         public Type ResourceType => typeof(TestEntity);
         public AccessLevel ResourceAction => AccessLevel.Read;
     }

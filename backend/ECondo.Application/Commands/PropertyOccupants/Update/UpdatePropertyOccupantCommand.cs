@@ -5,7 +5,6 @@ namespace ECondo.Application.Commands.PropertyOccupants.Update;
 
 public sealed record UpdatePropertyOccupantCommand(
     Guid OccupantId,
-    Guid PropertyId,
     string FirstName,
     string MiddleName,
     string LastName,
@@ -13,5 +12,5 @@ public sealed record UpdatePropertyOccupantCommand(
     string? Email,
     string ReturnUri) : ICommand, ICanUpdate<PropertyOccupant>
 {
-    Guid? IResourcePolicy.ResourceId => PropertyId;
+    Guid? IResourcePolicy.ResourceId => OccupantId;
 }

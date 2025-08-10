@@ -1,13 +1,10 @@
 using ECondo.Application.Commands.Properties.Update;
 using ECondo.Application.Repositories;
-using ECondo.Domain;
 using ECondo.Domain.Buildings;
-using ECondo.Domain.Shared;
 using ECondo.Infrastructure.Contexts;
 using ECondo.SharedKernel.Result;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
 
 namespace ECondo.Application.IntegrationTests.Commands.Properties.Update;
 

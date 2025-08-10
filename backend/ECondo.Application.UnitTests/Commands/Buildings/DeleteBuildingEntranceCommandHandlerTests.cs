@@ -1,11 +1,8 @@
-using System.Linq.Expressions;
 using ECondo.Application.Commands.Buildings.Delete;
 using ECondo.Application.Repositories;
 using ECondo.Application.UnitTests.Helper;
 using ECondo.Domain.Buildings;
-using ECondo.SharedKernel.Result;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 
 namespace ECondo.Application.UnitTests.Commands.Buildings.Delete;

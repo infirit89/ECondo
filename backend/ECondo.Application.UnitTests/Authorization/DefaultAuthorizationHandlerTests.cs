@@ -1,16 +1,12 @@
 using ECondo.Application.Authorization;
 using ECondo.Domain.Authorization;
+using FluentAssertions;
 
 namespace ECondo.Application.UnitTests.Authorization;
 
 public class DefaultAuthorizationHandlerTests
 {
-    private readonly DefaultAuthorizationHandler<TestEntity> _handler;
-
-    public DefaultAuthorizationHandlerTests()
-    {
-        _handler = new DefaultAuthorizationHandler<TestEntity>();
-    }
+    private readonly DefaultAuthorizationHandler<TestEntity> _handler = new();
 
     [Fact]
     public async Task GetAccessLevelAsync_ReturnsNoAccess()
@@ -23,7 +19,9 @@ public class DefaultAuthorizationHandlerTests
         var result = await _handler.GetAccessLevelAsync(userId, resourceId);
 
         // Assert
-        Assert.Equal(AccessLevel.None, result);
+        result
+            .Should()
+            .Be(AccessLevel.None);
     }
 
     [Fact]
@@ -36,7 +34,9 @@ public class DefaultAuthorizationHandlerTests
         var result = await _handler.GetAccessLevelAsync(userId, null);
 
         // Assert
-        Assert.Equal(AccessLevel.None, result);
+        result
+            .Should()
+            .Be(AccessLevel.None);
     }
 
     [Fact]
@@ -46,21 +46,24 @@ public class DefaultAuthorizationHandlerTests
         var userId = Guid.NewGuid();
         var entities = new List<TestEntity>
         {
-            new TestEntity { Id = Guid.NewGuid() },
-            new TestEntity { Id = Guid.NewGuid() },
-            new TestEntity { Id = Guid.NewGuid() }
+            new(),
+            new(),
+            new()
         }.AsQueryable();
 
         // Act
         var result = await _handler.ApplyDataFilterAsync(entities, userId);
 
         // Assert
-        Assert.Equal(3, result.Count());
-        Assert.Equal(entities, result);
+        result
+            .Count()
+            .Should()
+            .Be(3);
+
+        result.Should().BeSameAs(entities);
     }
 
     private class TestEntity
     {
-        public Guid Id { get; set; }
     }
 }

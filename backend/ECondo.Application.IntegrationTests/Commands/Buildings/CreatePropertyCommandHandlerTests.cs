@@ -1,16 +1,13 @@
 using ECondo.Application.Commands.Properties.Create;
 using ECondo.Application.Repositories;
-using ECondo.Domain;
 using ECondo.Domain.Buildings;
-using ECondo.Domain.Shared;
 using ECondo.Infrastructure.Contexts;
+using ECondo.SharedKernel.Result;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
 
 namespace ECondo.Application.IntegrationTests.Commands.Properties.Create;
 
-#if false
 public class CreatePropertyCommandHandlerTests
 {
     private readonly IApplicationDbContext _dbContext;
@@ -30,11 +27,10 @@ public class CreatePropertyCommandHandlerTests
     public async Task Handle_ShouldCreateProperty_WhenEntranceAndPropertyTypeAreValid()
     {
         // Arrange
-        var buildingId = Guid.NewGuid();
         var entrance = new Entrance
         {
             Id = Guid.NewGuid(),
-            BuildingId = buildingId,
+            BuildingId = Guid.NewGuid(),
             Number = "Entrance1"
         };
 
@@ -49,8 +45,7 @@ public class CreatePropertyCommandHandlerTests
         await _dbContext.SaveChangesAsync();
 
         var command = new CreatePropertyCommand(
-            buildingId,
-            "Entrance1",
+            entrance.Id,
             "Apartment",
             "2",
             "202",
@@ -79,7 +74,6 @@ public class CreatePropertyCommandHandlerTests
         // Arrange
         var command = new CreatePropertyCommand(
             Guid.NewGuid(),
-            "NonExistentEntrance",
             "Apartment",
             "2",
             "202",
@@ -99,11 +93,10 @@ public class CreatePropertyCommandHandlerTests
     public async Task Handle_ShouldReturnError_WhenPropertyTypeDoesNotExist()
     {
         // Arrange
-        var buildingId = Guid.NewGuid();
         var entrance = new Entrance
         {
             Id = Guid.NewGuid(),
-            BuildingId = buildingId,
+            BuildingId = Guid.NewGuid(),
             Number = "Entrance1"
         };
 
@@ -111,8 +104,7 @@ public class CreatePropertyCommandHandlerTests
         await _dbContext.SaveChangesAsync();
 
         var command = new CreatePropertyCommand(
-            buildingId,
-            "Entrance1",
+            entrance.Id,
             "NonExistentType",
             "2",
             "202",
@@ -132,11 +124,10 @@ public class CreatePropertyCommandHandlerTests
     public async Task Handle_ShouldReturnError_WhenPropertyAlreadyExists()
     {
         // Arrange
-        var buildingId = Guid.NewGuid();
         var entrance = new Entrance
         {
             Id = Guid.NewGuid(),
-            BuildingId = buildingId,
+            BuildingId = Guid.NewGuid(),
             Number = "Entrance1"
         };
 
@@ -162,8 +153,7 @@ public class CreatePropertyCommandHandlerTests
         await _dbContext.SaveChangesAsync();
 
         var command = new CreatePropertyCommand(
-            buildingId,
-            "Entrance1",
+            entrance.Id,
             "Apartment",
             "2",
             "202",
@@ -179,4 +169,3 @@ public class CreatePropertyCommandHandlerTests
         result.ToError().Data.Should().BeOfType<Error>();
     }
 }
-#endif

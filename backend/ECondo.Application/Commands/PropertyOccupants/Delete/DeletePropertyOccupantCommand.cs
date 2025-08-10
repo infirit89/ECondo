@@ -4,8 +4,7 @@ using ECondo.Domain.Buildings;
 namespace ECondo.Application.Commands.PropertyOccupants.Delete;
 
 public sealed record DeletePropertyOccupantCommand(
-    Guid OccupantId,
-    Guid PropertyId) : ICommand, ICanDelete<PropertyOccupant>
+    Guid OccupantId) : ICommand, ICanDelete<PropertyOccupant>
 {
-    Guid? IResourcePolicy.ResourceId => PropertyId;
+    Guid? IResourcePolicy.ResourceId => OccupantId;
 }
