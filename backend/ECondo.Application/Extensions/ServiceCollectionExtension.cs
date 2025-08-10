@@ -17,21 +17,26 @@ public static class ServiceCollectionExtension
             t.ImplementedInterfaces.Any(i =>
                 i.IsGenericType && 
                 i.GetGenericTypeDefinition() == authorizerInterfaceType))
+            .Except([typeof(DefaultAuthorizationHandler<>)])
             .ToList();
 
+        services.AddScoped(typeof(DefaultAuthorizationHandler<>));
         foreach (var authorizer in authorizers)
         {
-            switch (lifetime)
+            foreach (var implementedInterface in authorizer.GetInterfaces())
             {
-                case ServiceLifetime.Singleton:
-                    services.AddSingleton(authorizerInterfaceType, authorizer);
-                    break;
-                case ServiceLifetime.Scoped:
-                    services.AddScoped(authorizerInterfaceType, authorizer);
-                    break;
-                case ServiceLifetime.Transient:
-                    services.AddTransient(authorizerInterfaceType, authorizer);
-                    break;
+                switch (lifetime)
+                {
+                    case ServiceLifetime.Singleton:
+                        services.AddSingleton(implementedInterface, authorizer);
+                        break;
+                    case ServiceLifetime.Scoped:
+                        services.AddScoped(implementedInterface, authorizer);
+                        break;
+                    case ServiceLifetime.Transient:
+                        services.AddTransient(implementedInterface, authorizer);
+                        break;
+                }
             }
         }
 
