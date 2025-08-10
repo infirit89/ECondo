@@ -1,5 +1,4 @@
 ﻿using ECondo.Application.Queries.Payment.GetById;
-using ECondo.Domain.Shared;
 using ECondo.SharedKernel.Collections;
 
 namespace ECondo.Application.Queries.Payment.GetForProperty;
