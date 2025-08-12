@@ -21,8 +21,7 @@ internal sealed class IsUserEntranceManagerQueryHandler(
             .AsNoTracking()
             .AnyAsync(e =>
             e.ManagerId == userContext.UserId &&
-            e.BuildingId == request.BuildingId &&
-            e.Number == request.EntranceNumber,
+            e.Id == request.EntranceId,
             cancellationToken: cancellationToken);
 
         if(!entrance)

@@ -8,12 +8,12 @@ import Link from "next/link";
 export type ActiveTab = 'properties' | 'bills';
 
 export default function DashboardSidebar(
-    { buildingId, entranceNumber, activeTab } : 
-    { buildingId: string, entranceNumber: string, activeTab: ActiveTab }) {
+    { entranceId, activeTab } : 
+    { entranceId: string, activeTab: ActiveTab }) {
 
     const data = [
-        { id: 'properties', link: `/buildings/${buildingId}/${entranceNumber}/properties`, label: 'Имоти', icon: IconBuildingEstate },
-        { id: 'bills', link: `/buildings/${buildingId}/${entranceNumber}/bills`, label: 'Сметки', icon: IconReceipt },
+        { id: 'properties', link: `/entrances/${entranceId}/properties`, label: 'Имоти', icon: IconBuildingEstate },
+        { id: 'bills', link: `/entrances/${entranceId}/bills`, label: 'Сметки', icon: IconReceipt },
       ];
     
 

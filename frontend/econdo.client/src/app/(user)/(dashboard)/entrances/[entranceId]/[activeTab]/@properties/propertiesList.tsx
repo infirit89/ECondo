@@ -13,32 +13,28 @@ import { queryKeys } from "@/types/queryKeys";
 // hard coded for now
 const pageSize = 9;
 
-const useQueryPropertiesPaged = (buildingId: string, entranceNumber: string, page: number) => {
+const useQueryPropertiesPaged = (entranceId: string, page: number) => {
     return useQuery({
         queryKey: queryKeys.properties.pagedInEntrance(
-            buildingId,
-            entranceNumber,
+            entranceId,
             page,
             pageSize),
         queryFn: () => getPropertiesInEntrance(
-            buildingId,
-            entranceNumber,
+            entranceId,
             page,
             pageSize),
     })
 }
 
 export default function PropertiesList() {
-    const { buildingId, entranceNumber } = useParams<{
-        buildingId: string,
-        entranceNumber: string }>();
+    const { entranceId } = useParams<{
+        entranceId: string }>();
 
-    const decodedEntranceNumber = decodeURIComponent(entranceNumber);
     const [isDeleteError, setDeleteError] = useState(false);
     const [page, setPage] = useState(0);
 
 
-    const { data: properties, isLoading } = useQueryPropertiesPaged(buildingId, decodedEntranceNumber, page);
+    const { data: properties, isLoading } = useQueryPropertiesPaged(entranceId, page);
 
     const onPropertyDeleteError = () => {
         setDeleteError(true);

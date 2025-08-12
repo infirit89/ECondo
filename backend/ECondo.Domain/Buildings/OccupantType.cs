@@ -7,7 +7,7 @@ public sealed class OccupantType
 
     public HashSet<PropertyOccupant> PropertyOccupants { get; set; } = [];
 
-    public const string TenantType = "tennat";
+    public const string TenantType = "tennant";
     public const string OwnerType = "owner";
     public const string UserType = "user";
     public const string RepresentativeType = "representative";

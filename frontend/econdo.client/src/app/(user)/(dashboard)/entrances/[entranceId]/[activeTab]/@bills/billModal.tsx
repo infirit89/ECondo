@@ -27,11 +27,10 @@ type BillFormValues = z.infer<typeof billSchema>;
 interface BillModalProps {
     isOpen: boolean,
     onClose: () => void,
-    buildingId: string,
-    entranceNumber: string,
+    entranceId: string,
 }
 
-export default function BillModal({ isOpen, onClose, buildingId, entranceNumber }:
+export default function BillModal({ isOpen, onClose, entranceId }:
     BillModalProps) {
     const form = useForm<BillFormValues>({
         defaultValues: {
@@ -68,8 +67,7 @@ export default function BillModal({ isOpen, onClose, buildingId, entranceNumber 
         }
 
         const res = await createBill(
-            buildingId,
-            entranceNumber,
+            entranceId,
             data.title,
             data.amount,
             data.isRecurring,

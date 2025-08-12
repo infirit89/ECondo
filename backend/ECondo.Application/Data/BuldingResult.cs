@@ -11,4 +11,5 @@ public sealed record BuildingResult(
     string Street,
     string StreetNumber,
     string BuildingNumber,
-    string EntranceNumber);
+    string EntranceNumber,
+    Guid EntranceId);

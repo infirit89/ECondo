@@ -27,14 +27,13 @@ export interface PropertyOccupantResult {
 }
 
 export const getPropertiesInEntrance =
-    cache(async (buildingId: string, entranceNumber: string, page: number, pageSize: number):
+    cache(async (entranceId: string, page: number, pageSize: number):
         Promise<Result<PagedList<PropertyOccupantResult>>> => {
         try {
             const properties = await authInstance
-                .get<PagedList<PropertyOccupantResult>>('/api/property/getPropertiesInBuilding', {
+                .get<PagedList<PropertyOccupantResult>>('/api/property/getPropertiesInEntrance', {
                     params: {
-                        buildingId,
-                        entranceNumber,
+                        entranceId,
                         page,
                         pageSize
                     },

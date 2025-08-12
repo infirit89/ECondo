@@ -13,19 +13,16 @@ export default async function Dashboard(
     properties: ReactNode,
     bills: ReactNode,
     params: Promise<{
-      buildingId: string, entranceNumber: string, activeTab: ActiveTab
+      entranceId: string, activeTab: ActiveTab
     }>
   }>) {
 
 
   const {
-    buildingId,
-    entranceNumber,
+    entranceId,
     activeTab } = await params;
 
-  const result = await isUserInBuilding(
-    buildingId,
-    entranceNumber);
+  const result = await isUserInBuilding(entranceId);
 
   if(!result.ok)
     redirect('/condos/buildings');
@@ -46,13 +43,12 @@ export default async function Dashboard(
   header={{ height: 60 }}
   navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: true }} }>
       <UserNavbar additionalLinks={[
-        { link: `/buildings/${buildingId}/${entranceNumber}/properties`, label: 'Имоти' },
-        { link: `/buildings/${buildingId}/${entranceNumber}/bills`, label: 'Сметки' },
+        { link: `/buildings/${entranceId}/properties`, label: 'Имоти' },
+        { link: `/buildings/${entranceId}/bills`, label: 'Сметки' },
       ]}/>
       <DashboardSidebar 
       activeTab={activeTab}
-      buildingId={buildingId}
-      entranceNumber={entranceNumber}/>
+      entranceId={entranceId}/>
       <AppShellMain>
           { getChild() }
       </AppShellMain>

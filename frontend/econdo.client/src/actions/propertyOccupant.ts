@@ -2,7 +2,7 @@
 
 import { authInstance } from "@/lib/axiosInstance";
 import { ApiError, PagedList } from "@/types/apiResponses";
-import { InvitationStatus } from "@/types/propertyOccupant";
+import { InvitationStatus, OccupantType } from "@/types/propertyOccupant";
 import { Result, resultFail, resultOk } from "@/types/result";
 import { isAxiosError } from "axios";
 import { cache } from "react";
@@ -103,7 +103,7 @@ export interface Occupant {
     firstName: string,
     middleName: string,
     lastName: string,
-    type: string,
+    type: OccupantType,
     email?: string,
     invitationStatus: InvitationStatus,
 }
