@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
   reactStrictMode: false,
   experimental: {
     optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
-    ppr: 'incremental',
   },
 };
 

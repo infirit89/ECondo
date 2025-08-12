@@ -15,43 +15,41 @@ import BillCard from "./billCard";
 // hard coded for now
 const pageSize = 9;
 
-const useCheckStripeStatusQuery = (buildingId: string, entranceNumber: string) => {
+const useCheckStripeStatusQuery = (entranceId: string) => {
     return useQuery({
-        queryKey: queryKeys.stripe.checkStatus(buildingId, entranceNumber),
-        queryFn: () => checkStripeStatus(buildingId, entranceNumber),
+        queryKey: queryKeys.stripe.checkStatus(entranceId),
+        queryFn: () => checkStripeStatus(entranceId),
     });
 }
 
-const useBillsForEntranceQuery = (buildingId: string, entranceNumber: string, page: number) => {
+const useBillsForEntranceQuery = (entranceId: string, page: number) => {
     return useQuery({
-        queryKey: queryKeys.bills.pagedForEntrance(buildingId, entranceNumber, page, pageSize),
-        queryFn: () => getBillsForEntrance(buildingId, entranceNumber, page, pageSize),
+        queryKey: queryKeys.bills.pagedForEntrance(entranceId, page, pageSize),
+        queryFn: () => getBillsForEntrance(entranceId, page, pageSize),
     });
 }
 
 export default function BillsPage() {
-    const { buildingId, entranceNumber } = useParams<{
-        buildingId: string,
-        entranceNumber: string
+    const { entranceId } = useParams<{
+        entranceId: string
     }>();
 
+    console.log(entranceId);
     const [opened, { open, close }] = useDisclosure(false);
     const [isConnectingToStripe, setConnectingToStripe] = useState(false);
 
     const { data: stripeStatus, isLoading } = useCheckStripeStatusQuery(
-        buildingId,
-        entranceNumber);
+        entranceId);
 
     const [page, setPage] = useState(0);
     const { data: bills, isLoading: isLoadingBills } = useBillsForEntranceQuery(
-        buildingId,
-        entranceNumber,
+        entranceId,
         page,
     );
 
     const handleConnectToStripe = async () => {
         setConnectingToStripe(true);
-        const res = await connectToStripe(buildingId, entranceNumber);
+        const res = await connectToStripe(entranceId);
 
         if (!res.ok) {
             console.log(res.error);
@@ -66,7 +64,7 @@ export default function BillsPage() {
     }
 
     const handleLoginToStripe = async () => {
-        const res = await getStripeLoginLink(buildingId, entranceNumber);
+        const res = await getStripeLoginLink(entranceId);
 
         if (!res.ok) {
             console.log(res.error);
@@ -82,6 +80,8 @@ export default function BillsPage() {
         }
     }
 
+    console.log(stripeStatus);
+    console.log(bills);
     if (isLoading || !stripeStatus?.ok || isLoadingBills || !bills?.ok)
         return <Loading />;
 
@@ -91,8 +91,7 @@ export default function BillsPage() {
             <BillModal
                 isOpen={opened}
                 onClose={close}
-                buildingId={buildingId}
-                entranceNumber={entranceNumber} />
+                entranceId={entranceId} />
             <Container size="lg" py="xl">
                 <Flex justify={'space-between'} mb={'md'}>
                     <Title>Разходи</Title>

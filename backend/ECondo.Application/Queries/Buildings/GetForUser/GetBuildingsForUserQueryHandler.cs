@@ -42,7 +42,8 @@ internal sealed class GetBuildingsForUserQueryHandler(
                 e.Building.Street,
                 e.Building.StreetNumber,
                 e.Building.BuildingNumber,
-                e.Number))
+                e.Number,
+                e.Id))
             .ToPagedListAsync(
                 request.Page,
                 request.PageSize,

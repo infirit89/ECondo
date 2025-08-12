@@ -7,13 +7,13 @@ using ECondo.SharedKernel.Collections;
 using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECondo.Application.Queries.Properties.GetInBuilding;
+namespace ECondo.Application.Queries.Properties.GetInEntrance;
 
-internal sealed class GetPropertiesInBuildingQueryHandler
+internal sealed class GetPropertiesInEntranceQueryHandler
     (IApplicationDbContext dbContext, IUserContext userContext)
-    : IQueryHandler<GetPropertiesInBuildingQuery, PagedList<PropertyOccupantResult>>
+    : IQueryHandler<GetPropertiesInEntranceQuery, PagedList<PropertyOccupantResult>>
 {
-    public async Task<Result<PagedList<PropertyOccupantResult>, Error>> Handle(GetPropertiesInBuildingQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PagedList<PropertyOccupantResult>, Error>> Handle(GetPropertiesInEntranceQuery request, CancellationToken cancellationToken)
     {
         var properties = await dbContext.Entrances
             .Include(e => e.Properties)
@@ -22,8 +22,7 @@ internal sealed class GetPropertiesInBuildingQueryHandler
                 .ThenInclude(p => p.PropertyOccupants)
             .AsNoTracking()
             .Where(e =>
-                e.BuildingId == request.BuildingId &&
-                e.Number == request.EntranceNumber &&
+                e.Id == request.EntranceId &&
                 e.ManagerId == userContext.UserId)
             .SelectMany(e =>
                 e.Properties
