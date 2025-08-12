@@ -1,19 +1,16 @@
 using ECondo.Application.Commands.Identity.UpdatePassword;
-using ECondo.Application.Extensions;
 using ECondo.Application.Services;
-using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
+using ECondo.SharedKernel.Result;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using NSubstitute;
-using Xunit;
 
 namespace ECondo.Application.UnitTests.Commands.Identity
 {
     public class UpdatePasswordCommandHandlerTests
     {
         private readonly UserManager<User> _userManager;
-        private readonly IUserContext _userContext;
         private readonly UpdatePasswordCommandHandler _handler;
         private readonly Guid _userId = Guid.NewGuid();
 
@@ -21,9 +18,9 @@ namespace ECondo.Application.UnitTests.Commands.Identity
         {
             _userManager = Substitute.For<UserManager<User>>(
                 Substitute.For<IUserStore<User>>(), null, null, null, null, null, null, null, null);
-            _userContext = Substitute.For<IUserContext>();
-            _userContext.UserId.Returns(_userId);
-            _handler = new UpdatePasswordCommandHandler(_userManager, _userContext);
+            var userContext = Substitute.For<IUserContext>();
+            userContext.UserId.Returns(_userId);
+            _handler = new UpdatePasswordCommandHandler(_userManager, userContext);
         }
 
         [Fact]
@@ -31,7 +28,7 @@ namespace ECondo.Application.UnitTests.Commands.Identity
         {
             // Arrange
             var command = new UpdatePasswordCommand("currentPassword", "newPassword");
-            _userManager.FindByIdAsync(_userId.ToString()).Returns((User)null);
+            _userManager.FindByIdAsync(_userId.ToString()).Returns((User)null!);
 
             // Act
             var result = await _handler.Handle(command, CancellationToken.None);
@@ -64,8 +61,8 @@ namespace ECondo.Application.UnitTests.Commands.Identity
             result.Should().BeOfType<Result<EmptySuccess, Error>.Error>();
             var error = result.ToError().Data;
             error.Should().BeOfType<ValidationError>();
-            var validationError = (ValidationError)error;
-            validationError.Errors.Should().HaveCount(2);
+            var validationError = error as ValidationError;
+            validationError!.Errors.Should().HaveCount(2);
             validationError.Errors.Should().Contain(e => e.Code == "PasswordMismatch");
             validationError.Errors.Should().Contain(e => e.Code == "PasswordRequiresNonAlphanumeric");
         }
@@ -135,8 +132,8 @@ namespace ECondo.Application.UnitTests.Commands.Identity
             result.Should().BeOfType<Result<EmptySuccess, Error>.Error>();
             var error = result.ToError().Data;
             error.Should().BeOfType<ValidationError>();
-            var validationError = (ValidationError)error;
-            validationError.Errors.Should().HaveCount(1);
+            var validationError = error as ValidationError;
+            validationError!.Errors.Should().HaveCount(1);
             validationError.Errors.Should().Contain(e => e.Code == "PasswordTooShort");
         }
 
@@ -162,8 +159,8 @@ namespace ECondo.Application.UnitTests.Commands.Identity
             result.Should().BeOfType<Result<EmptySuccess, Error>.Error>();
             var error = result.ToError().Data;
             error.Should().BeOfType<ValidationError>();
-            var validationError = (ValidationError)error;
-            validationError.Errors.Should().HaveCount(1);
+            var validationError = error as ValidationError;
+            validationError!.Errors.Should().HaveCount(1);
             validationError.Errors.Should().Contain(e => e.Code == "PasswordRequiresUniqueChars");
         }
     }

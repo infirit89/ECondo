@@ -1,7 +1,7 @@
 ﻿using ECondo.Application.Repositories;
 using ECondo.Application.Services;
 using ECondo.Domain.Payments;
-using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Commands.Payment.CreateBill;
@@ -15,8 +15,7 @@ internal sealed class CreateBillCommandHandler
         var entrance = await dbContext
             .Entrances
             .FirstAsync(e => 
-                e.BuildingId == request.BuildingId && 
-                e.Number == request.EntranceNumber, 
+                e.Id == request.EntranceId,
                 cancellationToken: cancellationToken);
 
         var bill = new Bill

@@ -32,7 +32,6 @@ export default function BuildingsList({ buildingQuery } : { buildingQuery: strin
     if(isLoading || !buildings?.ok)
         return <Loading/>;
 
-
     return (
     buildings.value && buildings.value.items.length > 0 ?
     <>
@@ -45,7 +44,7 @@ export default function BuildingsList({ buildingQuery } : { buildingQuery: strin
         cols={{ base: 1, md: 2, lg: 3 }}
         spacing={{ base: 'sm', md: 'md', lg: 'lg' }}>
             {buildings.value.items.map((value, index) => (
-                <Link key={index} href={`/buildings/${value.id}/${value.entranceNumber}/properties`}>
+                <Link key={index} href={`/entrances/${value.entranceId}/properties`}>
                     <CondoCard key={index} {...value} canEdit={false} canDelete/>
                 </Link>
             ))}

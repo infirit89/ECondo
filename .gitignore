@@ -413,5 +413,6 @@ appsettings.json
 # MacOs
 .DS_Store
 
+
 #Claude
 CLAUDE.md

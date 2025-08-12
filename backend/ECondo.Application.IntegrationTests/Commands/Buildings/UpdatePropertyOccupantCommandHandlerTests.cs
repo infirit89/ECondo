@@ -1,15 +1,13 @@
 using ECondo.Application.Commands.PropertyOccupants.Update;
 using ECondo.Application.Events.PropertyOccupant;
 using ECondo.Application.Repositories;
-using ECondo.Domain;
 using ECondo.Domain.Buildings;
-using ECondo.Domain.Shared;
 using ECondo.Infrastructure.Contexts;
+using ECondo.SharedKernel.Result;
 using FluentAssertions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using Xunit;
 
 namespace ECondo.Application.IntegrationTests.Commands.PropertyOccupants.Update;
 

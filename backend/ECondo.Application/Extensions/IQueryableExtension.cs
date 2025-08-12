@@ -1,4 +1,4 @@
-﻿using ECondo.Domain.Shared;
+﻿using ECondo.SharedKernel.Collections;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Extensions;

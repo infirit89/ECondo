@@ -2,12 +2,11 @@
 using ECondo.Application.Commands.Properties.Create;
 using ECondo.Application.Commands.Properties.Delete;
 using ECondo.Application.Commands.Properties.Update;
-using ECondo.Application.Data;
 using ECondo.Application.Data.Property;
 using ECondo.Application.Queries.Properties.GetAll;
 using ECondo.Application.Queries.Properties.GetById;
 using ECondo.Application.Queries.Properties.GetForUser;
-using ECondo.Application.Queries.Properties.GetInBuilding;
+using ECondo.Application.Queries.Properties.GetInEntrance;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,15 +18,15 @@ namespace ECondo.Api.Controllers;
 public class PropertyController(ISender sender) : ControllerBase
 {
     [Authorize]
-    [HttpGet(nameof(GetPropertiesInBuilding))]
+    [HttpGet(nameof(GetPropertiesInEntrance))]
     [ProducesResponseType(StatusCodes.Status200OK,
         Type = typeof(PagedListResponse<PropertyOccupantResult>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest,
         Type = typeof(HttpValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IResult>
-        GetPropertiesInBuilding(
-            [FromQuery] GetPropertiesInBuildingQuery request)
+        GetPropertiesInEntrance(
+            [FromQuery] GetPropertiesInEntranceQuery request)
     {
         var result = await sender.Send(request);
 

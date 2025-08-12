@@ -1,17 +1,17 @@
 import { Occupant } from "@/actions/propertyOccupant";
-import { InvitationStatus } from "@/types/propertyOccupant";
+import { InvitationStatus, OccupantType } from "@/types/propertyOccupant";
 import { ActionIcon, Badge, Box, Group, Paper, Text, Tooltip } from "@mantine/core";
 import { IconClockHour4, IconEdit, IconMail, IconMailCheck, IconMailX, IconTrash } from "@tabler/icons-react";
 
-const getBadgeColor = (occupantType: string): string => {
+const getBadgeColor = (occupantType: OccupantType): string => {
   switch (occupantType) {
-      case "Собственик":
+      case 'owner':
           return "blue"
-      case "Наемател":
+      case 'tennant':
           return "green"
-      case "Представител":
+      case 'representative':
           return "violet"
-      case "Ползвател":
+      case 'user':
           return "yellow"
       default:
           return "gray"

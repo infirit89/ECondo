@@ -1,6 +1,6 @@
 ﻿using ECondo.Application.Services;
-using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
+using ECondo.SharedKernel.Result;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 

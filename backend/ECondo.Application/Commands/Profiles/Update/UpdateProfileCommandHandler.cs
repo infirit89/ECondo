@@ -1,7 +1,7 @@
 ﻿using ECondo.Application.Repositories;
 using ECondo.Application.Services;
 using ECondo.Domain.Profiles;
-using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Commands.Profiles.Update;

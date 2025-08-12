@@ -1,7 +1,8 @@
 ﻿using ECondo.Application.Data;
 using ECondo.Application.Extensions;
 using ECondo.Application.Repositories;
-using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Collections;
+using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Queries.Buildings.GetAll;
@@ -29,7 +30,8 @@ internal sealed class GetAllBuildingsQueryHandler
                 e.Building.Street,
                 e.Building.StreetNumber,
                 e.Building.BuildingNumber,
-                e.Number)
+                e.Number,
+                e.Id)
             ).ToPagedListAsync(
                 request.Page, 
                 request.PageSize, 

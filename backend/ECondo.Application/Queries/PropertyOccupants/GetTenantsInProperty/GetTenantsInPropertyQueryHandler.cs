@@ -1,7 +1,9 @@
 ﻿using ECondo.Application.Data.Occupant;
 using ECondo.Application.Extensions;
 using ECondo.Application.Repositories;
-using ECondo.Domain.Shared;
+using ECondo.Domain.Buildings;
+using ECondo.SharedKernel.Collections;
+using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Queries.PropertyOccupants.GetTenantsInProperty;
@@ -18,7 +20,7 @@ internal sealed class GetTenantsInPropertyQueryHandler
             .AsNoTracking()
             .Where(po => 
                 po.PropertyId == request.PropertyId &&
-                po.OccupantType.Name != "Собственик")
+                po.OccupantType.Name != OccupantType.OwnerType)
             .Select(po =>
                 new OccupantResult(
                     po.Id,

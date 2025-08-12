@@ -1,9 +1,12 @@
-﻿using ECondo.Application.Policies;
+﻿using ECondo.Domain.Authorization;
+using ECondo.Domain.Buildings;
 
 namespace ECondo.Application.Commands.Payment.ConnectStripeAccount;
 
 public record ConnectStripeAccountCommand(
-    Guid BuildingId, 
-    string EntranceNumber,
-    string ReturnUri) 
-    : ICommand<string>, IRequireEntranceManager;
+    Guid EntranceId,
+    string ReturnUri)
+    : ICommand<string>, ICanUpdate<Entrance>
+{
+    Guid? IResourcePolicy.ResourceId => EntranceId;
+}

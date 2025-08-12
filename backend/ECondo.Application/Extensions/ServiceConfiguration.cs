@@ -15,19 +15,11 @@ public static class ServiceConfiguration
             configuration.RegisterServicesFromAssembly(currentAssembly);
 
             configuration.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
-            configuration.AddOpenBehavior(typeof(EntranceManagerAuthorizationPipelineBehaviour<,>));
-            configuration.AddOpenBehavior(typeof(AccessPropertyAuthorizationPipelineBehaviour<,>));
-            configuration.AddOpenBehavior(typeof(EditPropertyAuthorizationPipelineBehaviour<,>));
-            configuration.AddOpenBehavior(typeof(EditOccupantAuthorizationPipelineBehaviour<,>));
-            configuration.AddOpenBehavior(typeof(AddOccupantAuthorizationPipelineBehaviour<,>));
-            configuration.AddOpenBehavior(typeof(AccessTenantAuthorizationPipelineBehaviour<,>));
-            configuration.AddOpenBehavior(typeof(DeleteOccupantAuthorizationPipelineBehaviour<,>));
-            configuration.AddOpenBehavior(typeof(AdminAuthorizationPipelineBehaviour<,>));
-            configuration.AddOpenBehavior(typeof(EditBuildingEntranceAuthorizationPipelineBehaviour<,>));
+            configuration.AddOpenBehavior(typeof(AuthorizationPipelineBehaviour<,>));
         });
 
         services.AddValidatorsFromAssembly(currentAssembly, includeInternalTypes: true);
-
+        services.AddAuthorizersFromAssembly(currentAssembly);
         return services;
     }
 }

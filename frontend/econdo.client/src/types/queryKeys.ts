@@ -3,13 +3,11 @@ export const queryKeys = {
         all: ['properties'] as const,
         details: (id: string) => [...queryKeys.properties.all, id] as const,
         pagedInEntrance: (
-            buildingId: string, 
-            entranceNumber: string, 
+            entranceId: string,
             page: number, 
             pageSize: number) => [
                 ...queryKeys.properties.all,
-                buildingId,
-                entranceNumber,
+                entranceId,
                 page,
                 pageSize] as const,
         pagedForUser: (
@@ -82,11 +80,9 @@ export const queryKeys = {
     },
     stripe: {
         checkStatus: (
-            buildingId: string,
-            entranceNumber: string,
+            entranceId: string,
         ) => [
-            buildingId,
-            entranceNumber,
+            entranceId,
         ] as const,
     },
     payments: {
@@ -111,14 +107,12 @@ export const queryKeys = {
     bills: {
         all: ['bills'] as const,
         pagedForEntrance: (
-            buildingId: string,
-            entranceNumber: string,
+            entranceId: string,
             page: number,
             pageSize: number,
         ) => [
             ...queryKeys.bills.all,
-            buildingId,
-            entranceNumber,
+            entranceId,
             page,
             pageSize,
         ]

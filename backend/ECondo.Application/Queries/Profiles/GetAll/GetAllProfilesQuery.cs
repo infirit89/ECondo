@@ -1,9 +1,13 @@
-﻿using ECondo.Application.Policies;
-using ECondo.Domain.Shared;
+﻿using ECondo.Domain.Authorization;
+using ECondo.Domain.Users;
+using ECondo.SharedKernel.Collections;
 
 namespace ECondo.Application.Queries.Profiles.GetAll;
 
 public record UserProfileResult(string FirstName, string MiddleName, string LastName, string Email);
 
-public record GetAllProfilesQuery(int Page, int PageSize) : 
-    IQuery<PagedList<UserProfileResult>>, IIsAdmin;
+public record GetAllProfilesQuery(int Page, int PageSize) :
+    IQuery<PagedList<UserProfileResult>>, ICanRead<User>
+{
+    Guid? IResourcePolicy.ResourceId => null;
+}

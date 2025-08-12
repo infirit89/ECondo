@@ -1,10 +1,10 @@
-﻿using ECondo.Application.Data;
-using ECondo.Application.Data.Occupant;
+﻿using ECondo.Application.Data.Occupant;
 using ECondo.Application.Data.Property;
 using ECondo.Application.Extensions;
 using ECondo.Application.Repositories;
 using ECondo.Application.Services;
-using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Collections;
+using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Queries.Properties.GetForUser;

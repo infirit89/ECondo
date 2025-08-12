@@ -1,5 +1,4 @@
 ﻿using ECondo.Domain.Buildings;
-using ECondo.Infrastructure.Shared;
 
 namespace ECondo.Infrastructure.Data;
 
