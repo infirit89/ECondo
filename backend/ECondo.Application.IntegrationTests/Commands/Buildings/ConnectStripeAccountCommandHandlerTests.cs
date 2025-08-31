@@ -1,16 +1,15 @@
 using ECondo.Application.Commands.Payment.ConnectStripeAccount;
 using ECondo.Application.Repositories;
 using ECondo.Application.Services;
-using ECondo.Domain;
 using ECondo.Domain.Buildings;
-using ECondo.Domain.Shared;
 using ECondo.Infrastructure.Contexts;
+using ECondo.SharedKernel.Result;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using Xunit;
 
 namespace ECondo.Application.IntegrationTests.Commands.Payment.ConnectStripeAccount;
+
 
 public class ConnectStripeAccountCommandHandlerTests
 {
@@ -33,12 +32,11 @@ public class ConnectStripeAccountCommandHandlerTests
     public async Task Handle_ShouldConnectStripeAccount_WhenValid()
     {
         // Arrange
-        var buildingId = Guid.NewGuid();
+        var entranceId = Guid.NewGuid();
         var entrance = new Entrance
         {
-            Id = Guid.NewGuid(),
-            BuildingId = buildingId,
-            Number = "Entrance1"
+            Id = entranceId,
+            Number = "1",
         };
 
         _dbContext.Entrances.Add(entrance);
@@ -52,8 +50,7 @@ public class ConnectStripeAccountCommandHandlerTests
             .Returns(onboardingLink);
 
         var command = new ConnectStripeAccountCommand(
-            buildingId,
-            "Entrance1",
+            entranceId,
             "https://example.com/return"
         );
 
@@ -74,12 +71,11 @@ public class ConnectStripeAccountCommandHandlerTests
     public async Task Handle_ShouldUpdateDatabaseCorrectly_WhenStripeAccountConnected()
     {
         // Arrange
-        var buildingId = Guid.NewGuid();
+        var entranceId = Guid.NewGuid();
         var entrance = new Entrance
         {
-            Id = Guid.NewGuid(),
-            BuildingId = buildingId,
-            Number = "Entrance1"
+            Id = entranceId,
+            Number = "1",
         };
 
         _dbContext.Entrances.Add(entrance);
@@ -93,8 +89,7 @@ public class ConnectStripeAccountCommandHandlerTests
             .Returns(onboardingLink);
 
         var command = new ConnectStripeAccountCommand(
-            buildingId,
-            "Entrance1",
+            entranceId,
             "https://example.com/return"
         );
 

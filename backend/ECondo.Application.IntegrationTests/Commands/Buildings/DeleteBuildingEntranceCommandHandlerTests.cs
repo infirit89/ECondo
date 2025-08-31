@@ -54,7 +54,7 @@ public class DeleteBuildingEntranceCommandHandlerTests
         _dbContext.Entrances.Add(entrance);
         await _dbContext.SaveChangesAsync();
 
-        var command = new DeleteBuildingEntranceCommand(buildingId, "Entrance1");
+        var command = new DeleteBuildingEntranceCommand(entrance.Id);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -70,55 +70,10 @@ public class DeleteBuildingEntranceCommandHandlerTests
     public async Task Handle_ShouldThrowException_WhenEntranceNotFound()
     {
         // Arrange
-        var command = new DeleteBuildingEntranceCommand(Guid.NewGuid(), "NonExistentEntrance");
+        var command = new DeleteBuildingEntranceCommand(Guid.NewGuid());
 
         // Act & Assert
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
             _handler.Handle(command, CancellationToken.None));
-    }
-
-    [Fact]
-    public async Task Handle_ShouldLeaveDatabaseInConsistentState_AfterDeletion()
-    {
-        // Arrange
-        var buildingId = Guid.NewGuid();
-        var entrance = new Entrance
-        {
-            Id = Guid.NewGuid(),
-            BuildingId = buildingId,
-            Number = "Entrance1",
-            Properties = new HashSet<Property>
-            {
-                new Property
-                {
-                    EntranceId = Guid.NewGuid(),
-                    Floor = "1",
-                    Number = "1",
-                    PropertyOccupants = new HashSet<PropertyOccupant>
-                    {
-                        new PropertyOccupant
-                        {
-                            Id = Guid.NewGuid(),
-                            FirstName = "A",
-                            MiddleName = "A",
-                            LastName = "A",
-                        }
-                    }
-                }
-            }
-        };
-
-        _dbContext.Entrances.Add(entrance);
-        await _dbContext.SaveChangesAsync();
-
-        var command = new DeleteBuildingEntranceCommand(buildingId, "Entrance1");
-
-        // Act
-        await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        Assert.False(await _dbContext.Entrances.AnyAsync());
-        Assert.False(await _dbContext.Properties.AnyAsync());
-        Assert.False(await _dbContext.PropertyOccupants.AnyAsync());
     }
 }

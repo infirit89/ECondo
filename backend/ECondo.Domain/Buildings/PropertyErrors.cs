@@ -1,4 +1,4 @@
-﻿using ECondo.Domain.Shared;
+﻿using ECondo.SharedKernel.Result;
 
 namespace ECondo.Domain.Buildings;
 

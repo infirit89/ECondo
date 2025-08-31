@@ -1,15 +1,13 @@
 using ECondo.Application.Commands.Payment.CreateBill;
 using ECondo.Application.Repositories;
 using ECondo.Application.Services;
-using ECondo.Domain;
 using ECondo.Domain.Buildings;
 using ECondo.Domain.Payments;
-using ECondo.Domain.Shared;
 using ECondo.Infrastructure.Contexts;
+using ECondo.SharedKernel.Result;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using Xunit;
 
 namespace ECondo.Application.IntegrationTests.Commands.Payment.CreateBill;
 
@@ -34,11 +32,10 @@ public class CreateBillCommandHandlerTests
     public async Task Handle_ShouldCreateBill_WhenValid()
     {
         // Arrange
-        var buildingId = Guid.NewGuid();
         var entrance = new Entrance
         {
             Id = Guid.NewGuid(),
-            BuildingId = buildingId,
+            BuildingId = Guid.NewGuid(),
             Number = "Entrance1"
         };
 
@@ -48,8 +45,7 @@ public class CreateBillCommandHandlerTests
         _userContext.UserId.Returns(Guid.NewGuid());
 
         var command = new CreateBillCommand(
-            buildingId,
-            "Entrance1",
+            entrance.Id,
             "Test Bill",
             "Test Description",
             100.0m,
@@ -65,7 +61,9 @@ public class CreateBillCommandHandlerTests
         // Assert
         result.IsOk().Should().BeTrue();
 
-        var createdBill = await _dbContext.Bills.FirstOrDefaultAsync(b => b.Title == "Test Bill");
+        var createdBill = await _dbContext
+            .Bills
+            .FirstOrDefaultAsync(b => b.Title == "Test Bill");
         createdBill.Should().NotBeNull();
         createdBill!.Amount.Should().Be(100.0m);
         createdBill.IsRecurring.Should().BeFalse();
@@ -75,11 +73,10 @@ public class CreateBillCommandHandlerTests
     public async Task Handle_ShouldGeneratePayments_ForOneTimeBill()
     {
         // Arrange
-        var buildingId = Guid.NewGuid();
         var entrance = new Entrance
         {
             Id = Guid.NewGuid(),
-            BuildingId = buildingId,
+            BuildingId = Guid.NewGuid(),
             Number = "Entrance1"
         };
 
@@ -105,8 +102,7 @@ public class CreateBillCommandHandlerTests
         _userContext.UserId.Returns(Guid.NewGuid());
 
         var command = new CreateBillCommand(
-            buildingId,
-            "Entrance1",
+            entrance.Id,
             "One-Time Bill",
             "Test Description",
             200.0m,
@@ -122,7 +118,12 @@ public class CreateBillCommandHandlerTests
         // Assert
         result.IsOk().Should().BeTrue();
 
-        var payments = await _dbContext.Payments.Where(p => p.BillId == result.ToSuccess().Data).ToListAsync();
+        var payments = await _dbContext
+            .Payments
+            .Where(p => 
+                p.BillId == result.ToSuccess().Data)
+            .ToListAsync();
+        
         payments.Should().HaveCount(2);
         payments.All(p => p.AmountPaid == 100.0m).Should().BeTrue();
     }
@@ -131,11 +132,10 @@ public class CreateBillCommandHandlerTests
     public async Task Handle_ShouldNotGeneratePayments_ForRecurringBill()
     {
         // Arrange
-        var buildingId = Guid.NewGuid();
         var entrance = new Entrance
         {
             Id = Guid.NewGuid(),
-            BuildingId = buildingId,
+            BuildingId = Guid.NewGuid(),
             Number = "Entrance1"
         };
 
@@ -145,8 +145,7 @@ public class CreateBillCommandHandlerTests
         _userContext.UserId.Returns(Guid.NewGuid());
 
         var command = new CreateBillCommand(
-            buildingId,
-            "Entrance1",
+            entrance.Id,
             "Recurring Bill",
             "Test Description",
             300.0m,
@@ -162,7 +161,11 @@ public class CreateBillCommandHandlerTests
         // Assert
         result.IsOk().Should().BeTrue();
 
-        var payments = await _dbContext.Payments.Where(p => p.BillId == result.ToSuccess().Data).ToListAsync();
+        var payments = await _dbContext
+            .Payments
+            .Where(p => 
+                p.BillId == result.ToSuccess().Data)
+            .ToListAsync();
         payments.Should().BeEmpty();
     }
 }

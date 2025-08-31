@@ -32,6 +32,7 @@ public static class ServiceConfiguration
         services.AddSingleton<IEmailTemplateService, HtmlEmailTemplateService>();
         services.AddScoped<IEmailService, MailService>();
         services.AddScoped<IUserContext, UserContext>();
+        services.AddScoped<IAuthorizationService, AuthorizationService>();
 
         services.AddScoped<IStripeService, StripeService>();
 

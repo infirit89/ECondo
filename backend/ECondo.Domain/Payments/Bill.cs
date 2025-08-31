@@ -9,17 +9,17 @@ public sealed class Bill
     public string Title { get; set; } = null!;
     public string? Description { get; set; }
     public decimal Amount { get; set; }
-    
+
     public Guid EntranceId { get; set; }
     public Entrance Entrance { get; set; } = null!;
-    
+
     public bool IsRecurring { get; set; }
     public RecurringInterval? RecurringInterval { get; set; }
-    
+
     public DateTimeOffset StartDate { get; set; }
     public DateTimeOffset? EndDate { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
-    
+
     public Guid CreatedByUserId { get; set; }
     public User CreatedByUser { get; set; } = null!;
 
@@ -41,3 +41,4 @@ public enum BillStatus
     Paid,
     Cancelled,
 }
+

@@ -1,7 +1,7 @@
 ﻿using ECondo.Application.Repositories;
 using ECondo.Application.Services;
 using ECondo.Domain.Buildings;
-using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Queries.Buildings.IsUserIn;
@@ -21,8 +21,7 @@ internal sealed class IsUserEntranceManagerQueryHandler(
             .AsNoTracking()
             .AnyAsync(e =>
             e.ManagerId == userContext.UserId &&
-            e.BuildingId == request.BuildingId &&
-            e.Number == request.EntranceNumber,
+            e.Id == request.EntranceId,
             cancellationToken: cancellationToken);
 
         if(!entrance)

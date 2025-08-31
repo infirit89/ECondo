@@ -6,3 +6,4 @@ export enum InvitationStatus {
     Declined
 }
 
+export type OccupantType = 'tennant' | 'owner' | 'user' | 'representative';

@@ -1,12 +1,11 @@
 using ECondo.Application.Commands.Identity.ForgotPassword;
 using ECondo.Application.Services;
-using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
+using ECondo.SharedKernel.Result;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using NSubstitute;
-using Xunit;
 
 namespace ECondo.Application.UnitTests.Commands.Identity.ForgotPassword;
 
@@ -58,7 +57,7 @@ public class ForgotPasswordCommandHandlerTests
         // Assert
         result.IsOk().Should().BeTrue();
         await _emailService.Received(1).SendPasswordResetMail(
-            user.Email!,
+            user.Email,
             Arg.Is<string>(url => url.Contains("token=reset-token") && url.Contains("email=test@example.com")));
     }
 
@@ -78,7 +77,7 @@ public class ForgotPasswordCommandHandlerTests
 
         // Assert
         await _emailService.Received(1).SendPasswordResetMail(
-            user.Email!,
+            user.Email,
             Arg.Is<string>(url =>
                 url == QueryHelpers.AddQueryString(command.ReturnUri, new Dictionary<string, string?>
                 {

@@ -9,13 +9,13 @@ export interface LoginData {
     password: string;
 }
 
-export interface TokenResponse {
+export interface TokenResult {
     accessToken: string;
     expiresIn: number;
     refreshToken: string;
 }
 
-export interface AccessTokenResponse {
+export interface AccessTokenResult {
     accessToken: string;
 }
 

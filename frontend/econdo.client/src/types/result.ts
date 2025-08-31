@@ -11,3 +11,9 @@ export function resultOk<T = void, E = ApiError>(value?: T): Result<T, E> {
 export function resultFail<T = void, E = ApiError>(error: E): Result<T, E> {
     return { ok: false, error: error };
 }
+
+export interface Matchers<T, E, R1, R2> {
+    ok(value?: T): R1;
+    err(error: E): R2;
+}
+

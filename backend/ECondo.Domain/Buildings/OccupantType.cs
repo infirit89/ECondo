@@ -3,7 +3,12 @@
 public sealed class OccupantType
 {
     public Guid Id { get; set; } = Guid.NewGuid();
-    public string Name { get; set; } = null!;
+    public required string Name { get; set; } = null!;
 
     public HashSet<PropertyOccupant> PropertyOccupants { get; set; } = [];
+
+    public const string TenantType = "tennant";
+    public const string OwnerType = "owner";
+    public const string UserType = "user";
+    public const string RepresentativeType = "representative";
 }

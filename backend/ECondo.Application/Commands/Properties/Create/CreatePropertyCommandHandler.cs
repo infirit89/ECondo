@@ -1,7 +1,6 @@
 ﻿using ECondo.Application.Repositories;
-using ECondo.Domain;
 using ECondo.Domain.Buildings;
-using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Commands.Properties.Create;
@@ -17,15 +16,13 @@ internal sealed class CreatePropertyCommandHandler
         var entrance = await dbContext
             .Entrances
             .FirstOrDefaultAsync(e =>
-                e.BuildingId == request.BuildingId &&
-                e.Number == request.EntranceNumber,
+                e.Id == request.EntranceId,
                 cancellationToken: cancellationToken);
 
         if (entrance is null)
             return Result<EmptySuccess, Error>.Fail(
                 EntranceErrors.InvalidEntrance(
-                    request.BuildingId,
-                    request.EntranceNumber));
+                    request.EntranceId));
 
         var propertyType = await dbContext
             .PropertyTypes

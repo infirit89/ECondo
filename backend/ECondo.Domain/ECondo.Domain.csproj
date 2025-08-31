@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.12" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ECondo.SharedKernel\ECondo.SharedKernel.csproj" />
+  </ItemGroup>
+
 </Project>

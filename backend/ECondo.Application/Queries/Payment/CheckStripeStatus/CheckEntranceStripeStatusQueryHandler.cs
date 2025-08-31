@@ -1,6 +1,6 @@
 ﻿using ECondo.Application.Repositories;
 using ECondo.Application.Services;
-using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Queries.Payment.CheckStripeStatus;
@@ -16,8 +16,7 @@ internal sealed class CheckEntranceStripeStatusQueryHandler
         var entrance = await dbContext
             .Entrances
             .FirstAsync(e => 
-                e.BuildingId == request.BuildingId && 
-                e.Number == request.EntranceNumber, 
+                e.Id == request.EntranceId,
                 cancellationToken: cancellationToken);
         
         if(entrance.StripeAccountId is null)

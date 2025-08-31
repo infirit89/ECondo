@@ -1,8 +1,12 @@
 ﻿using ECondo.Application.Data.Occupant;
-using ECondo.Application.Policies;
+using ECondo.Domain.Authorization;
+using ECondo.Domain.Buildings;
 
 namespace ECondo.Application.Queries.PropertyOccupants.GetInProperty;
 
 // TODO: make paged list
 public sealed record GetOccupantsInPropertyQuery(Guid PropertyId)
-    : IQuery<IEnumerable<OccupantResult>>, ICanEditProperty;
+    : IQuery<IEnumerable<OccupantResult>>, ICanRead<Property>
+{
+    Guid? IResourcePolicy.ResourceId => PropertyId;
+}

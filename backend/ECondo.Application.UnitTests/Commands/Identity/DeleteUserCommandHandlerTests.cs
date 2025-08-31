@@ -1,80 +1,67 @@
 using ECondo.Application.Commands.Identity.Delete;
 using ECondo.Application.Repositories;
-using ECondo.Domain.Shared;
+using ECondo.Application.UnitTests.Helper;
 using ECondo.Domain.Users;
+using ECondo.SharedKernel.Result;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using Xunit;
 
 namespace ECondo.Application.UnitTests.Commands.Identity.Delete;
 
 public class DeleteUserCommandHandlerTests
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IApplicationDbContext _mockDbContext;
     private readonly DeleteUserCommandHandler _handler;
 
     public DeleteUserCommandHandlerTests()
     {
-        _dbContext = Substitute.For<IApplicationDbContext>();
-        _handler = new DeleteUserCommandHandler(_dbContext);
+        _mockDbContext = Substitute.For<IApplicationDbContext>();
+        _handler = new DeleteUserCommandHandler(_mockDbContext);
     }
 
     [Fact]
     public async Task Handle_ShouldReturnInvalidUserError_WhenUserNotFound()
     {
-        try
-        {
-            // Arrange
-            var command = new DeleteUserCommand("nonexistent@example.com");
-            var users = new List<User>().AsQueryable();
+        // Arrange
+        var userId = Guid.NewGuid();
+        var command = new DeleteUserCommand(userId);
+        var users = new List<User>().AsQueryable();
 
-            // Act
-            var mockSet = Substitute.For<DbSet<User>, IQueryable<User>, IAsyncEnumerable<User>>();
-            ((IQueryable<User>)mockSet).Provider.Returns(new TestAsyncQueryProvider<User>(users.Provider));
-            ((IQueryable<User>)mockSet).Expression.Returns(users.Expression);
-            ((IQueryable<User>)mockSet).ElementType.Returns(users.ElementType);
-            ((IQueryable<User>)mockSet).GetEnumerator().Returns(users.GetEnumerator());
-            ((IAsyncEnumerable<User>)mockSet).GetAsyncEnumerator(Arg.Any<CancellationToken>())
-                .Returns(new TestAsyncEnumerator<User>(users.GetEnumerator()));
-
-            _dbContext.Users.Returns(mockSet);
-            var result = await _handler.Handle(command, CancellationToken.None);
-            // Assert
-            result.IsOk().Should().BeFalse();
-            result.ToError().Data.Should().BeOfType<Error>();
-            result.ToError().Data!.Code.Should().Be("Users.NotFound");
-        }
-        catch
-        {
-            Assert.True(true);
-        }
+        var mockUserSet = DbSetMockHelper.CreateMockDbSet(users);
+        _mockDbContext.Users.Returns(mockUserSet);
+        
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+        
+        // Assert
+        result.IsOk().Should().BeFalse();
+        result.ToError().Data.Should().BeOfType<Error>();
+        result.ToError().Data!.Code.Should().Be("Users.NotFound");
     }
 
     [Fact]
     public async Task Handle_ShouldDeleteUser_WhenUserExists()
     {
-        try
+        // Arrange
+        var userId = Guid.NewGuid();
+        var command = new DeleteUserCommand(userId);
+        var users = new List<User>()
         {
-            // Arrange
-            var command = new DeleteUserCommand("test@example.com");
-            var user = new User { Email = command.Email };
-            _dbContext.Users.FirstOrDefaultAsync(
-                u => u.Email == command.Email, Arg.Any<CancellationToken>())
-                .Returns(user);
-            // Act
-            var result = await _handler.Handle(command, CancellationToken.None);
+            new()
+            {
+                Id = userId,
+            }
+        }.AsQueryable();
+        var mockUserSet = DbSetMockHelper.CreateMockDbSet(users);
+        _mockDbContext.Users.Returns(mockUserSet);
+        
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
-            result.IsOk().Should().BeTrue();
-            _dbContext.Users.Received(1).Remove(user);
-            await _dbContext.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
-        }
-        catch
-        {
-            Assert.True(true);
-        }
-
+        // Assert
+        result.IsOk().Should().BeTrue();
+        _mockDbContext.Users.Received(1).Remove(users.First());
+        await _mockDbContext.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }
 

@@ -1,11 +1,9 @@
 using ECondo.Application.Commands.Identity.ResetPassword;
-using ECondo.Application.Extensions;
-using ECondo.Domain.Shared;
 using ECondo.Domain.Users;
+using ECondo.SharedKernel.Result;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using NSubstitute;
-using Xunit;
 
 namespace ECondo.Application.UnitTests.Commands.Identity
 {
@@ -26,7 +24,7 @@ namespace ECondo.Application.UnitTests.Commands.Identity
         {
             // Arrange
             var command = new ResetPasswordCommand("test@example.com", "token", "newPassword");
-            _userManager.FindByEmailAsync(command.Email).Returns((User)null);
+            _userManager.FindByEmailAsync(command.Email).Returns((User)null!);
 
             // Act
             var result = await _handler.Handle(command, CancellationToken.None);
@@ -59,8 +57,8 @@ namespace ECondo.Application.UnitTests.Commands.Identity
             result.Should().BeOfType<Result<EmptySuccess, Error>.Error>();
             var error = result.ToError().Data;
             error.Should().BeOfType<ValidationError>();
-            var validationError = (ValidationError)error;
-            validationError.Errors.Should().HaveCount(2);
+            var validationError = error as ValidationError;
+            validationError!.Errors.Should().HaveCount(2);
             validationError.Errors.Should().Contain(e => e.Code == "InvalidToken");
             validationError.Errors.Should().Contain(e => e.Code == "PasswordRequiresDigit");
         }
@@ -125,8 +123,8 @@ namespace ECondo.Application.UnitTests.Commands.Identity
             result.Should().BeOfType<Result<EmptySuccess, Error>.Error>();
             var error = result.ToError().Data;
             error.Should().BeOfType<ValidationError>();
-            var validationError = (ValidationError)error;
-            validationError.Errors.Should().HaveCount(1);
+            var validationError = error as ValidationError;
+            validationError!.Errors.Should().HaveCount(1);
             validationError.Errors.Should().Contain(e => e.Code == "PasswordTooShort");
         }
     }

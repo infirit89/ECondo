@@ -1,6 +1,7 @@
 ﻿using ECondo.Application.Extensions;
 using ECondo.Application.Repositories;
-using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Collections;
+using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Queries.Payment.GetBillsForEntrance;
@@ -14,7 +15,7 @@ internal sealed class GetBillsForEntranceQueryHandler
         var bills = await dbContext
             .Bills
             .AsNoTracking()
-            .Where(b => b.Entrance.BuildingId == request.BuildingId && b.Entrance.Number == request.EntranceNumber)
+            .Where(b => b.Entrance.Id == request.EntranceId)
             .Select(e => new BillResult(e.Title, e.Description, e.Amount, e.RecurringInterval, e.StartDate, e.EndDate))
             .ToPagedListAsync(request.Page, request.PageSize, cancellationToken: cancellationToken);
         

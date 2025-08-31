@@ -20,6 +20,7 @@ export interface BuildingResult {
     streetNumber: string,
     buildingNumber: string,
     entranceNumber: string,
+    entranceId: string,
 }
 
 export const getBuildingsForUser =
@@ -44,10 +45,10 @@ export const getBuildingsForUser =
         throw new Error('Unexpected code flow');
     });
 
-export const isUserInBuilding = cache(async (buildingId: string, entranceNumber: string): Promise<Result> => {
+export const isUserInBuilding = cache(async (entranceId: string): Promise<Result> => {
     try {
         await authInstance
-            .get(`/api/building/isEntranceManager?buildingId=${buildingId}&entranceNumber=${entranceNumber}`);
+            .get(`/api/building/isEntranceManager?entranceId=${entranceId}`);
         return resultOk();
     }
     catch (error) {
@@ -135,8 +136,7 @@ export const deleteEntrance =
 
 export const createBill =
     cache(async (
-        buildingId: string,
-        entranceNumber: string,
+        entranceId: string,
         title: string,
         amount: number,
         isRecurring: boolean,
@@ -148,8 +148,7 @@ export const createBill =
         try {
             await authInstance.post(
                 '/api/bills/create', {
-                buildingId,
-                entranceNumber,
+                entranceId,
                 title,
                 amount,
                 isRecurring,
@@ -182,13 +181,12 @@ interface StripeStatus {
 const baseUrl = process.env.NEXT_PRIVATE_BASE_URL;
 
 export const connectToStripe =
-    cache(async (buildingId: string, entranceNumber: string):
+    cache(async (entranceId: string):
         Promise<Result<StripeResponse>> => {
         try {
             const res = await authInstance.post<StripeResponse>(
                 '/api/stripe/connect', {
-                buildingId,
-                entranceNumber,
+                entranceId,
                 returnUri: `${baseUrl}`,
             });
 
@@ -204,14 +202,13 @@ export const connectToStripe =
     });
 
 export const checkStripeStatus =
-    cache(async (buildingId: string, entranceNumber: string):
+    cache(async (entranceId: string):
         Promise<Result<StripeStatus>> => {
         try {
             const res = await authInstance.get<StripeStatus>(
                 '/api/stripe/checkEntranceStatus', {
                 params: {
-                    buildingId,
-                    entranceNumber,
+                    entranceId
                 }
             });
 
@@ -227,14 +224,13 @@ export const checkStripeStatus =
     });
 
 export const getStripeLoginLink =
-    cache(async (buildingId: string, entranceNumber: string):
+    cache(async (entranceId: string):
         Promise<Result<StripeResponse>> => {
         try {
             const res = await authInstance.get<StripeResponse>(
                 '/api/stripe/getLoginLink', {
                 params: {
-                    buildingId,
-                    entranceNumber,
+                    entranceId,
                 }
             });
 
@@ -259,14 +255,13 @@ export interface BillResult {
 }
 
 export const getBillsForEntrance =
-    cache(async (buildingId: string, entranceNumber: string, page: number, pageSize: number):
+    cache(async (entranceId: string, page: number, pageSize: number):
         Promise<Result<PagedList<BillResult>>> => {
         try {
             const res = await authInstance.get<PagedList<BillResult>>(
                 '/api/bills/getForEntrance', {
                 params: {
-                    buildingId,
-                    entranceNumber,
+                    entranceId,
                     page,
                     pageSize
                 }

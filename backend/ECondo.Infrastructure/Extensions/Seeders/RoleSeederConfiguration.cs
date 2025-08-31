@@ -1,5 +1,4 @@
-﻿using ECondo.Application.Repositories;
-using ECondo.Domain.Users;
+﻿using ECondo.Domain.Users;
 using ECondo.Infrastructure.Data;
 using ECondo.Infrastructure.Shared;
 using Microsoft.AspNetCore.Builder;
@@ -24,9 +23,6 @@ internal static class RoleSeederConfiguration
         var logger = services
             .GetRequiredService<ILogger<RoleSeeder>>();
 
-        var dbContext = services
-            .GetRequiredService<IApplicationDbContext>();
-        
         using (logger.BeginScope("Role creation"))
         {
             foreach (var role in RoleSeedData.Roles)

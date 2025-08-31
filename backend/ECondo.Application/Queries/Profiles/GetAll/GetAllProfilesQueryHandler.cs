@@ -1,6 +1,8 @@
 ﻿using ECondo.Application.Extensions;
 using ECondo.Application.Repositories;
-using ECondo.Domain.Shared;
+using ECondo.Domain.Users;
+using ECondo.SharedKernel.Collections;
+using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Queries.Profiles.GetAll;
@@ -17,7 +19,7 @@ internal sealed class GetAllProfilesQueryHandler
             .UserDetails
             .Include(ud => ud.User)
             .AsNoTracking()
-            .Where(ud => ud.User.UserRoles.All(ur => ur.Role.Name != "admin"))
+            .Where(ud => ud.User.UserRoles.All(ur => ur.Role.Name != Role.Admin))
             .Select(ud =>
                 new UserProfileResult(
                     ud.FirstName,

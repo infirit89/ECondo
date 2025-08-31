@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECondo.Application.UnitTest
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECondo.Application.IntegrationTests", "ECondo.Application.IntegrationTests\ECondo.Application.IntegrationTests.csproj", "{C70CFF9E-0433-4097-85D4-D0A5DA4384F7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECondo.SharedKernel", "ECondo.SharedKernel\ECondo.SharedKernel.csproj", "{640CF724-5526-4183-9910-4979E796B698}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{C70CFF9E-0433-4097-85D4-D0A5DA4384F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C70CFF9E-0433-4097-85D4-D0A5DA4384F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C70CFF9E-0433-4097-85D4-D0A5DA4384F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{640CF724-5526-4183-9910-4979E796B698}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{640CF724-5526-4183-9910-4979E796B698}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{640CF724-5526-4183-9910-4979E796B698}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{640CF724-5526-4183-9910-4979E796B698}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +72,7 @@ Global
 		{E567D4A2-F808-4E66-814F-CEEE5DC0087E} = {51FAD893-9652-4751-AE25-2682DD7B83DB}
 		{92EC01BF-60E9-4951-84DC-9D4E89D52410} = {5844E686-BEBE-40AB-A57B-E4CA5874A882}
 		{C70CFF9E-0433-4097-85D4-D0A5DA4384F7} = {5844E686-BEBE-40AB-A57B-E4CA5874A882}
+		{640CF724-5526-4183-9910-4979E796B698} = {51FAD893-9652-4751-AE25-2682DD7B83DB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {29376348-8E26-4C7C-A441-8B922F1FAC87}

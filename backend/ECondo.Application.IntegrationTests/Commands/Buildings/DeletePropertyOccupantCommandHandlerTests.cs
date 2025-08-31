@@ -1,12 +1,9 @@
 using ECondo.Application.Commands.PropertyOccupants.Delete;
 using ECondo.Application.Repositories;
-using ECondo.Domain;
 using ECondo.Domain.Buildings;
-using ECondo.Domain.Shared;
 using ECondo.Infrastructure.Contexts;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
 
 namespace ECondo.Application.IntegrationTests.Commands.PropertyOccupants.Delete;
 
@@ -63,6 +60,7 @@ public class DeletePropertyOccupantCommandHandlerTests
     {
         // Arrange
         var occupantId = Guid.NewGuid();
+        
         var propertyOccupant = new PropertyOccupant
         {
             Id = occupantId,

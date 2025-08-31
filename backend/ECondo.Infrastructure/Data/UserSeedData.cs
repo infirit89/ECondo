@@ -53,7 +53,7 @@ internal static class UserSeedData
             PhoneNumber = "0881231231",
             EmailConfirmed = true,
         },
-        Password: "testPass@T1", ["admin"]
+        Password: "testPass@T1", [Role.Admin]
     );
 
     public static readonly ProfileDetails BasicUserProfile =

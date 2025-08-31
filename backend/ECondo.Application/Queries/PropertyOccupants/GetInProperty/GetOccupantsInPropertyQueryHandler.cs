@@ -1,6 +1,6 @@
 ﻿using ECondo.Application.Data.Occupant;
 using ECondo.Application.Repositories;
-using ECondo.Domain.Shared;
+using ECondo.SharedKernel.Result;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECondo.Application.Queries.PropertyOccupants.GetInProperty;

@@ -8,3 +8,4 @@ public interface ICacheRepository
     Task StoreAsync<T>(string key, T value, DistributedCacheEntryOptions? entryOptions = null, CancellationToken cancellationToken = default) where T : class;
     Task RemoveAsync(string key, CancellationToken cancellationToken = default);
 }
+    
