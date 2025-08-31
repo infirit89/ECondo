@@ -20,43 +20,13 @@ const publicRoutes = ['/login', '/register', '/', '/confirmAccount', '/forgotPas
 export default async function middleware(req: NextRequest) {
     const path = req.nextUrl.pathname;
 
-    const cookieStore = (await cookies());
-    let accessToken = cookieStore.get(accessTokenCookieKey)?.value;
-    const refreshTokenCookie = cookieStore.get(refreshTokenCookieKey);
-    if(accessToken) {
-        const token = jwtDecode(accessToken);
-
-        if(token.exp! < Date.now() / 1000)
-            accessToken = undefined;
-    }
-    
-    if(accessToken && !refreshTokenCookie) {
-        cookieStore.delete(accessTokenCookieKey);
-        return NextResponse.redirect(new URL('/', req.nextUrl));
-    }
-
-    if(!accessToken && refreshTokenCookie) {
-        const res = await generateAccessToken();
-        if(res.ok) {
-            await setAccessTokenCookie(res.value!.accessToken, 
-                res.value!.expiresIn);
-            accessToken = res.value!.accessToken;
-        } else {
-            cookieStore.delete(refreshTokenCookieKey);
-            cookieStore.delete(accessTokenCookieKey);
-            return NextResponse.redirect(new URL('/', req.nextUrl));
-        }
-
-        return NextResponse.redirect(req.nextUrl);
-    }
-
-    if(path.startsWith('/logout')) {
-        if(accessToken) {
+    if (path.startsWith('/logout')) {
+        if (accessToken) {
             try {
                 await logout();
                 return NextResponse.redirect(new URL('/', req.nextUrl));
             }
-            catch(error) {
+            catch (error) {
                 console.error(error);
             }
         } else {
@@ -66,18 +36,18 @@ export default async function middleware(req: NextRequest) {
 
     // TODO: move in admin layout
     const isAdmin = (await isUserInRole('admin')).ok;
-    if(path.startsWith('/admin')) {
-        if(!isAdmin)
+    if (path.startsWith('/admin')) {
+        if (!isAdmin)
             return NextResponse.redirect(new URL('/', req.nextUrl));
     }
 
-    if(isAdmin && !path.startsWith('/admin'))
+    if (isAdmin && !path.startsWith('/admin'))
         return NextResponse.redirect(new URL('/admin/buildings', req.nextUrl));
-    
-    if(protectedRoutes.some(route => path.startsWith(route)) && !accessToken)
+
+    if (protectedRoutes.some(route => path.startsWith(route)) && !accessToken)
         return NextResponse.redirect(new URL('/login', req.nextUrl));
-    
-    if(publicRoutes.includes(path) && accessToken && !path.startsWith('/condos/properties')) {
+
+    if (publicRoutes.includes(path) && accessToken && !path.startsWith('/condos/properties')) {
         return NextResponse.redirect(new URL('/condos/properties', req.nextUrl));
     }
 
